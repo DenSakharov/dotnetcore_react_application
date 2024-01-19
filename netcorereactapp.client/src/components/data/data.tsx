@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, MouseEventHandler } from 'react';
 import axios from 'axios';
 
 interface DataProps {
-    token: string;
+    token: { token: string };
 }
 
-const Data: React.FC<DataProps> = ({ token }) => {
-    const [secureData, setSecureData] = useState('');
 
+const Data: React.FC<string> = (token) => {
+    const [secureData, setSecureData] = useState('');
+    /*
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('https://localhost:7294/data/GetSecureData', {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `${token.toString()}`,
                     },
                 });
 
@@ -25,11 +26,31 @@ const Data: React.FC<DataProps> = ({ token }) => {
 
         fetchData();
     }, [token]);
+    */
+    const click_send_request: MouseEventHandler<HTMLButtonElement> = async () => {
+        try {
+            try {
+                const response = await axios.get('https://localhost:7294/data/GetSecureData', {
+                    headers: {
+                        Authorization: `${token}`
+                    },
+                });
 
+                setSecureData(response.data);
+            } catch (error) {
+                console.error('Ошибка при получении защищенных данных:', error);
+            }        } catch (error) {
+            // Обработка ошибок
+            console.error('Ошибка во время запроса авторизации:', error);
+        }
+    };
     return (
         <div>
             <h2>Данные из запроса:</h2>
-            <p>{secureData}</p>
+            {/*<p>{secureData}</p>*/}
+            <div>
+                <button onClick={click_send_request}>Запрос на данные</button>
+            </div>
         </div>
     );
 };

@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using netcorereactapp.Server.Services.Interfaces;
 using netcorereactapp.Server.Services;
 using System.Text;
+using netcorereactapp.Server.Controllers.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,7 +57,10 @@ builder.Services.AddAuthentication(options =>
         OnMessageReceived = context =>
         {
             Console.WriteLine(""+DateTime.Now);
-            Console.WriteLine($"Received token from path: {context.Request.Path}");
+            Console.WriteLine($"Received token from path : {context.Request.Path}");
+            Console.WriteLine($"Received token from pat Body : {context.Request.Body}");
+            Console.WriteLine($"Received token from pat Headers.Authorization : {context.Request.Headers.Authorization}");
+            Console.WriteLine($"Received token from pat Headers : {context.Request.Headers}");
             Console.WriteLine($"Token: {context.Token}");
 
             return Task.CompletedTask;
@@ -74,13 +78,20 @@ builder.Services.AddAuthentication(options =>
     };
     options.TokenValidationParameters = new TokenValidationParameters
     {
+        // указывает, будет ли валидироваться издатель при валидации токена
         ValidateIssuer = true,
+        // строка, представляющая издателя
+        ValidIssuer = AuthOptions.ISSUER,
+        // будет ли валидироваться потребитель токена
         ValidateAudience = true,
+        // установка потребителя токена
+        ValidAudience = AuthOptions.AUDIENCE,
+        // будет ли валидироваться время существования
         ValidateLifetime = true,
+        // установка ключа безопасности
+        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(builder.Configuration["Configuration:SecretKey"]),
+        // валидация ключа безопасности
         ValidateIssuerSigningKey = true,
-        ValidIssuer = "DeVSakharov", 
-        ValidAudience = "test_audience",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Configuration:SecretKey"]))
     };
 });
 

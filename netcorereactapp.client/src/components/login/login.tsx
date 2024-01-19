@@ -15,7 +15,7 @@ const Login = () => {
         setPassword(event.target.value);
     };
 
-    const [token, setToken] = useState('');
+    const [token, setToken] = useState<string>();
     const click_send_request: MouseEventHandler<HTMLButtonElement> = async () => {
         try {
             const login_url = "https://localhost:7294/authentication/login";
