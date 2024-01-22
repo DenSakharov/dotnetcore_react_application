@@ -1,4 +1,5 @@
 import React, { MouseEventHandler, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import Data from '../data/data';
 
@@ -6,6 +7,9 @@ const Login = () => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    const navigate = useNavigate();
+
 
     const handleLoginChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setLogin(event.target.value);
@@ -36,6 +40,7 @@ const Login = () => {
                 localStorage.setItem("authToken", JSON.stringify(response.data));
 
                 console.log('Авторизация успешна:', response.data);
+                navigate("/data");
             } else {
                 // Обработка других статусов ответа
                 console.error('Авторизация не удалась:', response.statusText);

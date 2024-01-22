@@ -26,10 +26,9 @@ namespace netcorereactapp.Server.Services
         }
         public string Get_Token(string login) 
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes( Get_Secret_Key() );
-
-            var claims = new List<Claim> { new Claim(ClaimTypes.Name, login) };
+            var claims = new List<Claim> { 
+                new Claim(ClaimTypes.Name, login)
+            };
 
             var tokenDescriptor = new JwtSecurityToken(
             issuer: AuthOptions.ISSUER,
