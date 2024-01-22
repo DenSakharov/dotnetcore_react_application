@@ -2,11 +2,10 @@ import React, { useState, useEffect, MouseEventHandler } from 'react';
 import axios from 'axios';
 
 interface DataProps {
-    token: { token: string };
+    token:  string ;
 }
 
-
-const Data: React.FC<string> = (token) => {
+const Data: React.FC<DataProps> = ({ token }) => {
     const [secureData, setSecureData] = useState('');
     /*
     useEffect(() => {
@@ -30,9 +29,12 @@ const Data: React.FC<string> = (token) => {
     const click_send_request: MouseEventHandler<HTMLButtonElement> = async () => {
         try {
             try {
+                const storedAuthToken = localStorage.getItem("authToken");
+                const authTokenObject = JSON.parse(storedAuthToken);
+                const tokenValue = authTokenObject.token;
                 const response = await axios.get('https://localhost:7294/data/GetSecureData', {
                     headers: {
-                        Authorization: `${token}`
+                        Authorization: `Bearer ${tokenValue }`,
                     },
                 });
 
@@ -47,7 +49,7 @@ const Data: React.FC<string> = (token) => {
     return (
         <div>
             <h2>Данные из запроса:</h2>
-            {/*<p>{secureData}</p>*/}
+            {secureData}
             <div>
                 <button onClick={click_send_request}>Запрос на данные</button>
             </div>

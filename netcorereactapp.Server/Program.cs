@@ -43,10 +43,11 @@ builder.Services.AddAuthentication(options =>
 
             Console.WriteLine($"Token validated for user: {user.Identity?.Name}");
             Console.WriteLine($"Token issuer: {validatedToken.Issuer}");
-            Console.WriteLine( $"Token audience:\n" +
-                $"{validatedToken.SecurityKey.KeyId};\n" +
-                $"{validatedToken.SecurityKey.KeySize};\n"+
-                 $"{validatedToken.SecurityKey.CryptoProviderFactory};\n" );
+            
+            //Console.WriteLine( $"Token audience:\n" +
+            //    $"{validatedToken.SecurityKey.KeyId};\n" +
+            //    $"{validatedToken.SecurityKey.KeySize};\n"+
+            //     $"{validatedToken.SecurityKey.CryptoProviderFactory};\n" );
 
             Console.WriteLine($"Token valid from: {validatedToken.ValidFrom}");
             Console.WriteLine($"Token valid to: {validatedToken.ValidTo}");

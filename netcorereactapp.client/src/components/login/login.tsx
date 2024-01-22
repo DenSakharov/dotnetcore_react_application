@@ -15,7 +15,7 @@ const Login = () => {
         setPassword(event.target.value);
     };
 
-    const [token, setToken] = useState<string>();
+    const [token, setToken] = useState('');
     const click_send_request: MouseEventHandler<HTMLButtonElement> = async () => {
         try {
             const login_url = "https://localhost:7294/authentication/login";
@@ -32,6 +32,9 @@ const Login = () => {
                 // Успешная аутентификация
                 setIsAuthenticated(true);
                 setToken(response.data)
+
+                localStorage.setItem("authToken", JSON.stringify(response.data));
+
                 console.log('Авторизация успешна:', response.data);
             } else {
                 // Обработка других статусов ответа
