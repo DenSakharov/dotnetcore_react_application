@@ -2,17 +2,17 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using netcorereactapp.Server.Controllers.Authentication;
-using netcorereactapp.Server.Services.Interfaces;
+using netcorereactapp.Server.Services.AuthenctionServices.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 
-namespace netcorereactapp.Server.Services
+namespace netcorereactapp.Server.Services.AuthenctionServices
 {
 
-    public class AuthService: IAuthService
+    public class AuthService : IAuthService
     {
         private readonly IConfiguration configuration;
         public AuthService(IConfiguration _configuration)
@@ -24,10 +24,11 @@ namespace netcorereactapp.Server.Services
             string secretKey = configuration["Configuration:SecretKey"];
             return secretKey;
         }
-        public string Get_Token(string login) 
-        {
-            var claims = new List<Claim> { 
-                new Claim(ClaimTypes.Name, login)
+        public string Get_Token(string login , string role)
+            {
+            var claims = new List<Claim> {
+                new Claim(ClaimTypes.Name, login),
+                new Claim(ClaimTypes.Role, role)
             };
 
             var tokenDescriptor = new JwtSecurityToken(
@@ -35,12 +36,12 @@ namespace netcorereactapp.Server.Services
             audience: AuthOptions.AUDIENCE,
             claims: claims,
             expires: DateTime.UtcNow.Add(TimeSpan.FromHours(1)),
-            signingCredentials: 
+            signingCredentials:
             new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(Get_Secret_Key()),
             SecurityAlgorithms.HmacSha256)
             );
 
-           
+
             var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
             return tokenString;
         }

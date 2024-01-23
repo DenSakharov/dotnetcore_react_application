@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using netcorereactapp.Server.Services.Interfaces;
-using netcorereactapp.Server.Services;
 using System.Text;
 using netcorereactapp.Server.Controllers.Authentication;
+using netcorereactapp.Server.Services.AuthenctionServices;
+using netcorereactapp.Server.Services.AuthenctionServices.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

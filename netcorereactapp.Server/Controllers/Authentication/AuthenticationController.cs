@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using netcorereactapp.Server.Services.Interfaces;
+using netcorereactapp.Server.Services.AuthenctionServices.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -14,9 +14,9 @@ namespace netcorereactapp.Server.Controllers.Authentication
     {
         private readonly IAuthService authService;
 
-        public AuthenticationController(IAuthService authService)
+        public AuthenticationController(IAuthService _authService)
         {
-            this.authService = authService;
+            authService = _authService;
         }
         [AllowAnonymous]
         [HttpPost]
@@ -26,7 +26,7 @@ namespace netcorereactapp.Server.Controllers.Authentication
             // Пример простой проверки пользователя (замените на вашу логику)
             if (IsValidUser(model.Login, model.Password))
             {
-                string token = authService.Get_Token(model.Login);
+                string token = authService.Get_Token(model.Login, model.Role);
                 return Ok(new { Token = token });
             }
 
@@ -42,6 +42,7 @@ namespace netcorereactapp.Server.Controllers.Authentication
     public class LoginModel
     {
         public string Login { get; set; }
+        public string Role { get; set; }
         public string Password { get; set; }
     }
 

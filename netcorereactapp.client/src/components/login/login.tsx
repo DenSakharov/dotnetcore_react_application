@@ -6,10 +6,11 @@ import Data from '../data/data';
 const Login = () => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('user')
+
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const navigate = useNavigate();
-
 
     const handleLoginChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setLogin(event.target.value);
@@ -19,12 +20,16 @@ const Login = () => {
         setPassword(event.target.value);
     };
 
-    const [token, setToken] = useState('');
+    const handleRoleChange = (event) => {
+        setRole(event.target.value);
+    };
+    
     const click_send_request: MouseEventHandler<HTMLButtonElement> = async () => {
         try {
             const login_url = "https://localhost:7294/authentication/login";
             const response = await axios.post(login_url, {
                 login,
+                role,
                 password,
             }, {
                 headers: {
@@ -35,7 +40,6 @@ const Login = () => {
             if (response.status === 200) {
                 // Успешная аутентификация
                 setIsAuthenticated(true);
-                setToken(response.data)
 
                 localStorage.setItem("authToken", JSON.stringify(response.data));
 
@@ -59,6 +63,13 @@ const Login = () => {
                 <input type="text" value={login} onChange={handleLoginChange} />
             </div>
             <div>
+                <label>Роль</label>
+                <select id="roles" type="text" defaultValue={role} onChange={handleRoleChange}>
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                </select>
+            </div>
+            <div>
                 <label>Пароль</label>
                 <input type="password" value={password} onChange={handlePasswordChange} />
             </div>
@@ -69,7 +80,7 @@ const Login = () => {
                 <div>
                     <p>Пользователь аутентифицирован</p>
                     <div>
-                        <Data token={token} />
+                        <Data />
                     </div>
                 </div>
 

@@ -15,5 +15,13 @@ namespace netcorereactapp.Server.Controllers.Data
             // Ваш код безопасного ресурса
             return Ok("Защищенные данные");
         }
+        [HttpGet]
+        [Authorize(Roles ="admin")]
+        [Route("GetSecureDataForAdmin")]
+        public IActionResult GetSecureDataForAdmin()
+        {
+            // Ваш код безопасного ресурса
+            return Ok("Защищенные данные");
+        }
     }
 }
