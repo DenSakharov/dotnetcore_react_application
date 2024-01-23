@@ -1,30 +1,23 @@
-import Login from './components/login/login'
-import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import Data from './components/data/data';
 
 import './App.css';
-// Предположим, у вас есть функция, которая проверяет аутентификацию пользователя
-const isAuthenticated = () => {
-    // Реализуйте вашу логику проверки аутентификации, например, проверку наличия токена в localStorage
+import { MainPage } from './MainPage';
+//Проверка аутентификации пользователя
+export const isAuthenticated = () => {
     const authToken = localStorage.getItem('authToken');
-    console.log("authToken : " + authToken)
-    return authToken !== null; // Пример простой проверки
+    //console.log("authToken : " + authToken)
+    return authToken !== null; 
 };
 
 function App() {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<MainPage />} />
-                <Route path="login" element={<Login />} />
-                <Route path="data" element={<CheckAccessToData />} />
-            </Routes>
-        </BrowserRouter>
+        <MainPage></MainPage>
     );
 }
-
 export default App;
-const CheckAccessToData = () => {
+
+export const CheckAccessToData = () => {
     // Проверка аутентификации перед отображением защищенного контента
     if (!isAuthenticated()) {
         return <Navigate to="/login" />;
@@ -36,15 +29,3 @@ const CheckAccessToData = () => {
         </div>
     );
 };
-export const MainPage = () => (
-    <nav>
-        <ul>
-            <li>
-                <Link to="/login">Login</Link>
-            </li>
-            <li>
-                <Link to="/data">data</Link>
-            </li>
-        </ul>
-    </nav>
-);
