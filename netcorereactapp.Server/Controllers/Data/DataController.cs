@@ -21,7 +21,7 @@ namespace netcorereactapp.Server.Controllers.Data
         public IActionResult GetSecureDataForAdmin()
         {
             // Ваш код безопасного ресурса
-            return Ok("Защищенные данные");
+            return Ok("Защищенные данные админа");
         }
     }
 }

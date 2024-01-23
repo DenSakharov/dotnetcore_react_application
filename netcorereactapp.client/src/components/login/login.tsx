@@ -20,7 +20,7 @@ const Login = () => {
         setPassword(event.target.value);
     };
 
-    const handleRoleChange = (event) => {
+    const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRole(event.target.value);
     };
     
