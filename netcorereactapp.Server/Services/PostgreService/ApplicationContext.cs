@@ -15,6 +15,11 @@ namespace netcorereactapp.Server.Services.PostgreService
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<LoginModel>()
+                .HasIndex(u => u.Login)
+                .IsUnique();
+        }
     }
-
 }

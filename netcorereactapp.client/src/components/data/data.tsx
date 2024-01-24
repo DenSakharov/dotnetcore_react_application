@@ -24,7 +24,7 @@ const Data=() => {
         }
     };
 
-    const [secureDataAdmin, setSecureDataAdmin] = useState('');
+    const [secureDataAdmin, setSecureDataAdmin] = useState([]);
     const click_send_request_for_get_admin_data: MouseEventHandler<HTMLButtonElement> = async () => {
         try {
             try {
@@ -54,7 +54,15 @@ const Data=() => {
                 <button onClick={click_send_request}>Запрос на данные</button>
             </div>
             <h2>Данные из запроса для админа:</h2>
-            {secureDataAdmin}
+            <ul>
+                {secureDataAdmin.map((item) => (
+                    <li key={item.id}>
+                        {/* Выводите здесь нужные свойства вашей модели */}
+                        <p>Login: {item.login}</p>
+                        <p>Role: {item.role}</p>
+                    </li>
+                ))}
+            </ul>
             <div>
                 <button onClick={click_send_request_for_get_admin_data}>Запрос на данные для админа</button>
             </div>

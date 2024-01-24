@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using netcorereactapp.Server.Models;
 using netcorereactapp.Server.Services.AuthenctionServices.Interfaces;
 using System.Data;
+using System.Linq;
 
 namespace netcorereactapp.Server.Services.PostgreService
 {
@@ -13,37 +14,48 @@ namespace netcorereactapp.Server.Services.PostgreService
         {
             _configuration = configuration;
         }
-
-        public string GetData(string username)
+        DbContextOptions<ApplicationContext> getoptons()
         {
-            throw new NotImplementedException();
+            string str_connect = _configuration["Configuration:db"];
+            return new DbContextOptionsBuilder<ApplicationContext>()
+            .UseNpgsql(str_connect)
+            .Options;
+        }
+        public List<T> GetData<T>() where T : class
+        {
+            using (ApplicationContext db = new ApplicationContext(getoptons()))
+            {
+                IQueryable<T> query = db.Set<T>();
+
+                return query.ToList();
+            }
         }
         public LoginModel CreateUser(LoginModel user) {
             // получение данных
-            string str_connect = _configuration["Configuration:db"];
-            var options = new DbContextOptionsBuilder<ApplicationContext>()
-            .UseNpgsql(str_connect)
-            .Options;
-            using (ApplicationContext db = new ApplicationContext(options))
+
+            using (ApplicationContext db = new ApplicationContext(getoptons() ))
             {
                 // Создаем объекты для добавления в базу данных
                 LoginModel user1 = user;
                 db.Users.Add(user1);
 
                 // Сохраняем изменения в базе данных
-                db.SaveChanges();
-                return user1;
+                try
+                {
+                    db.SaveChanges();
+                    return user1;
+                } 
+                catch (Exception ex)
+                {
+                    var test = ex.InnerException.Message;
+                }
             }
             return null;
         }
         public LoginModel IsExistingUserInDB(string username)
         {
             // получение данных
-            string str_connect = _configuration["Configuration:db"];
-            var options = new DbContextOptionsBuilder<ApplicationContext>()
-            .UseNpgsql(str_connect) 
-            .Options;
-            using (ApplicationContext db = new ApplicationContext(options))
+            using (ApplicationContext db = new ApplicationContext(getoptons() ))
             {
                 var user = db.Users.Where(x => x.Login == username).FirstOrDefault();
                 return user;

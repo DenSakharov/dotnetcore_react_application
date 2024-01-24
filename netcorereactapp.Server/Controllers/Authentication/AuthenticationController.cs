@@ -40,9 +40,11 @@ namespace netcorereactapp.Server.Controllers.Authentication
         public IActionResult Register([FromBody] LoginModel model)
         {
             var user =postgreService.CreateUser(model);
-            string token = authService.Get_Token(user.Login, user.Role);
-            return Ok(new { Token = token });
-
+            if (user != null)
+            {
+                string token = authService.Get_Token(user.Login, user.Role);
+                return Ok(new { Token = token });
+            }
             return Unauthorized();
         }
 

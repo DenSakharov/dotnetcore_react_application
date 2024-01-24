@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace netcorereactapp.Server.Models
 {
@@ -6,6 +7,8 @@ namespace netcorereactapp.Server.Models
     {
         [Key]
         public int id {  get; set; }
+        [Required]
+        [MaxLength(255)] 
         public string Login { get; set; }
         public string Role { get; set; }
         public string Password { get; set; }
