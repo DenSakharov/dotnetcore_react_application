@@ -1,0 +1,28 @@
+.styled-table {
+
+    width: 100%;
+    border-collapse: collapse;
+    margin: 50px auto;
+    font-size: 18px;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}
+
+    .styled-table th, .styled-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #4CAF50;
+        color: white;
+    }
+
+    .styled-table th {
+        background-color: #4CAF50;
+    }
+
+    .styled-table tbody tr {
+        background-color: #808080;
+    }
+
+        .styled-table tbody tr:hover {
+            background-color: #e0f2f1;
+            cursor: pointer;
+        }

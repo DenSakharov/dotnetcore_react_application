@@ -1,5 +1,9 @@
-﻿export function Home() {
+﻿import  OrdersPage  from './OrdersPage'
+export function Home() {
     return (
-        <h1>Home</h1>
+        <div>
+            <h1>Home</h1>
+            <OrdersPage />
+        </div>
     );
 }

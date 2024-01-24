@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using netcorereactapp.Server.Services.PostgreService;
@@ -11,9 +12,11 @@ using netcorereactapp.Server.Services.PostgreService;
 namespace netcorereactapp.Server.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20240124134712_AddEntities")]
+    partial class AddEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,9 +62,6 @@ namespace netcorereactapp.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
 
-                    b.Property<int>("StatusModelsid")
-                        .HasColumnType("integer");
-
                     b.Property<string>("caption")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -73,9 +73,10 @@ namespace netcorereactapp.Server.Migrations
                     b.Property<DateTime>("date_of_edited")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("id");
+                    b.Property<int>("status_model_id")
+                        .HasColumnType("integer");
 
-                    b.HasIndex("StatusModelsid");
+                    b.HasKey("id");
 
                     b.HasIndex("caption")
                         .IsUnique();
@@ -100,17 +101,6 @@ namespace netcorereactapp.Server.Migrations
                     b.HasKey("id");
 
                     b.ToTable("Statuses");
-                });
-
-            modelBuilder.Entity("netcorereactapp.Server.Models.OrderModels", b =>
-                {
-                    b.HasOne("netcorereactapp.Server.Models.StatusModels", "StatusModels")
-                        .WithMany()
-                        .HasForeignKey("StatusModelsid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("StatusModels");
                 });
 #pragma warning restore 612, 618
         }

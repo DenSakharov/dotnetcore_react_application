@@ -7,6 +7,8 @@ namespace netcorereactapp.Server.Services.PostgreService
     public class ApplicationContext : DbContext
     {
         public DbSet<LoginModel> Users { get; set; } = null!;
+        public DbSet<OrderModels> Orders { get; set; } = null!;
+        public DbSet<StatusModels> Statuses { get; set; } = null!;
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
@@ -19,6 +21,9 @@ namespace netcorereactapp.Server.Services.PostgreService
         {
             modelBuilder.Entity<LoginModel>()
                 .HasIndex(u => u.Login)
+                .IsUnique();
+            modelBuilder.Entity<OrderModels>()
+                .HasIndex(u => u.caption)
                 .IsUnique();
         }
     }

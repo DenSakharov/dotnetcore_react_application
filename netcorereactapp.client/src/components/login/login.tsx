@@ -44,7 +44,7 @@ const Login = () => {
                 localStorage.setItem("authToken", JSON.stringify(response.data));
 
                 console.log('Авторизация успешна:', response.data);
-                navigate("/data");
+                navigate("/");
             } else {
                 // Обработка других статусов ответа
                 console.error('Авторизация не удалась:', response.statusText);
