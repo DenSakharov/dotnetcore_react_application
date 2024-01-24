@@ -1,10 +1,6 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using netcorereactapp.Server.Controllers.Authentication;
-using netcorereactapp.Server.Services.AuthenctionServices;
-using netcorereactapp.Server.Services.AuthenctionServices.Interfaces;
 using netcorereactapp.Server.Infrostructure.Exctentions;
+using netcorereactapp.Server.Services.PostgreService;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +10,10 @@ builder.Host.AddInfrostructre()
     .AddCors()
     .AddAuthnticationAndAuthorization(builder.Configuration);
 
+//builder.Services.AddScoped<PostgreService>();
+string connection = builder.Configuration["Configuration:db"];
+builder.Services.AddDbContext<ApplicationContext>(options =>
+    options.UseNpgsql(connection));
 var app = builder.Build();
 
 

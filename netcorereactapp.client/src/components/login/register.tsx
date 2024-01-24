@@ -1,9 +1,9 @@
-import React, { MouseEventHandler, useState } from 'react';
+﻿import React, { MouseEventHandler, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import Data from '../data/data';
 
-const Login = () => {
+const Register = () => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('user')
@@ -20,13 +20,13 @@ const Login = () => {
         setPassword(event.target.value);
     };
 
-    //const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //    setRole(event.target.value);
-    //};
-    
+    const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRole(event.target.value);
+    };
+
     const click_send_request: MouseEventHandler<HTMLButtonElement> = async () => {
         try {
-            const login_url = "https://localhost:7294/authentication/login";
+            const login_url = "https://localhost:7294/authentication/register";
             const response = await axios.post(login_url, {
                 login,
                 role,
@@ -57,18 +57,18 @@ const Login = () => {
 
     return (
         <div>
-            <h1>Аутентификация пользователя:</h1>
+            <h1>Регистрация нового пользователя:</h1>
             <div>
                 <label>Логин</label>
                 <input type="text" value={login} onChange={handleLoginChange} />
             </div>
-            {/*<div>*/}
-            {/*    <label>Роль</label>*/}
-            {/*    <select id="roles" type="text" defaultValue={role} onChange={handleRoleChange}>*/}
-            {/*        <option value="admin">Admin</option>*/}
-            {/*        <option value="user">User</option>*/}
-            {/*    </select>*/}
-            {/*</div>*/}
+            <div>
+                <label>Роль</label>
+                <select id="roles" type="text" defaultValue={role} onChange={handleRoleChange}>
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                </select>
+            </div>
             <div>
                 <label>Пароль</label>
                 <input type="password" value={password} onChange={handlePasswordChange} />
@@ -89,7 +89,7 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;
 
 
 

@@ -25,6 +25,7 @@ export const Navbar = () => {
 
         setUserInfo(null);
         history.push('/login');
+        window.location.reload();
     };
 
     return (
@@ -32,6 +33,7 @@ export const Navbar = () => {
             <ul>
                 <li><NavLink to="/">Home</NavLink></li>
                 <li><NavLink to="/login">Login</NavLink></li>
+                <li><NavLink to="/register">Register</NavLink></li>
                 <li><NavLink to="/data">Data</NavLink></li>
                 <li><NavLink to="/about">About</NavLink></li>
 
@@ -41,7 +43,11 @@ export const Navbar = () => {
                         <span className="role">Role: {userInfo['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']}</span>
                     </div>
                 )}
-                {userInfo && <button onClick={handleLogout}>Logout</button>}
+                {userInfo && (
+                    <button className="logout-btn" onClick={handleLogout}>
+                        Logout
+                    </button>
+                )}
             </ul>
         </div>
     );

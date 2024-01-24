@@ -6,6 +6,8 @@ using netcorereactapp.Server.Infrostructure.Swagger;
 using netcorereactapp.Server.Services.AuthenctionServices.Interfaces;
 using netcorereactapp.Server.Services.AuthenctionServices;
 using System.Reflection;
+using netcorereactapp.Server.Services.PostgreService;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace netcorereactapp.Server.Infrostructure.Exctentions
 {
@@ -90,6 +92,9 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
         {
             builder.ConfigureServices(services =>
             {
+                //services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(configuration["Configuration:db"]));
+                services.AddSingleton<IPostgreService, PostgreService>();
+
                 services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

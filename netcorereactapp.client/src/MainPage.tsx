@@ -5,6 +5,7 @@ import { CheckAccessToData } from './App';
 import { About } from './About';
 import { Home } from './components/Home/Home';
 import './styles/MainPage.css';
+import Register from './components/login/register';
 export function MainPage() {
     return (
         <div className="main-container"> {/* Добавьте класс для основного контейнера */}
@@ -14,6 +15,7 @@ export function MainPage() {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
                         <Route path="/data" element={<CheckAccessToData />} />
                         <Route path="/about" element={<About />} />
                     </Routes>
