@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+п»їimport React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AddOrderForm from './AddOrderForm'
+import { Modal } from './Modal';
 interface StatusModel {
     id: number;
     type: string;
@@ -13,7 +14,7 @@ interface OrderModel {
     date_of_creature: string; 
     date_of_edited: string; 
     status_model_id: number;
-    statusModel: StatusModel; // Ссылка на связанный статус
+    statusModel: StatusModel; // РЎСЃС‹Р»РєР° РЅР° СЃРІСЏР·Р°РЅРЅС‹Р№ СЃС‚Р°С‚СѓСЃ
 }
 
 const OrdersPage: React.FC = () => {
@@ -41,23 +42,34 @@ const OrdersPage: React.FC = () => {
 
     const [showAddForm, setShowAddForm] = useState(false);
     const handleOrderAdded = (newOrder) => {
-        // Обновление списка заказов после добавления нового заказа
+        // РћР±РЅРѕРІР»РµРЅРёРµ СЃРїРёСЃРєР° Р·Р°РєР°Р·РѕРІ РїРѕСЃР»Рµ РґРѕР±Р°РІР»РµРЅРёСЏ РЅРѕРІРѕРіРѕ Р·Р°РєР°Р·Р°
         setOrders([...orders, newOrder]);
-        // Закрытие формы добавления
+        // Р—Р°РєСЂС‹С‚РёРµ С„РѕСЂРјС‹ РґРѕР±Р°РІР»РµРЅРёСЏ
         setShowAddForm(false);
     };
 
     const toggleAddForm = () => {
-        // Переключение видимости формы добавления
+        // РџРµСЂРµРєР»СЋС‡РµРЅРёРµ РІРёРґРёРјРѕСЃС‚Рё С„РѕСЂРјС‹ РґРѕР±Р°РІР»РµРЅРёСЏ
         setShowAddForm(!showAddForm);
     };
+
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    const [isModal, setModal] = useState(false)
+    const onRowClick = (orderId: number | React.SetStateAction<null>) => {
+
+        console.log(`Clicked on row with order ID: ${orderId}`);
+        setSelectedOrderId(orderId); 
+        setModal(true)
+    };
+   
+    const onClose = () => setModal(false)
     return (
         <div>
             <h1>Orders</h1>
             <button onClick={toggleAddForm}>Add Order</button>
 
             {showAddForm && <AddOrderForm onOrderAdded={handleOrderAdded} />}
-            <table>
+            <table className="styled-table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -69,7 +81,7 @@ const OrdersPage: React.FC = () => {
                 </thead>
                 <tbody>
                     {orders.map(order => (
-                        <tr key={order.id}>
+                        <tr key={order.id} onClick={() => onRowClick(order.id)}>
                             <td>{order.id}</td>
                             <td>{order.caption}</td>
                             <td>{order.date_of_creature}</td>
@@ -79,6 +91,15 @@ const OrdersPage: React.FC = () => {
                     ))}
                 </tbody>
             </table>
+            {selectedOrderId && (
+                <Modal
+                    visible={isModal}
+                    title='Р—Р°РіРѕР»РѕРІРѕРє'
+                    content={<p>Р§С‚Рѕ-С‚Рѕ РІР°Р¶РЅРѕРµ</p>}
+                    footer={<button onClick={onClose}>Р—Р°РєСЂС‹С‚СЊ</button>}
+                    onClose={onClose}
+                />
+            )}
         </div>
     );
 };

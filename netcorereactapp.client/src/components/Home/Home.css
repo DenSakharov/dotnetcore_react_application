@@ -1,0 +1,99 @@
+.styled-button {
+    background-color: #4caf50; /* Задайте цвет фона */
+    color: white; /* Задайте цвет текста */
+    padding: 15px 25px; /* Задайте внутренние отступы */
+    font-size: 18px; /* Задайте размер шрифта */
+    border: none; /* Уберите границу */
+    border-radius: 8px; /* Задайте скругление углов */
+    text-transform: uppercase; /* Преобразуйте текст в верхний регистр */
+    font-weight: bold; /* Сделайте текст жирным */
+    /* Тень */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Эффекты при наведении */
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+}
+
+    .styled-button:hover {
+        background-color: #45a049; /* Измените цвет фона при наведении */
+        color: #ffffff; /* Измените цвет текста при наведении */
+        transform: scale(1.05); /* Небольшой масштаб при наведении */
+        cursor: pointer; /* Измените курсор при наведении */
+    }
+
+    .styled-button:active {
+        background-color: #398038; /* Измените цвет фона при нажатии */
+        transform: scale(0.95); /* Небольшой масштаб при нажатии */
+    }
+
+    /* Анимация изменения цвета при наведении */
+    .styled-button.color-change:hover {
+        animation: colorChange 1s infinite alternate;
+    }
+
+    /* Анимация изменения цвета после нажатия */
+    .styled-button.clicked {
+        animation: clickedAnimation 0.5s forwards;
+    }
+
+    /* Градиентный фон */
+    .styled-button.gradient-background {
+        background: linear-gradient(45deg, #4caf50, #45a049); /* Градиентный фон */
+    }
+
+    /* Дополнительные стили для границы */
+    .styled-button.border {
+        border: 2px solid #4caf50;
+    }
+
+    /* Размер текста при наведении */
+    .styled-button.font-size-change:hover {
+        font-size: 20px;
+    }
+
+    /* Инверсия цвета при наведении */
+    .styled-button.invert-color:hover {
+        filter: invert(100%);
+    }
+
+    /* Вращение при наведении */
+    .styled-button.rotate:hover {
+        transform: rotate(45deg);
+    }
+
+    /* Пульсация при наведении */
+    .styled-button.pulse:hover {
+        animation: pulse 1s infinite;
+    }
+
+@keyframes colorChange {
+    0% {
+        background-color: #4caf50;
+        color: white;
+    }
+
+    100% {
+        background-color: #45a049;
+        color: #ffffff;
+    }
+}
+
+@keyframes clickedAnimation {
+    to {
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+п»їimport React, { useState } from 'react';
 import axios from 'axios';
 interface OrderCreationData {
     caption: string;
@@ -22,7 +22,7 @@ const AddOrderForm = ({ onOrderAdded }) => {
         dateOfCreation: '',
         dateOfEdited: '',
         statusModelId: 0,
-        // Добавьте другие поля заказа здесь
+        // Р”РѕР±Р°РІСЊС‚Рµ РґСЂСѓРіРёРµ РїРѕР»СЏ Р·Р°РєР°Р·Р° Р·РґРµСЃСЊ
     });
 
     const handleInputChange = (e) => {
@@ -38,11 +38,11 @@ const AddOrderForm = ({ onOrderAdded }) => {
 
             const order: OrderCreationData = {
                 caption: newOrder.caption,
-                date_of_creature: new Date(1), // Здесь нужно уточнить, откуда брать дату
-                date_of_edited: new Date(1),   // То же самое, уточнить, откуда брать дату
+                date_of_creature: new Date(1), // Р—РґРµСЃСЊ РЅСѓР¶РЅРѕ СѓС‚РѕС‡РЅРёС‚СЊ, РѕС‚РєСѓРґР° Р±СЂР°С‚СЊ РґР°С‚Сѓ
+                date_of_edited: new Date(1),   // РўРѕ Р¶Рµ СЃР°РјРѕРµ, СѓС‚РѕС‡РЅРёС‚СЊ, РѕС‚РєСѓРґР° Р±СЂР°С‚СЊ РґР°С‚Сѓ
                 statusModels: {
                     type: TypesStatus.Start,
-                    date_of_creature: new Date(1) // И снова, уточнить, откуда брать дату
+                    date_of_creature: new Date(1) // Р СЃРЅРѕРІР°, СѓС‚РѕС‡РЅРёС‚СЊ, РѕС‚РєСѓРґР° Р±СЂР°С‚СЊ РґР°С‚Сѓ
                 }
             };
             const response = await axios.post('https://localhost:7294/orders/createorder', order, {
