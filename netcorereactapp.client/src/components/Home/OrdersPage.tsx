@@ -4,33 +4,44 @@ import AddOrderForm from './AddOrderForm'
 import { Modal } from './Modal';
 interface StatusModel {
     id: number;
-    type: string;
-    date_of_creature: string; 
+    type: TypesStatus;
+    date_of_creature: string;
 }
 
+export enum TypesStatus {
+    Start = "Start",
+    Proccess = "Proccess",
+    End = "End",
+}
+export const statusMap = {
+    0: 'Start',
+    1: 'Process',
+    2: 'End',
+};
 interface OrderModel {
     id: number;
     caption: string;
-    date_of_creature: string; 
-    date_of_edited: string; 
-    status_model_id: number;
-    statusModel: StatusModel; // Ссылка на связанный статус
+    date_of_creature: string;
+    date_of_edited: string;
+    statusModels: StatusModel; // Используйте имя во множественном числе, так как это связь "многие к одному"
 }
+
+
+export default OrderModel;
 
 const OrdersPage: React.FC = () => {
     const [orders, setOrders] = useState<OrderModel[]>([]);
-
+   
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const storedAuthToken = localStorage.getItem("authToken");
-                const authTokenObject = JSON.parse(storedAuthToken);
-                const tokenValue = authTokenObject.token;
+                const tokenValue = localStorage.getItem("authToken");
                 const response = await axios.get<OrderModel[]>('https://localhost:7294/orders/getorders', {
                     headers: {
                         Authorization: `Bearer ${tokenValue}`,
                     },
                 });
+                //console.log(response.data)
                 setOrders(response.data);
             } catch (error) {
                 console.error('Error fetching orders:', error);
@@ -53,12 +64,10 @@ const OrdersPage: React.FC = () => {
         setShowAddForm(!showAddForm);
     };
 
-    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
     const [isModal, setModal] = useState(false)
-    const onRowClick = (orderId: number | React.SetStateAction<null>) => {
-
-        console.log(`Clicked on row with order ID: ${orderId}`);
-        setSelectedOrderId(orderId); 
+    const onRowClick = (order: OrderModel | null) => {
+        setSelectedOrderId(order); 
         setModal(true)
     };
    
@@ -81,12 +90,12 @@ const OrdersPage: React.FC = () => {
                 </thead>
                 <tbody>
                     {orders.map(order => (
-                        <tr key={order.id} onClick={() => onRowClick(order.id)}>
+                        <tr key={order.id} onClick={() => onRowClick(order)}>
                             <td>{order.id}</td>
                             <td>{order.caption}</td>
                             <td>{order.date_of_creature}</td>
                             <td>{order.date_of_edited}</td>
-                            <td>{order.statusModel?.type}</td>
+                            <td>{statusMap[order.statusModels.type]}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -95,9 +104,10 @@ const OrdersPage: React.FC = () => {
                 <Modal
                     visible={isModal}
                     title='Заголовок'
-                    content={<p>Что-то важное</p>}
+                    content={<p>Окно для показа информаци о выбранном заказе</p>}
                     footer={<button onClick={onClose}>Закрыть</button>}
                     onClose={onClose}
+                    order={selectedOrderId}
                 />
             )}
         </div>

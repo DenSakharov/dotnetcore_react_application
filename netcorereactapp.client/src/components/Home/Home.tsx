@@ -1,7 +1,7 @@
 ﻿import { useState } from 'react';
 import OrdersPage from './OrdersPage'
 
-import './Home.css'
+import '../../styles/Home.css'
 
 export function Home() {
     const [view, setView] = useState(false);

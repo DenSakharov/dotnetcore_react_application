@@ -1,14 +1,12 @@
 import React, { useState, useEffect, MouseEventHandler } from 'react';
 import axios from 'axios';
-import './data.css'
+import '../../styles/data.css'
 const Data = () => {
     const [secureData, setSecureData] = useState('');
     const click_send_request: MouseEventHandler<HTMLButtonElement> = async () => {
         try {
             try {
-                const storedAuthToken = localStorage.getItem("authToken");
-                const authTokenObject = JSON.parse(storedAuthToken);
-                const tokenValue = authTokenObject.token;
+                const tokenValue = localStorage.getItem("authToken");
                 const response = await axios.get('https://localhost:7294/data/GetSecureData', {
                     headers: {
                         Authorization: `Bearer ${tokenValue}`,
@@ -29,9 +27,7 @@ const Data = () => {
     const click_send_request_for_get_admin_data: MouseEventHandler<HTMLButtonElement> = async () => {
         try {
             try {
-                const storedAuthToken = localStorage.getItem("authToken");
-                const authTokenObject = JSON.parse(storedAuthToken);
-                const tokenValue = authTokenObject.token;
+                const tokenValue = localStorage.getItem("authToken");
                 const response = await axios.get('https://localhost:7294/data/GetSecureDataForAdmin', {
                     headers: {
                         Authorization: `Bearer ${tokenValue}`,

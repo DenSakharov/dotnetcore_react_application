@@ -41,9 +41,9 @@ const Register = () => {
                 // Успешная аутентификация
                 setIsAuthenticated(true);
 
-                localStorage.setItem("authToken", JSON.stringify(response.data));
+                localStorage.setItem("authToken", String(response.data));
 
-                console.log('Авторизация успешна:', response.data);
+                //console.log('Авторизация успешна:', response.data);
                 navigate("/data");
             } else {
                 // Обработка других статусов ответа

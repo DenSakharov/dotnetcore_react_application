@@ -2,7 +2,7 @@
 import { NavLink } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-import './Navbar.css';
+import '../../styles/Navbar.css';
 
 export const Navbar = () => {
     const [userInfo, setUserInfo] = useState(null);

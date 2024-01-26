@@ -30,7 +30,7 @@ namespace netcorereactapp.Server.Controllers.Authentication
             if (user != null)
             {
                 string token = authService.Get_Token(user.Login, user.Role);
-                return Ok(new { Token = token });
+                return Ok(token);
             }
             return Unauthorized();
         }
@@ -43,7 +43,7 @@ namespace netcorereactapp.Server.Controllers.Authentication
             if (user != null)
             {
                 string token = authService.Get_Token(user.Login, user.Role);
-                return Ok(new { Token = token });
+                return Ok( token );
             }
             return Unauthorized();
         }

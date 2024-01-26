@@ -40,10 +40,10 @@ const Login = () => {
             if (response.status === 200) {
                 // Успешная аутентификация
                 setIsAuthenticated(true);
+                
+                localStorage.setItem("authToken", String(response.data));
 
-                localStorage.setItem("authToken", JSON.stringify(response.data));
-
-                console.log('Авторизация успешна:', response.data);
+                //console.log('Авторизация успешна:', response.data);
                 navigate("/");
             } else {
                 // Обработка других статусов ответа
