@@ -71,7 +71,10 @@ const OrdersPage: React.FC = () => {
         setModal(true)
     };
    
-    const onClose = () => setModal(false)
+    const onClose = () => {
+        setModal(false)
+        window.location.reload();
+    }
     return (
         <div>
             <h1>Orders</h1>

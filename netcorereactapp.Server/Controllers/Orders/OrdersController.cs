@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using netcorereactapp.Server.Models;
 using netcorereactapp.Server.Services.PostgreService;
+using System.Text.Json;
 
 namespace netcorereactapp.Server.Controllers.Orders
 {
@@ -44,8 +45,6 @@ namespace netcorereactapp.Server.Controllers.Orders
             {
                 if (ModelState.IsValid)
                 {
-                    // Перед добавлением в базу данных можно выполнить дополнительные проверки или логику
-
                     _dbContext.Orders.Add(order);
                     await _dbContext.SaveChangesAsync();
 
@@ -76,35 +75,82 @@ namespace netcorereactapp.Server.Controllers.Orders
             return Ok(order); // Возвращаем заказ в случае успеха
         }
         [HttpPut("{orderId}/updatestatus")]
-        public async Task<IActionResult> UpdateStatus(int orderId, [FromBody] StatusModels statusUpdateModel)
+        public async Task<IActionResult> UpdateStatus(int orderId, [FromBody] dynamic statusUpdateModel)
         {
+            var jsonObject = JsonSerializer.Deserialize<UpdateStatusClass>(statusUpdateModel);
+
+            // Check if jsonObject or selectedStatus is null
+            if (jsonObject == null || jsonObject.status == null)
+            {
+                return BadRequest("Invalid status update data");
+            }
+
+            // Use Enum.TryParse to handle invalid enum values
+            if (!Enum.TryParse<TypesStatus>(jsonObject.status, out TypesStatus status))
+            {
+                return BadRequest("Invalid status value");
+            }
+
             try
             {
+                // Получаем заказ из базы данных
+                var existingOrder = await _dbContext.Orders
+                    .Include(o => o.StatusModels)
+                    .FirstOrDefaultAsync(o => o.id == orderId);
+
                 // Проверяем, существует ли заказ с указанным ID
-                var existingOrder = await GetOrder(orderId);
                 if (existingOrder == null)
                 {
                     return NotFound("Order not found");
                 }
 
-                // Проверяем, существует ли связанный статус
-                if (existingOrder.Value.StatusModels != null)
+                if (existingOrder.StatusModels == null)
                 {
-                    // Обновляем статус заказа
-                    existingOrder.Value.StatusModels.type = statusUpdateModel.type;
-                    await _dbContext.SaveChangesAsync(); // Сохраняем изменения в базу данных
+                    existingOrder.StatusModels = new StatusModels(); 
+                }
 
-                    return Ok("Status updated successfully");
-                }
-                else
-                {
-                    return BadRequest("StatusModels is null");
-                }
+                existingOrder.StatusModels.type = status;
+                existingOrder.StatusModels.date_of_creature = DateTime.UtcNow;
+                existingOrder.date_of_edited = DateTime.UtcNow;
+                await _dbContext.SaveChangesAsync();
+
+                return Ok("Status updated successfully");
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
+        }
+
+        [HttpDelete("{orderId}")]
+        public async Task<ActionResult<OrderModels>> DeleteOrder(int orderId)
+        {
+            try
+            {
+                // Находим заказ по ID
+                var order = await _dbContext.Orders.FindAsync(orderId);
+
+                // Проверяем, существует ли заказ
+                if (order == null)
+                {
+                    return NotFound("Order not found");
+                }
+
+                // Удаляем заказ из базы данных
+                _dbContext.Orders.Remove(order);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok("Order deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+        public class UpdateStatusClass
+        {
+            public string status { get; set; }
         }
     }
 }

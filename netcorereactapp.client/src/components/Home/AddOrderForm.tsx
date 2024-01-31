@@ -32,10 +32,7 @@ const AddOrderForm = ({ onOrderAdded }) => {
 
     const handleAddOrder = async () => {
         try {
-            const storedAuthToken = localStorage.getItem("authToken");
-            const authTokenObject = JSON.parse(storedAuthToken);
-            const tokenValue = authTokenObject.token;
-
+            const tokenValue = localStorage.getItem("authToken");
             const order: OrderCreationData = {
                 caption: newOrder.caption,
                 date_of_creature: new Date(),

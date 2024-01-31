@@ -1,35 +1,37 @@
 ﻿import axios from "axios";
 import React, { useEffect, useState } from "react";
-import OrderModel, { statusMap } from "./OrdersPage";
-import TypesStatus from "./OrdersPage";
+import OrderModel, { TypesStatus, statusMap } from "./OrdersPage";
 
-export const SelectedOrder: React.FC<{ orderInput: OrderModel | null }> = ({ orderInput }) => {
+export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal: () => void }> = ({ orderInput, closeModal }) => {
     const [order, setOrder] = useState<OrderModel | null>(orderInput);
-    const [selectedStatus, setSelectedStatus] = useState<string | undefined>(undefined);
-
+    const [selectedStatus, setSelectedStatus] = useState(null)
     useEffect(() => {
         setOrder(orderInput);
-        setSelectedStatus(orderInput?.statusModels.type); // Устанавливаем начальное значение статуса при загрузке данных
     }, [orderInput]);
-
+    const [errorMessage, setErrorMessage] = useState(null);
     const updateStatus = async () => {
         try {
             if (order && selectedStatus !== undefined) {
                 const tokenValue = localStorage.getItem("authToken");
+                
+                const status=selectedStatus 
 
-                // Предположим, что ваш сервер поддерживает обновление статуса через PUT-запрос
-                await axios.put(
+                const response =await axios.put(
                     `https://localhost:7294/orders/${order.id}/updatestatus`,
-                    { selectedStatus },
+                    { status },
                     {
                         headers: {
                             Authorization: `Bearer ${tokenValue}`,
                         },
                     }
                 );
-
-                // Обновление статуса в локальном состоянии
-                setOrder(prevOrder => ({ ...prevOrder, statusModels: { ...prevOrder.statusModels, type: selectedStatus } }));
+                if (response.status === 200) {
+                    closeModal();
+                } else {
+                    window.alert('Ошибка обновления заказа. Неожиданный статус: ' + response.status);
+                    setErrorMessage('Ошибка обновления заказа. Неожиданный статус: ' + response.status);
+                    console.error('Error updating order. Unexpected status:', response.status);
+                }
             }
         } catch (error) {
             console.error(error);
@@ -37,11 +39,37 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null }> = ({ ord
     };
 
     const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedStatus(event.target.value);
+        const newValue = event.target.value;
+        setSelectedStatus((prevStatus) => {
+            console.log(`selectedStatus => ${newValue}`);
+            return newValue;
+        });
     };
+
+
     if (!order) {
         return <p>Invalid orderId or order data is not available</p>;
     }
+
+    const deleteOrder = async () => {
+        try {
+            const tokenValue = localStorage.getItem("authToken");
+            const response = await axios.delete(`https://localhost:7294/orders/${order.id}`, {
+                headers: {
+                    Authorization: `Bearer ${tokenValue}`,
+                },
+            });
+
+            // Проверяем успешность удаления
+            if (response.status === 200) {
+                closeModal();
+            } else {
+                console.error('Error deleting order. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error deleting order:', error);
+        }
+    };
 
     return (
         <div>
@@ -51,13 +79,15 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null }> = ({ ord
             <label>
                 Select Status:
                 <select value={selectedStatus || ""} onChange={handleStatusChange}>
+                    <option value="">Выберите статус</option>
                     <option value={TypesStatus.Start}>Start</option>
                     <option value={TypesStatus.Proccess}>Proccess</option>
                     <option value={TypesStatus.End}>End</option>
                 </select>
             </label>
+            {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
             <button onClick={updateStatus}>Update Status</button>
-            {/* Additional fields */}
+            <button onClick={deleteOrder}>Delete Order</button>
         </div>
     );
 };

@@ -38,8 +38,11 @@ export const Modal = ({
     // если компонент невидим, то не отображаем его
     if (!visible) return null
 
-    console.log('Order prop in Modal:', order);
-
+    //console.log('Order prop in Modal:', order);
+    const closeModal = () => {
+        onClose(); // Закрыть модальное окно
+        window.location.reload();
+    };
     // или возвращаем верстку модального окна
     return (
         <div className='modal' onClick={onClose}>
@@ -54,14 +57,7 @@ export const Modal = ({
                     {content}
                     {order ? (
                         <div>
-                        {/*<ul>*/}
-                        {/*    {Object.entries(order).map(([key, value]) => (*/}
-                        {/*        <li key={key}>*/}
-                        {/*            <strong>{key}:</strong> {value.toString()}*/}
-                        {/*        </li>*/}
-                        {/*    ))}*/}
-                        {/*</ul>*/}
-                            <SelectedOrder orderInput={order} />
+                            <SelectedOrder orderInput={order} closeModal={onClose} />
                         </div>
                     ) : (
                         <p>Invalid orderId or order data is not available</p>
