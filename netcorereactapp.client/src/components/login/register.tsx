@@ -43,8 +43,8 @@ const Register = () => {
 
                 localStorage.setItem("authToken", String(response.data));
 
-                //console.log('Авторизация успешна:', response.data);
-                navigate("/data");
+                navigate("/");
+                window.location.reload();
             } else {
                 // Обработка других статусов ответа
                 console.error('Авторизация не удалась:', response.statusText);

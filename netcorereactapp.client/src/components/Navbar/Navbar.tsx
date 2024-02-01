@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
 import '../../styles/Navbar.css';
@@ -19,12 +19,12 @@ export const Navbar = () => {
             }
         }
     }, []);
-
+    const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.removeItem('authToken');
 
         setUserInfo(null);
-        history.push('/login');
+        navigate("/login");
         window.location.reload();
     };
 

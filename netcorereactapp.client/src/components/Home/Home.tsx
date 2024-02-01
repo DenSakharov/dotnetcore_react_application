@@ -4,7 +4,7 @@ import OrdersPage from './OrdersPage'
 import '../../styles/Home.css'
 
 export function Home() {
-    const [view, setView] = useState(false);
+    const [view, setView] = useState(true);
 
     const click_view_table = (e: any) => {
         if(view)
@@ -15,7 +15,9 @@ export function Home() {
     return (
         <div>
             <button className="styled-button"
-                title="Показать таблицу" onClick={click_view_table} >Показать таблицу</button>
+                title={view ? "Скрыть таблицу" : "Показать таблицу"} onClick={click_view_table} >
+                {view ? "Скрыть таблицу" : "Показать таблицу"}
+            </button>
             <div>
                 {view &&
                     <OrdersPage />}
