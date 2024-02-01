@@ -4,12 +4,10 @@
     {
         public int Id { get; set; }
         public DateTime DateOfChange { get; set; }
-
-        // Внешний ключ для связи с моделью статуса
+        public string Message {  get; set; }
         public int StatusModelId { get; set; }
-
-        // Навигационное свойство для доступа к связанной модели статуса
         public StatusModels StatusModel { get; set; }
-
+        public int OderStatusHistoryId { get; set; }
+        public OrderStatusHistory OrderStatusHistory { get; set; }
     }
 }

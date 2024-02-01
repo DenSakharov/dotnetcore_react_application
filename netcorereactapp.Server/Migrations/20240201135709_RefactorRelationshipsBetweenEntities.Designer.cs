@@ -12,8 +12,8 @@ using netcorereactapp.Server.Services.PostgreService;
 namespace netcorereactapp.Server.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240131144256_AddHistoryAndAttachmentsInStatuses")]
-    partial class AddHistoryAndAttachmentsInStatuses
+    [Migration("20240201135709_RefactorRelationshipsBetweenEntities")]
+    partial class RefactorRelationshipsBetweenEntities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,28 @@ namespace netcorereactapp.Server.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("netcorereactapp.Server.Models.AttachmentModels", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AttachmentData")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("StatusModelId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StatusModelId");
+
+                    b.ToTable("Attachments");
+                });
 
             modelBuilder.Entity("netcorereactapp.Server.Models.LoginModel", b =>
                 {
@@ -94,13 +116,7 @@ namespace netcorereactapp.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("DateOfChange")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<int>("OrderId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -110,7 +126,7 @@ namespace netcorereactapp.Server.Migrations
                     b.ToTable("OrderStatusHistories");
                 });
 
-            modelBuilder.Entity("netcorereactapp.Server.Models.StatusAttachment", b =>
+            modelBuilder.Entity("netcorereactapp.Server.Models.StatusEvent", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -118,19 +134,22 @@ namespace netcorereactapp.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AttachmentData")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateTime>("DateOfChange")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("StatusId")
+                    b.Property<int>("OderStatusHistoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StatusModelId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StatusId")
-                        .IsUnique();
+                    b.HasIndex("OderStatusHistoryId");
 
-                    b.ToTable("StatusAttachments");
+                    b.HasIndex("StatusModelId");
+
+                    b.ToTable("StatusEvents");
                 });
 
             modelBuilder.Entity("netcorereactapp.Server.Models.StatusModels", b =>
@@ -152,6 +171,17 @@ namespace netcorereactapp.Server.Migrations
                     b.ToTable("Statuses");
                 });
 
+            modelBuilder.Entity("netcorereactapp.Server.Models.AttachmentModels", b =>
+                {
+                    b.HasOne("netcorereactapp.Server.Models.StatusModels", "StatusModel")
+                        .WithMany("Attachments")
+                        .HasForeignKey("StatusModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StatusModel");
+                });
+
             modelBuilder.Entity("netcorereactapp.Server.Models.OrderModels", b =>
                 {
                     b.HasOne("netcorereactapp.Server.Models.StatusModels", "StatusModels")
@@ -166,7 +196,7 @@ namespace netcorereactapp.Server.Migrations
             modelBuilder.Entity("netcorereactapp.Server.Models.OrderStatusHistory", b =>
                 {
                     b.HasOne("netcorereactapp.Server.Models.OrderModels", "Order")
-                        .WithMany("StatusHistory")
+                        .WithMany("StatusHistories")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -174,26 +204,40 @@ namespace netcorereactapp.Server.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("netcorereactapp.Server.Models.StatusAttachment", b =>
+            modelBuilder.Entity("netcorereactapp.Server.Models.StatusEvent", b =>
                 {
-                    b.HasOne("netcorereactapp.Server.Models.StatusModels", "Status")
-                        .WithOne("Attachment")
-                        .HasForeignKey("netcorereactapp.Server.Models.StatusAttachment", "StatusId")
+                    b.HasOne("netcorereactapp.Server.Models.OrderStatusHistory", "OrderStatusHistory")
+                        .WithMany("StatusEvents")
+                        .HasForeignKey("OderStatusHistoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Status");
+                    b.HasOne("netcorereactapp.Server.Models.StatusModels", "StatusModel")
+                        .WithMany("StatusEvents")
+                        .HasForeignKey("StatusModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderStatusHistory");
+
+                    b.Navigation("StatusModel");
                 });
 
             modelBuilder.Entity("netcorereactapp.Server.Models.OrderModels", b =>
                 {
-                    b.Navigation("StatusHistory");
+                    b.Navigation("StatusHistories");
+                });
+
+            modelBuilder.Entity("netcorereactapp.Server.Models.OrderStatusHistory", b =>
+                {
+                    b.Navigation("StatusEvents");
                 });
 
             modelBuilder.Entity("netcorereactapp.Server.Models.StatusModels", b =>
                 {
-                    b.Navigation("Attachment")
-                        .IsRequired();
+                    b.Navigation("Attachments");
+
+                    b.Navigation("StatusEvents");
                 });
 #pragma warning restore 612, 618
         }

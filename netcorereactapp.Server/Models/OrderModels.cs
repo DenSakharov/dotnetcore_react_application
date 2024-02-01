@@ -13,5 +13,6 @@ namespace netcorereactapp.Server.Models
         public DateTime date_of_edited { get; set; }
         //public int status_model_id { get; set; }
         public StatusModels StatusModels { get; set; }
+        public List<OrderStatusHistory> StatusHistories { get; set; } = new List<OrderStatusHistory>();
     }
 }

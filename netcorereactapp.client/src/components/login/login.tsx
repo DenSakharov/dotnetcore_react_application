@@ -64,13 +64,6 @@ const Login = () => {
                 <label>Логин</label>
                 <input type="text" value={login} onChange={handleLoginChange} />
             </div>
-            {/*<div>*/}
-            {/*    <label>Роль</label>*/}
-            {/*    <select id="roles" type="text" defaultValue={role} onChange={handleRoleChange}>*/}
-            {/*        <option value="admin">Admin</option>*/}
-            {/*        <option value="user">User</option>*/}
-            {/*    </select>*/}
-            {/*</div>*/}
             <div>
                 <label>Пароль</label>
                 <input type="password" value={password} onChange={handlePasswordChange} />
