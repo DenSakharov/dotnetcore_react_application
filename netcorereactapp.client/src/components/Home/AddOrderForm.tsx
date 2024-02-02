@@ -7,6 +7,7 @@ interface OrderCreationData {
     statusModels: {
         type: TypesStatus;
         date_of_creature: Date;
+        attachments?: File;
     };
 }
 
@@ -22,29 +23,33 @@ const AddOrderForm = ({ onOrderAdded }) => {
         dateOfCreation: '',
         dateOfEdited: '',
         statusModelId: 0,
-        // Добавьте другие поля заказа здесь
+        attachment: null, // Поле для хранения файла
     });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewOrder({ ...newOrder, [name]: value });
     };
-
+    const handleAttachmentChange = (e) => {
+        const file = e.target.files[0];
+        setNewOrder({ ...newOrder, attachment: file });
+    };
     const handleAddOrder = async () => {
         try {
             const tokenValue = localStorage.getItem("authToken");
-            const order: OrderCreationData = {
-                caption: newOrder.caption,
-                date_of_creature: new Date(),
-                date_of_edited: new Date(),
-                statusModels: {
-                    type: TypesStatus.Start,
-                    date_of_creature: new Date()
-                }
-            };
 
-            const response = await axios.post('https://localhost:7294/orders/createorder', order, {
+            const formData = new FormData();
+            formData.append('caption', newOrder.caption);
+            formData.append('date_of_creature', new Date().toISOString());
+            formData.append('date_of_edited', new Date().toISOString());
+            formData.append('statusModels[type]', TypesStatus.Start);
+            formData.append('statusModels[date_of_creature]', new Date().toISOString());
+            formData.append('statusModels[attachments]', newOrder.attachment);
+
+
+            const response = await axios.post('https://localhost:7294/orders/createorder', formData, {
                 headers: {
+                    'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${tokenValue}`,
                 },
             });
@@ -55,9 +60,15 @@ const AddOrderForm = ({ onOrderAdded }) => {
                 dateOfCreation: '',
                 dateOfEdited: '',
                 statusModelId: 0,
+                attachment: null,
             });
         } catch (error) {
             console.error('Error adding order:', error);
+
+            if (error.response) {
+                // Вывести подробности об ошибке, если они доступны
+                console.error('Response data:', error.response.data);
+            }
         }
     };
 
@@ -69,6 +80,11 @@ const AddOrderForm = ({ onOrderAdded }) => {
                 value={newOrder.caption}
                 onChange={handleInputChange}
                 placeholder="Order Caption"
+            />
+            <input
+                type="file"
+                name="attachment"
+                onChange={handleAttachmentChange}
             />
             <button onClick={handleAddOrder}>+</button>
         </div>

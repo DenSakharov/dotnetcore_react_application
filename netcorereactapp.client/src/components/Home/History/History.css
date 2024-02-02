@@ -1,0 +1,24 @@
+
+.order-history table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.order-history th, .order-history td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.order-history th {
+    background-color: forestgreen;
+}
+
+.order-history tbody tr{
+    background-color:darkslategrey;
+}
+
+.order-history tbody tr:hover {
+    background-color: darkgreen;
+}

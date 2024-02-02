@@ -1,6 +1,7 @@
 using netcorereactapp.Server.Infrostructure.Exctentions;
 using netcorereactapp.Server.Services.PostgreService;
 using Microsoft.EntityFrameworkCore;
+using netcorereactapp.Server.Infrostructure.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,12 @@ builder.Host.AddInfrostructre()
 string connection = builder.Configuration["Configuration:db"];
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(connection));
+
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.AllowSynchronousIO = true;
+});
+
 var app = builder.Build();
 
 
@@ -23,6 +30,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseEndpoints(endpoints =>endpoints.MapControllers());
 

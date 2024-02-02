@@ -37,18 +37,50 @@ namespace netcorereactapp.Server.Controllers.Orders
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpPost]
-        [Route("createorder")]
-        public async Task<ActionResult<OrderModels>> CreateOrder([FromBody] OrderModels order)
+        [HttpPost("createorder")]
+        public async Task<ActionResult<OrderModels>> CreateOrder([FromForm] OrderModels order)
         {
+            Console.WriteLine($"\n{order.id} ;{order.caption} ;{order.StatusModels.type} ;{order.StatusHistories.Count} ,\n{order.StatusHistories.FirstOrDefault().Id}" +
+                $"{order.StatusHistories.FirstOrDefault()}");
             try
             {
                 if (ModelState.IsValid)
                 {
+                    var statusEvent = new StatusEvent
+                    {
+                        DateOfChange = DateTime.UtcNow,
+                        Message = $"Новое событие: создание нового заказа под номером {order.id}",
+                    };
+
+                    var orderStatusHistory = new OrderStatusHistory
+                    {
+                        OrderId = order.id,
+                        StatusEvents = new List<StatusEvent> { statusEvent }
+                    };
+
+                    order.StatusHistories ??= new List<OrderStatusHistory>();
+                    order.StatusHistories.Add(orderStatusHistory);
+
+                    // Проверка наличия записи в "Statuses"
+                    var status = await _dbContext.Statuses.FindAsync(order.id);
+                    if (status == null)
+                    {
+                        // Создание новой записи в "Statuses" (или другая обработка)
+                        status = new StatusModels
+                        {
+                            date_of_creature = DateTime.UtcNow,
+                            type= TypesStatus.Start,
+                            StatusEvents = { statusEvent }
+                        };
+                        _dbContext.Statuses.Add(status);
+                    }
+
+                    statusEvent.StatusModelId = status.id; 
+
                     _dbContext.Orders.Add(order);
                     await _dbContext.SaveChangesAsync();
 
-                    return Ok(order);
+                    return CreatedAtAction(nameof(GetOrder), new { id = order.id }, order);
                 }
 
                 return BadRequest("Invalid order data");
@@ -106,7 +138,7 @@ namespace netcorereactapp.Server.Controllers.Orders
 
                 if (existingOrder.StatusModels == null)
                 {
-                    existingOrder.StatusModels = new StatusModels(); 
+                    existingOrder.StatusModels = new StatusModels();
                 }
 
                 existingOrder.StatusModels.type = status;

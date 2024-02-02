@@ -1,0 +1,23 @@
+.order-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 25px;
+}
+
+.order-details {
+    margin: 10px;
+}
+
+.select-status {
+    margin: 10px;
+}
+
+.error-message {
+    color: red;
+    margin: 10px;
+}
+
+.action-buttons button {
+    margin: 10px;
+}

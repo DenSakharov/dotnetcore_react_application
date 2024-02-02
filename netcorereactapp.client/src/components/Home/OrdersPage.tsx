@@ -80,7 +80,14 @@ const OrdersPage: React.FC = () => {
             <h1>Orders</h1>
             <button onClick={toggleAddForm}>Add Order</button>
 
-            {showAddForm && <AddOrderForm onOrderAdded={handleOrderAdded} />}
+            {showAddForm && (
+                <Modal
+                    visible={showAddForm}
+                    title='Add Order'
+                    content={<AddOrderForm onOrderAdded={handleOrderAdded} onClose={toggleAddForm} />}
+                    footer={<button onClick={toggleAddForm}>Close</button>}
+                />
+            )}
             <table className="styled-table">
                 <thead>
                     <tr>

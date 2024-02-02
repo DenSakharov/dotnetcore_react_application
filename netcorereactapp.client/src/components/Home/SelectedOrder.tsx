@@ -1,6 +1,8 @@
 ﻿import axios from "axios";
 import React, { useEffect, useState } from "react";
 import OrderModel, { TypesStatus, statusMap } from "./OrdersPage";
+import '../../styles/SelectedOrder.css'
+import { History } from './History/Hitory'
 
 export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal: () => void }> = ({ orderInput, closeModal }) => {
     const [order, setOrder] = useState<OrderModel | null>(orderInput);
@@ -13,10 +15,10 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal
         try {
             if (order && selectedStatus !== undefined) {
                 const tokenValue = localStorage.getItem("authToken");
-                
-                const status=selectedStatus 
 
-                const response =await axios.put(
+                const status = selectedStatus
+
+                const response = await axios.put(
                     `https://localhost:7294/orders/${order.id}/updatestatus`,
                     { status },
                     {
@@ -72,23 +74,35 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal
     };
 
     return (
-        <div>
-            <p>ID: {order.id}</p>
-            <p>Caption: {order.caption}</p>
-            <td>Order status : {statusMap[order.statusModels.type]}</td>
-            <label>
-                Select Status:
-                <select value={selectedStatus || ""} onChange={handleStatusChange}>
-                    <option value="">Выберите статус</option>
-                    <option value={TypesStatus.Start}>Start</option>
-                    <option value={TypesStatus.Proccess}>Proccess</option>
-                    <option value={TypesStatus.End}>End</option>
-                </select>
-            </label>
-            {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
-            <button onClick={updateStatus}>Update Status</button>
-            <button onClick={deleteOrder}>Delete Order</button>
+        <div className="order-container">
+            <div className="order-details">
+                <p>ID: {order.id}</p>
+                <p>Caption: {order.caption}</p>
+                <p>Order status: {statusMap[order.statusModels.type]}</p>
+            </div>
+            <div className="select-status">
+                <label>
+                    Select Status:
+                    <select value={selectedStatus || ""} onChange={handleStatusChange}>
+                        <option value="">Выберите статус</option>
+                        <option value={TypesStatus.Start}>Start</option>
+                        <option value={TypesStatus.Proccess}>Proccess</option>
+                        <option value={TypesStatus.End}>End</option>
+                    </select>
+                </label>
+            </div>
+            <div className="error-message">
+                {errorMessage && <div>{errorMessage}</div>}
+            </div>
+            <div className="action-buttons">
+                <button onClick={updateStatus}>Update Status</button>
+                <button onClick={deleteOrder}>Delete Order</button>
+            </div>
+            <div>
+                <History orderId={ order.id} />
+            </div>
         </div>
+
     );
 };
 
