@@ -20,10 +20,10 @@ namespace netcorereactapp.Server.Controllers.History
         {
             _dbContext = dbContext;
         }
-
+        /*
         [HttpGet]
         [Route("{orderId}")]
-        public async Task<ActionResult<IEnumerable<OrderStatusHistory>>> GetOrdersWithHistory(int orderId)
+        public async Task<ActionResult<IEnumerable<StatusEvent> > > GetOrdersWithHistory(int orderId)
         {
             try
             {
@@ -65,5 +65,6 @@ namespace netcorereactapp.Server.Controllers.History
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        */
     }
 }

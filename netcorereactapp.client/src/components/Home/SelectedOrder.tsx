@@ -9,6 +9,33 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal
     const [selectedStatus, setSelectedStatus] = useState(null)
     useEffect(() => {
         setOrder(orderInput);
+        /*
+        console.log(`Order ID: ${order.id}`);
+        console.log(`Caption: ${order.caption}`);
+        console.log(`Date of Creation: ${order.dateOfCreature}`);
+        console.log(`Date of Editing: ${order.dateOfEdited}`);
+        if (order.statuses) {
+            order.statuses.forEach(status => {
+                console.log(`Status ID: ${status.id}`);
+                console.log(`Status Type: ${status.type}`);
+                console.log(`Date of Creation: ${status.dateOfCreature}`);
+                if (status.attachments) {
+                    status.attachments.forEach(attachment => {
+                        console.log(`Attachment ID: ${attachment.id}`);
+                        console.log(`Attachment Data: ${attachment.attachmentData}`);
+                    });
+                }
+            });
+        }
+        if (order.events) {
+            order.events.forEach(event => {
+                console.log(`Event ID: ${event.id}`);
+                console.log(`Date of Change: ${event.dateOfChange}`);
+                console.log(`Message: ${event.message}`);
+            });
+        }
+        console.log('---------------------------');
+        */
     }, [orderInput]);
     const [errorMessage, setErrorMessage] = useState(null);
     const updateStatus = async () => {
@@ -76,13 +103,20 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal
     return (
         <div className="order-container">
             <div className="order-details">
-                <p>ID: {order.id}</p>
-                <p>Caption: {order.caption}</p>
-                <p>Order status: {statusMap[order.statusModels.type]}</p>
+                <p>Идентификатор : {order.id}</p>
+                <p>Название заказа : {order.caption}</p>
+                <p>
+                    Текущий статус заказа : {order.statuses && order.statuses.length > 0
+                        ? statusMap[order.statuses.sort((a, b) =>
+                            new Date(b.dateOfCreature).getTime() - new Date(a.dateOfCreature).getTime())[0]
+                            .type]
+                        : ''}
+                </p>
+
             </div>
             <div className="select-status">
                 <label>
-                    Select Status:
+                    Выберите статут для добалвения :
                     <select value={selectedStatus || ""} onChange={handleStatusChange}>
                         <option value="">Выберите статус</option>
                         <option value={TypesStatus.Start}>Start</option>
@@ -95,11 +129,27 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal
                 {errorMessage && <div>{errorMessage}</div>}
             </div>
             <div className="action-buttons">
-                <button onClick={updateStatus}>Update Status</button>
-                <button onClick={deleteOrder}>Delete Order</button>
+                <button onClick={updateStatus}>Добавить статус</button>
+                <button onClick={deleteOrder}>Удалить заказ</button>
             </div>
             <div>
-                <History orderId={ order.id} />
+                <table className="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Статус</th>
+                            <th>Дата создания</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {order.statuses.map((status, index) => (
+                            <tr key={index}>
+                                <td>{statusMap[status.type]}</td>
+                                <td>{status.dateOfCreature}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
             </div>
         </div>
 

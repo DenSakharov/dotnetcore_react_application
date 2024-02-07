@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Text.Json.Serialization;
 
 namespace netcorereactapp.Server.Models
 {
@@ -11,12 +11,14 @@ namespace netcorereactapp.Server.Models
 
     public class StatusModels
     {
-        [Key]
-        public int id { get; set; }
+        public int Id { get; set; }
         public TypesStatus type { get; set; }
         public DateTime date_of_creature { get; set; }
+        [JsonIgnore]
         public List<AttachmentModels> Attachments { get; set; } = new List<AttachmentModels>();
-
-        public List<StatusEvent> StatusEvents { get; set; } = new List<StatusEvent>();
+        [JsonIgnore]
+        public int OrderId { get; set; }
+        [JsonIgnore]
+        public OrderModels Order { get; set; }
     }
 }

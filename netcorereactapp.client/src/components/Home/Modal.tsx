@@ -1,5 +1,4 @@
-﻿import React, { ReactElement, useEffect, useState } from 'react';
-import axios from 'axios'
+﻿import React, { ReactElement, useEffect } from 'react';
 import '../../styles/Modal.css'
 import OrderModel from './OrdersPage';
 import { SelectedOrder } from './SelectedOrder';

@@ -31,7 +31,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<RequestLoggingMiddleware>();
+//app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseEndpoints(endpoints =>endpoints.MapControllers());
 

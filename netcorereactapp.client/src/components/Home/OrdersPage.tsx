@@ -2,10 +2,16 @@
 import axios from 'axios';
 import AddOrderForm from './AddOrderForm'
 import { Modal } from './Modal';
-interface StatusModel {
+export interface AttachmentModel {
     id: number;
-    type: TypesStatus;
-    date_of_creature: string;
+    attachmentData: string;
+}
+
+export interface StatusModel {
+    Id: number;
+    Type: TypesStatus;
+    dateOfCreature: string;
+    attachments: AttachmentModel[];
 }
 
 export enum TypesStatus {
@@ -13,20 +19,19 @@ export enum TypesStatus {
     Proccess = "Proccess",
     End = "End",
 }
+
+interface OrderModel {
+    id: number;
+    caption: string;
+    dateOfCreature: string;
+    dateOfEdited: string;
+    statuses: StatusModel[];
+}
 export const statusMap = {
     0: 'Start',
     1: 'Process',
     2: 'End',
 };
-interface OrderModel {
-    id: number;
-    caption: string;
-    date_of_creature: string;
-    date_of_edited: string;
-    statusModels: StatusModel; // Используйте имя во множественном числе, так как это связь "многие к одному"
-}
-
-
 export default OrderModel;
 
 const OrdersPage: React.FC = () => {
@@ -43,6 +48,35 @@ const OrdersPage: React.FC = () => {
                 });
                 //console.log(response.data)
                 setOrders(response.data);
+                /*
+                response.data.forEach(order => {
+                    console.log(`Order ID: ${order.id}`);
+                    console.log(`Caption: ${order.caption}`);
+                    console.log(`Date of Creation: ${order.dateOfCreature}`);
+                    console.log(`Date of Editing: ${order.dateOfEdited}`);
+                    if (order.statuses) {
+                        order.statuses.forEach(status => {
+                            console.log(`Status ID: ${status.id}`);
+                            console.log(`Status Type: ${status.type}`);
+                            console.log(`Date of Creation: ${status.dateOfCreature}`);
+                            if (status.attachments) {
+                                status.attachments.forEach(attachment => {
+                                    console.log(`Attachment ID: ${attachment.id}`);
+                                    console.log(`Attachment Data: ${attachment.attachmentData}`);
+                                });
+                            }
+                        });
+                    }
+                    if (order.events) {
+                        order.events.forEach(event => {
+                            console.log(`Event ID: ${event.id}`);
+                            console.log(`Date of Change: ${event.dateOfChange}`);
+                            console.log(`Message: ${event.message}`);
+                        });
+                    }
+                    console.log('---------------------------');
+                });
+                */
             } catch (error) {
                 console.error('Error fetching orders:', error);
             }
@@ -96,6 +130,7 @@ const OrdersPage: React.FC = () => {
                         <th>Date of Creation</th>
                         <th>Date of Editing</th>
                         <th>Status</th>
+                        <th>Event</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -103,9 +138,12 @@ const OrdersPage: React.FC = () => {
                         <tr key={order.id} onClick={() => onRowClick(order)}>
                             <td>{order.id}</td>
                             <td>{order.caption}</td>
-                            <td>{order.date_of_creature}</td>
-                            <td>{order.date_of_edited}</td>
-                            <td>{statusMap[order.statusModels.type]}</td>
+                            <td>{order.dateOfCreature}</td>
+                            <td>{order.dateOfEdited}</td>
+                            <td>{order.statuses && order.statuses.length > 0 ? statusMap[order.statuses[0].type] : ''}</td>
+                            <td>
+                                {order.events && order.events.length > 0 ? order.events[0].message : ''}
+                            </td>
                         </tr>
                     ))}
                 </tbody>

@@ -1,15 +1,6 @@
 ﻿import React, { useState } from 'react';
 import axios from 'axios';
-interface OrderCreationData {
-    caption: string;
-    date_of_creature: Date;
-    date_of_edited: Date;
-    statusModels: {
-        type: TypesStatus;
-        date_of_creature: Date;
-        attachments?: File;
-    };
-}
+
 
 enum TypesStatus {
     Start,
@@ -36,18 +27,25 @@ const AddOrderForm = ({ onOrderAdded }) => {
     };
     const handleAddOrder = async () => {
         try {
+            const formDataData = new FormData();
+            const formDataFile = new FormData();
+
+            // Добавляем данные в первый объект FormData
+            formDataData.append('caption', newOrder.caption);
+
+            // Добавляем файл во второй объект FormData
+            formDataFile.append('StatusModels.Attachments', newOrder.attachment);
+
+            // Объединяем два объекта FormData в один
+            for (const [key, value] of formDataFile.entries()) {
+                formDataData.append(key, value);
+            }
+
+            // Добавляем токен авторизации
             const tokenValue = localStorage.getItem("authToken");
 
-            const formData = new FormData();
-            formData.append('caption', newOrder.caption);
-            formData.append('date_of_creature', new Date().toISOString());
-            formData.append('date_of_edited', new Date().toISOString());
-            formData.append('statusModels[type]', TypesStatus.Start);
-            formData.append('statusModels[date_of_creature]', new Date().toISOString());
-            formData.append('statusModels[attachments]', newOrder.attachment);
-
-
-            const response = await axios.post('https://localhost:7294/orders/createorder', formData, {
+            // Отправляем объединенный объект FormData
+            const response = await axios.post('https://localhost:7294/orders/createorder', formDataData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${tokenValue}`,

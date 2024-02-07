@@ -12,28 +12,29 @@ namespace netcorereactapp.Server.Infrostructure.Middlewares
             _next = next;
             _logger = loggerFactory.CreateLogger<RequestLoggingMiddleware>();
         }
-
         public async Task Invoke(HttpContext context)
         {
-            var originalBodyStream = context.Response.Body;
+            var originalBodyStream = context.Request.Body; // Store the original request body stream
+            var requestBody = string.Empty;
 
             try
             {
-                // Логирование до вызова _next
-                LogRequestInformation(context);
 
-                // Вызываем следующий middleware в цепочке
+                LogRequestInformation(context);
                 await _next(context);
             }
             catch (Exception ex)
             {
-                // Логирование ошибок
+                // Log errors
                 _logger.LogError(ex, "An error occurred during request processing.");
                 Console.WriteLine(ex);
             }
             finally
             {
-                // Логирование после ответа от контроллера
+                // Restore the position of the request body stream
+                context.Request.Body = originalBodyStream;
+
+                // Log response information
                 LogResponseInformation(context, originalBodyStream);
             }
         }

@@ -1,12 +1,42 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using netcorereactapp.Server.Models;
 using netcorereactapp.Server.Services.PostgreService;
+using System.Linq;
 using System.Text.Json;
 
 namespace netcorereactapp.Server.Controllers.Orders
 {
+    public class OrderDTO
+    {
+        // Свойства модели заказа
+        public int Id { get; set; }
+        public string Caption { get; set; }
+        public DateTime DateOfCreature { get; set; }
+        public DateTime DateOfEdited { get; set; }
+
+        // Свойства связанных статусов и событий
+        public List<StatusDTO> Statuses { get; set; }
+        public List<StatusEventDTO> Events { get; set; }
+    }
+
+    public class StatusDTO
+    {
+        // Свойства модели статуса
+        public int Id { get; set; }
+        public TypesStatus Type { get; set; }
+        public DateTime DateOfCreature { get; set; }
+    }
+
+    public class StatusEventDTO
+    {
+        // Свойства модели события статуса
+        public int Id { get; set; }
+        public DateTime DateOfChange { get; set; }
+        public string Message { get; set; }
+    }
     [Route("orders")]
     [ApiController]
     [Authorize]
@@ -14,23 +44,52 @@ namespace netcorereactapp.Server.Controllers.Orders
     public class OrdersController : ControllerBase
     {
         private readonly ApplicationContext _dbContext;
-
-        public OrdersController(ApplicationContext dbContext)
+        private readonly ILogger<OrdersController> _logger;
+        public OrdersController(ApplicationContext dbContext, ILogger<OrdersController> logger)
         {
-            _dbContext = dbContext;
+            try
+            {
+                _dbContext = dbContext;
+                _logger = logger;
+                logger.LogInformation("OrdersController constructor called.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
-        [HttpGet]
-        [Route("getorders")]
-        public async Task<ActionResult<IEnumerable<OrderModels>>> GetOrders()
+        [HttpGet("getorders")]
+        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrders()
         {
             try
             {
                 var orders = await _dbContext.Orders
-                    .Include(o => o.StatusModels) // Включаем связанный статус
+                    .Include(o => o.StatusModels)
+                    .Include(o => o.StatusEvents)
                     .ToListAsync();
 
-                return Ok(orders);
+                var orderDTOs = orders.Select(order => new OrderDTO
+                {
+                    Id = order.id,
+                    Caption = order.caption,
+                    DateOfCreature = order.date_of_creature,
+                    DateOfEdited = order.date_of_edited,
+                    Statuses = order.StatusModels.Select(status => new StatusDTO
+                    {
+                        Id = status.Id,
+                        Type = status.type,
+                        DateOfCreature = status.date_of_creature
+                    }).ToList(),
+                    Events = order.StatusEvents.Select(status => new StatusEventDTO
+                    {
+                        DateOfChange = status.DateOfChange,
+                        Id = status.Id,
+                        Message = status.Message
+                    }).ToList()
+                });
+                //_logger.LogInformation("DateOfCreature - " + orderDTOs.FirstOrDefault().Statuses.FirstOrDefault().DateOfCreature);
+                return Ok(orderDTOs);
             }
             catch (Exception ex)
             {
@@ -38,49 +97,48 @@ namespace netcorereactapp.Server.Controllers.Orders
             }
         }
         [HttpPost("createorder")]
-        public async Task<ActionResult<OrderModels>> CreateOrder([FromForm] OrderModels order)
+        public async Task<ActionResult<OrderModels>> CreateOrder()
         {
-            Console.WriteLine($"\n{order.id} ;{order.caption} ;{order.StatusModels.type} ;{order.StatusHistories.Count} ,\n{order.StatusHistories.FirstOrDefault().Id}" +
-                $"{order.StatusHistories.FirstOrDefault()}");
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var statusEvent = new StatusEvent
+                    var form = Request.Form;
+                    var capt = form["caption"];
+
+                    // Пример доступа к файлам
+                    var attachments = form.Files.GetFile("StatusModels.Attachments");
+
+                    var newlst = new List<StatusModels>();
+                    newlst.Add(new StatusModels
                     {
-                        DateOfChange = DateTime.UtcNow,
-                        Message = $"Новое событие: создание нового заказа под номером {order.id}",
-                    };
+                        date_of_creature = DateTime.UtcNow,
+                        type = TypesStatus.Start,
 
-                    var orderStatusHistory = new OrderStatusHistory
+                    });
+                    _dbContext.Orders.Add(new OrderModels
                     {
-                        OrderId = order.id,
-                        StatusEvents = new List<StatusEvent> { statusEvent }
-                    };
-
-                    order.StatusHistories ??= new List<OrderStatusHistory>();
-                    order.StatusHistories.Add(orderStatusHistory);
-
-                    // Проверка наличия записи в "Statuses"
-                    var status = await _dbContext.Statuses.FindAsync(order.id);
-                    if (status == null)
-                    {
-                        // Создание новой записи в "Statuses" (или другая обработка)
-                        status = new StatusModels
-                        {
-                            date_of_creature = DateTime.UtcNow,
-                            type= TypesStatus.Start,
-                            StatusEvents = { statusEvent }
-                        };
-                        _dbContext.Statuses.Add(status);
-                    }
-
-                    statusEvent.StatusModelId = status.id; 
-
-                    _dbContext.Orders.Add(order);
+                        caption = capt,
+                        date_of_creature = DateTime.UtcNow,
+                        date_of_edited = DateTime.UtcNow,
+                        StatusModels = newlst
+                    });
+                    // Добавление нового заказа в контекст базы данных
                     await _dbContext.SaveChangesAsync();
 
-                    return CreatedAtAction(nameof(GetOrder), new { id = order.id }, order);
+                    var lastCreatedOrder = _dbContext.Orders.OrderByDescending(o => o.id).FirstOrDefault();
+
+                    // Создание нового объекта StatusEvent (история создания)
+                    var statusEvent = new StatusEvent
+                    {
+                        OrderId = lastCreatedOrder.id,
+                        DateOfChange = DateTime.UtcNow,
+                        Message = $"Новое событие: создание нового заказа под номером {lastCreatedOrder.id}",
+                    };
+                    _dbContext.StatusEventsOfModels.Add(statusEvent);
+                    await _dbContext.SaveChangesAsync();
+                    // Возвращаем созданный заказ
+                    return CreatedAtAction(nameof(GetOrder), new { id = lastCreatedOrder.id }, lastCreatedOrder);
                 }
 
                 return BadRequest("Invalid order data");
@@ -118,10 +176,10 @@ namespace netcorereactapp.Server.Controllers.Orders
             }
 
             // Use Enum.TryParse to handle invalid enum values
-            if (!Enum.TryParse<TypesStatus>(jsonObject.status, out TypesStatus status))
-            {
-                return BadRequest("Invalid status value");
-            }
+            //if (!Enum.TryParse<TypesStatus>(jsonObject.status, out TypesStatus status))
+            //{
+            //    return BadRequest("Invalid status value");
+            //}
 
             try
             {
@@ -136,14 +194,16 @@ namespace netcorereactapp.Server.Controllers.Orders
                     return NotFound("Order not found");
                 }
 
-                if (existingOrder.StatusModels == null)
+                if (existingOrder.StatusModels != null)
                 {
-                    existingOrder.StatusModels = new StatusModels();
+                    TypesStatus status = (TypesStatus)Enum.Parse(typeof(TypesStatus), jsonObject.status);
+                    existingOrder.StatusModels.Add(
+                        new StatusModels
+                        {
+                            type = status,
+                            date_of_creature = DateTime.UtcNow,
+                        });
                 }
-
-                existingOrder.StatusModels.type = status;
-                existingOrder.StatusModels.date_of_creature = DateTime.UtcNow;
-                existingOrder.date_of_edited = DateTime.UtcNow;
                 await _dbContext.SaveChangesAsync();
 
                 return Ok("Status updated successfully");

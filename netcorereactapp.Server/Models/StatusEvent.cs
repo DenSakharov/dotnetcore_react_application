@@ -7,10 +7,7 @@ namespace netcorereactapp.Server.Models
         public int Id { get; set; }
         public DateTime DateOfChange { get; set; }
         public string Message {  get; set; }
-        public int StatusModelId { get; set; }
-        [JsonIgnore]
-        public StatusModels StatusModel { get; set; }
-        public int OderStatusHistoryId { get; set; }
-        public OrderStatusHistory OrderStatusHistory { get; set; }
+        public int OrderId { get; set; }
+        public OrderModels Order { get; set; }
     }
 }
