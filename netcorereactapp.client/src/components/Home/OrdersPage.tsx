@@ -125,12 +125,12 @@ const OrdersPage: React.FC = () => {
             <table className="styled-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Caption</th>
-                        <th>Date of Creation</th>
-                        <th>Date of Editing</th>
-                        <th>Status</th>
-                        <th>Event</th>
+                        <th>№</th>
+                        <th>Название</th>
+                        <th>Дата создания</th>
+                        <th>Дата редактирования</th>
+                        <th>Статус</th>
+                        <th>История</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -140,9 +140,14 @@ const OrdersPage: React.FC = () => {
                             <td>{order.caption}</td>
                             <td>{order.dateOfCreature}</td>
                             <td>{order.dateOfEdited}</td>
-                            <td>{order.statuses && order.statuses.length > 0 ? statusMap[order.statuses[0].type] : ''}</td>
+                            <td>{order.statuses && order.statuses.length > 0
+                                ? statusMap[order.statuses.sort((a, b) =>
+                                    new Date(b.dateOfCreature).getTime() - new Date(a.dateOfCreature).getTime())[0]
+                                    .type]
+                                : ''}</td>
                             <td>
-                                {order.events && order.events.length > 0 ? order.events[0].message : ''}
+                                {order.events && order.events.length > 0 ?
+                                    order.events[order.events.length - 1].message : ''}
                             </td>
                         </tr>
                     ))}

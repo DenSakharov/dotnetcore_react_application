@@ -28,8 +28,13 @@ namespace netcorereactapp.Server.Controllers.Orders
         public int Id { get; set; }
         public TypesStatus Type { get; set; }
         public DateTime DateOfCreature { get; set; }
+        public List<AttacmentDTO> Attachments { get; set; } = new List<AttacmentDTO>();
     }
-
+    public class AttacmentDTO
+    {
+        public int Id { get; set; }
+        public string AttachmentData { get; set; }
+    }
     public class StatusEventDTO
     {
         // Свойства модели события статуса
@@ -66,9 +71,10 @@ namespace netcorereactapp.Server.Controllers.Orders
             {
                 var orders = await _dbContext.Orders
                     .Include(o => o.StatusModels)
+                    .ThenInclude(s => s.Attachments)
                     .Include(o => o.StatusEvents)
                     .ToListAsync();
-
+                var list_of_attachments = new List<AttacmentDTO>();
                 var orderDTOs = orders.Select(order => new OrderDTO
                 {
                     Id = order.id,
@@ -79,7 +85,8 @@ namespace netcorereactapp.Server.Controllers.Orders
                     {
                         Id = status.Id,
                         Type = status.type,
-                        DateOfCreature = status.date_of_creature
+                        DateOfCreature = status.date_of_creature,
+                        Attachments= rewrite_array(status.Attachments),
                     }).ToList(),
                     Events = order.StatusEvents.Select(status => new StatusEventDTO
                     {
@@ -88,7 +95,8 @@ namespace netcorereactapp.Server.Controllers.Orders
                         Message = status.Message
                     }).ToList()
                 });
-                //_logger.LogInformation("DateOfCreature - " + orderDTOs.FirstOrDefault().Statuses.FirstOrDefault().DateOfCreature);
+                _logger.LogInformation("DateOfCreature - " + orderDTOs.LastOrDefault().Statuses.FirstOrDefault()
+                    .Attachments.FirstOrDefault().AttachmentData);
                 return Ok(orderDTOs);
             }
             catch (Exception ex)
@@ -96,6 +104,20 @@ namespace netcorereactapp.Server.Controllers.Orders
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        private List<AttacmentDTO> rewrite_array
+            (List<AttachmentModels> attachmentModels)
+        {
+            var list_of_AttacmentDTO = new List<AttacmentDTO>();
+            foreach (var attachmentModel in attachmentModels)
+            {
+                var e = new AttacmentDTO();
+                e.AttachmentData= attachmentModel.AttachmentData;
+                e.Id=attachmentModel.Id;
+                list_of_AttacmentDTO.Add(e);
+            }
+            return list_of_AttacmentDTO;
+        }
+        private readonly string path_to_files = "C:\\Uploads";
         [HttpPost("createorder")]
         public async Task<ActionResult<OrderModels>> CreateOrder()
         {
@@ -107,14 +129,35 @@ namespace netcorereactapp.Server.Controllers.Orders
                     var capt = form["caption"];
 
                     // Пример доступа к файлам
-                    var attachments = form.Files.GetFile("StatusModels.Attachments");
+                    //C:\Uploads
+                    var file = form.Files.GetFile("StatusModels.Attachments");
+                    string temp_file_name = "";
+                    if (file != null && file.Length > 0)
+                    {
+                        // Генерируем уникальное имя файла
+                        var fileName = Path.GetFileNameWithoutExtension(file.FileName)
+                            + DateTime.Now.ToString("yyyyMMddHHmmss")
+                        + Path.GetExtension(file.FileName);
+                        temp_file_name = Path.Combine(path_to_files, fileName);
+
+                        // Сохраняем файл на диск
+                        using (var stream = new FileStream(temp_file_name, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+                    }
 
                     var newlst = new List<StatusModels>();
+                    // Сохраняем путь к файлу в базу данных
+                   var attachment =new AttachmentModels
+                    {
+                        AttachmentData = temp_file_name,
+                    };
                     newlst.Add(new StatusModels
                     {
                         date_of_creature = DateTime.UtcNow,
                         type = TypesStatus.Start,
-
+                        Attachments=new List<AttachmentModels> { attachment },
                     });
                     _dbContext.Orders.Add(new OrderModels
                     {
@@ -138,7 +181,7 @@ namespace netcorereactapp.Server.Controllers.Orders
                     _dbContext.StatusEventsOfModels.Add(statusEvent);
                     await _dbContext.SaveChangesAsync();
                     // Возвращаем созданный заказ
-                    return CreatedAtAction(nameof(GetOrder), new { id = lastCreatedOrder.id }, lastCreatedOrder);
+                    return Ok();// CreatedAtAction(nameof(GetOrder), new { id = lastCreatedOrder.id }, lastCreatedOrder);
                 }
 
                 return BadRequest("Invalid order data");
@@ -197,12 +240,27 @@ namespace netcorereactapp.Server.Controllers.Orders
                 if (existingOrder.StatusModels != null)
                 {
                     TypesStatus status = (TypesStatus)Enum.Parse(typeof(TypesStatus), jsonObject.status);
+                    // Создание нового объекта StatusEvent (история создания)
+                    var lastStatusIndex = existingOrder.StatusModels.Count - 1; // Индекс предыдущего статуса
+                    var previousStatus = existingOrder.StatusModels.ElementAtOrDefault(lastStatusIndex);
+
+                    var statusEvent = new StatusEvent
+                    {
+                        OrderId = orderId,
+                        DateOfChange = DateTime.UtcNow,
+                        Message =
+                        $"Новое событие: Изменение статуса заказа под номером {orderId}" +
+                        $" с {previousStatus.type}" +
+                        $" на {status}",
+                    };
                     existingOrder.StatusModels.Add(
                         new StatusModels
                         {
                             type = status,
                             date_of_creature = DateTime.UtcNow,
                         });
+                    
+                    _dbContext.StatusEventsOfModels.Add(statusEvent);
                 }
                 await _dbContext.SaveChangesAsync();
 
