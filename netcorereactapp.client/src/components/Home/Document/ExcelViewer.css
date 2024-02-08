@@ -1,0 +1,10 @@
+.excel-container {
+    max-height: 400px; /* Set maximum height */
+    overflow-y: auto; /* Enable vertical scrollbar when content overflows */
+}
+table{
+    background-color:darkolivegreen;
+}
+tr,td,th{
+    background-color:darkslategray;
+}

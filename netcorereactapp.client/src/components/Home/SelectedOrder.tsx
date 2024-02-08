@@ -1,16 +1,17 @@
 ﻿import axios from "axios";
 import React, { useEffect, useState } from "react";
 import OrderModel, { TypesStatus, statusMap } from "./OrdersPage";
+import DocumnetViewer from '../Home/Document/DocumentViewer'
+import ExcelViewer from '../Home/Document/ExcelViewer'
+
 import '../../styles/SelectedOrder.css'
-import { History } from './History/Hitory'
-import FileViewer from 'react-file-viewer';
 
 export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal: () => void }> = ({ orderInput, closeModal }) => {
     const [order, setOrder] = useState<OrderModel | null>(orderInput);
     const [selectedStatus, setSelectedStatus] = useState(null)
     useEffect(() => {
         setOrder(orderInput);
-        
+        /*
         console.log(`Order ID: ${order.id}`);
         console.log(`Caption: ${order.caption}`);
         console.log(`Date of Creation: ${order.dateOfCreature}`);
@@ -100,16 +101,26 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal
             console.error('Error deleting order:', error);
         }
     };
+    const [base64doc, setBase64doc] = useState('')
+    const [showDocument, setShowDocument] = useState(false);
     const handleDownload = async (fileId) => {
-        const fileUrl = await downloadFile(fileId); // Ожидание получения ссылки на файл
-        if (fileUrl) {
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(fileContent, "text/xml");
-            window.open(xmlDoc); // Открыть ссылку в новой вкладке
-        } else {
-            // В случае ошибки выводим сообщение
-            console.error('Failed to download file');
+        window.location.href = `https://localhost:5173/#/excel/${fileId}`;
+        /*
+        try {
+            const base64Data = await downloadFile(fileId); // Ожидание получения строки base64
+            if (base64Data) {
+                console.log('reponse - \n' + base64Data)
+                setBase64doc(base64Data)
+                setShowDocument(true)
+                
+            } else {
+                // В случае ошибки выводим сообщение
+                console.error('Failed to download file');
+            }
+        } catch (error) {
+            console.error('Error downloading file:', error);
         }
+        //*/
     };
 
     return (
@@ -162,11 +173,12 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal
                                     {status.attachments && status.attachments.map((attachment, attachmentIndex) => (
                                         <div key={attachmentIndex}>
                                             <p>Data: {attachment.attachmentData}</p>
-                                            {/*<a href=*/}
-                                            {/*    {`data:${attachment.attachmentType};base64,${attachment.attachmentData}`}*/}
-                                            {/*    download={attachment.fileName}>Download</a>*/}
                                             <div>
                                                 <button onClick={() => handleDownload(attachment.id)}>Download File</button>
+                                                {showDocument &&
+                                                    <ExcelViewer base64Data={base64doc }/>
+                                                   /* <DocumnetViewer base64String={base64doc} />*/
+                                                }
                                             </div>
                                         </div>
                                     ))}
@@ -181,45 +193,23 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal
 
     );
 };
-const downloadFile = async (fileId) => {
+export const downloadFile = async (fileId) => {
     try {
         const tokenValue = localStorage.getItem("authToken");
-        console.log(" - " + fileId)
+        //console.log(" - " + fileId)
         const response = await axios.get(`https://localhost:7294/filedownload/${fileId}`, {
             headers: {
                 Authorization: `Bearer ${tokenValue}`,
-            },
-            responseType: 'text'
+            }
         });
-        console.log(response.data)
-        return response.data; 
-        
+       
+        return response.data
+
     } catch (error) {
         console.error('Error downloading file:', error);
+        throw error; // Пробрасывает ошибку для обработки в вызывающем коде
     }
 }
-const FileViewerComponent = ({ fileType, filePath }) => {
-    const [error, setError] = useState(null);
 
-    const onError = (e) => {
-        console.error('Error:', e);
-        setError(e);
-    };
-
-    return (
-        <div>
-            <h2>File Viewer</h2>
-            {error && <div>Error: {error.message}</div>}
-            <FileViewer
-                fileType={fileType}
-                filePath={filePath}
-                onError={onError}
-            />
-        </div>
-    );
-};
-
-
-export default FileViewer;
 
 

@@ -37,18 +37,17 @@ namespace netcorereactapp.Server.Controllers.File
             }
 
             var filePath = attachment.AttachmentData; // Путь к файлу на сервере
-            var fileName = Path.GetFileNameWithoutExtension( 
-                attachment.AttachmentData); // Имя файла
 
-            var memory = new MemoryStream();
-            using (var stream = new FileStream(filePath, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-            memory.Position = 0;
+            // Чтение содержимого файла в виде массива байтов
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
 
-            return File(memory, GetContentType(filePath), fileName);
+            // Преобразовать байтовый массив в строку base64
+            string base64String = Convert.ToBase64String(fileBytes);
+
+            // Возвращение строки base64 в качестве ответа
+            return Ok( base64String );
         }
+
         private string GetContentType(string filePath)
         {
             var provider = new FileExtensionContentTypeProvider();
