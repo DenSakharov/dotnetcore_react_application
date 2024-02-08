@@ -18,16 +18,15 @@ namespace netcorereactapp.Server.Controllers.Data
         {
             postgreService = _postgreService;
         }
-        [HttpGet]
-        [Route("GetSecureData")]
+        [HttpGet("GetSecureData")]
         public IActionResult GetSecureData()
         {
             // Ваш код безопасного ресурса
             return Ok("Защищенные данные");
         }
-        [HttpGet]
+       
         [Authorize(Roles ="admin")]
-        [Route("GetSecureDataForAdmin")]
+        [HttpGet("GetSecureDataForAdmin")]
         public IActionResult GetSecureDataForAdmin()
         {
             List<LoginModel> data = postgreService.GetData<LoginModel>();

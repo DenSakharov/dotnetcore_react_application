@@ -28,6 +28,8 @@ app.UseCors("CorsPolicy");
 
 app.UseRouting();
 
+//app.UseMiddleware<CustomTokenValidationMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

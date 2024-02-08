@@ -35,7 +35,7 @@ namespace netcorereactapp.Server.Services.AuthenctionServices
             issuer: AuthOptions.ISSUER,
             audience: AuthOptions.AUDIENCE,
             claims: claims,
-            expires: DateTime.UtcNow.Add(TimeSpan.FromHours(1)),
+            expires: DateTime.UtcNow.Add(TimeSpan.FromHours(8)),
             signingCredentials:
             new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(Get_Secret_Key()),
             SecurityAlgorithms.HmacSha256)

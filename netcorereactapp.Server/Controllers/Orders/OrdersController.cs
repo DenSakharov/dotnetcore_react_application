@@ -3,45 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using netcorereactapp.Server.Models;
+using netcorereactapp.Server.Models.DataTransferObjects;
 using netcorereactapp.Server.Services.PostgreService;
 using System.Linq;
 using System.Text.Json;
 
 namespace netcorereactapp.Server.Controllers.Orders
 {
-    public class OrderDTO
-    {
-        // Свойства модели заказа
-        public int Id { get; set; }
-        public string Caption { get; set; }
-        public DateTime DateOfCreature { get; set; }
-        public DateTime DateOfEdited { get; set; }
-
-        // Свойства связанных статусов и событий
-        public List<StatusDTO> Statuses { get; set; }
-        public List<StatusEventDTO> Events { get; set; }
-    }
-
-    public class StatusDTO
-    {
-        // Свойства модели статуса
-        public int Id { get; set; }
-        public TypesStatus Type { get; set; }
-        public DateTime DateOfCreature { get; set; }
-        public List<AttacmentDTO> Attachments { get; set; } = new List<AttacmentDTO>();
-    }
-    public class AttacmentDTO
-    {
-        public int Id { get; set; }
-        public string AttachmentData { get; set; }
-    }
-    public class StatusEventDTO
-    {
-        // Свойства модели события статуса
-        public int Id { get; set; }
-        public DateTime DateOfChange { get; set; }
-        public string Message { get; set; }
-    }
     [Route("orders")]
     [ApiController]
     [Authorize]
