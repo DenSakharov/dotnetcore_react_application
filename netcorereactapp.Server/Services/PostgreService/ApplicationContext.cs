@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using netcorereactapp.Server.Controllers.Orders;
 using netcorereactapp.Server.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -11,8 +12,12 @@ namespace netcorereactapp.Server.Services.PostgreService
         public DbSet<StatusModels> StatusesOfOrders { get; set; } = null!;
         public DbSet<AttachmentModels> AttachmentsOfStatuses { get; set; } = null!;
         public DbSet<StatusEvent> StatusEventsOfModels { get; set; } = null!;
-        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
+        private readonly ILogger<ApplicationContext> _logger;
+        public ApplicationContext(DbContextOptions<ApplicationContext> options, ILogger<ApplicationContext> logger) 
+            : base(options)
         {
+            _logger = logger;
+            _logger.LogInformation("ApplicationContext created.");
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -42,6 +47,11 @@ namespace netcorereactapp.Server.Services.PostgreService
                 .WithMany(ev => ev.StatusEvents)
                 .HasForeignKey(ev => ev.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
+        }
+        public override void Dispose()
+        {
+            _logger.LogInformation("ApplicationContext disposed.");
+            base.Dispose();
         }
     }
 }

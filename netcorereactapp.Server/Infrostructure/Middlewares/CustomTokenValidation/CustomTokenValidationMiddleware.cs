@@ -23,7 +23,7 @@ public class CustomTokenValidationMiddleware
         var role = identity?.FindFirst(ClaimTypes.Role)?.Value;
 
         // Генерируем новый токен, используя параметры из токена
-        var newToken = tokenService.Get_Token(login, role);
+        var newToken = await tokenService.Get_Token(login, role);
 
         // Добавляем новый токен в ответ
         context.Response.Headers["New-Token"] = newToken;

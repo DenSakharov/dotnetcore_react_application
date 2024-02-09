@@ -8,6 +8,9 @@ using netcorereactapp.Server.Services.AuthenctionServices;
 using System.Reflection;
 using netcorereactapp.Server.Services.PostgreService;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Microsoft.AspNetCore.Mvc.Filters;
+using netcorereactapp.Server.Services.ModelServices.Interfaces;
+using netcorereactapp.Server.Services.ModelServices;
 
 namespace netcorereactapp.Server.Infrostructure.Exctentions
 {
@@ -93,7 +96,7 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
             builder.ConfigureServices(services =>
             {
                 //services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(configuration["Configuration:db"]));
-                services.AddSingleton<IPostgreService, PostgreService>();
+               
 
                 services.AddAuthentication(options =>
                 {
@@ -165,9 +168,20 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                 });
 
                 services.AddAuthorization();
-                services.AddSingleton<IAuthService, AuthService>();
+               
             });
             return builder;
+        }
+
+        public static IHostBuilder AddServicesForControllers(this IHostBuilder hostBuilder)
+        {
+            hostBuilder.ConfigureServices(services =>
+            {
+                services.AddScoped<IAuthService, AuthService>();
+                services.AddScoped<IPostgreService, PostgreService>();
+                services.AddScoped<IOrderService,OrderSevice>();
+            });
+            return hostBuilder;
         }
     }
 }

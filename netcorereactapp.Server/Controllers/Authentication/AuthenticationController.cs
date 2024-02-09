@@ -23,13 +23,13 @@ namespace netcorereactapp.Server.Controllers.Authentication
         [AllowAnonymous]
         [HttpPost]
         [Route("login")]
-        public IActionResult Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             // Пример простой проверки пользователя (замените на вашу логику)
             var user = IsValidUser(model.Login, model.Password);
             if (user != null)
             {
-                string token = authService.Get_Token(user.Login, user.Role);
+                string token = await authService.Get_Token(user.Login, user.Role);
                 return Ok(token);
             }
             return Unauthorized();
@@ -37,12 +37,12 @@ namespace netcorereactapp.Server.Controllers.Authentication
         [AllowAnonymous]
         [HttpPost]
         [Route("register")]
-        public IActionResult Register([FromBody] LoginModel model)
+        public async Task<IActionResult> Register([FromBody] LoginModel model)
         {
-            var user =postgreService.CreateUser(model);
+            var user = await postgreService.CreateUser(model);
             if (user != null)
             {
-                string token = authService.Get_Token(user.Login, user.Role);
+                string token = await authService.Get_Token(user.Login, user.Role);
                 return Ok( token );
             }
             return Unauthorized();

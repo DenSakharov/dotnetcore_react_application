@@ -6,6 +6,6 @@ namespace netcorereactapp.Server.Services.AuthenctionServices.Interfaces
     {
         List<T> GetData<T>()where T : class;
         LoginModel IsExistingUserInDB(string username);
-        LoginModel CreateUser(LoginModel user);
+        Task<LoginModel> CreateUser(LoginModel user);
     }
 }

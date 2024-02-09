@@ -24,7 +24,7 @@ namespace netcorereactapp.Server.Services.AuthenctionServices
             string secretKey = configuration["Configuration:SecretKey"];
             return secretKey;
         }
-        public string Get_Token(string login , string role)
+        public async Task<string> Get_Token(string login , string role)
             {
             var claims = new List<Claim> {
                 new Claim(ClaimTypes.Name, login),

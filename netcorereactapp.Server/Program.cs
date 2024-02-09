@@ -9,12 +9,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.AddInfrostructre()
     .AddHttp()
     .AddCors()
-    .AddAuthnticationAndAuthorization(builder.Configuration);
+    .AddAuthnticationAndAuthorization(builder.Configuration)
+    .AddServicesForControllers();
 
 //builder.Services.AddScoped<PostgreService>();
 string connection = builder.Configuration["Configuration:db"];
 builder.Services.AddDbContext<ApplicationContext>(options =>
-    options.UseNpgsql(connection));
+    options.UseNpgsql(connection),
+    ServiceLifetime.Scoped
+    );
 
 builder.Services.Configure<IISServerOptions>(options =>
 {

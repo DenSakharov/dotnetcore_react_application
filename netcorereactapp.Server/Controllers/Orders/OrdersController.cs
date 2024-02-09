@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using netcorereactapp.Server.Models;
 using netcorereactapp.Server.Models.DataTransferObjects;
+using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
 using System.Linq;
 using System.Text.Json;
@@ -18,12 +19,14 @@ namespace netcorereactapp.Server.Controllers.Orders
     {
         private readonly ApplicationContext _dbContext;
         private readonly ILogger<OrdersController> _logger;
-        public OrdersController(ApplicationContext dbContext, ILogger<OrdersController> logger)
+        private readonly IOrderService _orderService;
+        public OrdersController(ApplicationContext dbContext, ILogger<OrdersController> logger, IOrderService orderService)
         {
             try
             {
                 _dbContext = dbContext;
                 _logger = logger;
+                _orderService = orderService;
                 logger.LogInformation("OrdersController constructor called.");
             }
             catch (Exception ex)
@@ -37,55 +40,15 @@ namespace netcorereactapp.Server.Controllers.Orders
         {
             try
             {
-                var orders = await _dbContext.Orders
-                    .Include(o => o.StatusModels)
-                    .ThenInclude(s => s.Attachments)
-                    .Include(o => o.StatusEvents)
-                    .ToListAsync();
-                var list_of_attachments = new List<AttacmentDTO>();
-                var orderDTOs = orders.Select(order => new OrderDTO
-                {
-                    Id = order.id,
-                    Caption = order.caption,
-                    DateOfCreature = order.date_of_creature,
-                    DateOfEdited = order.date_of_edited,
-                    Statuses = order.StatusModels.Select(status => new StatusDTO
-                    {
-                        Id = status.Id,
-                        Type = status.type,
-                        DateOfCreature = status.date_of_creature,
-                        Attachments= rewrite_array(status.Attachments),
-                    }).ToList(),
-                    Events = order.StatusEvents.Select(status => new StatusEventDTO
-                    {
-                        DateOfChange = status.DateOfChange,
-                        Id = status.Id,
-                        Message = status.Message
-                    }).ToList()
-                });
-                _logger.LogInformation("DateOfCreature - " + orderDTOs.LastOrDefault().Statuses.FirstOrDefault()
-                    .Attachments.FirstOrDefault().AttachmentData);
-                return Ok(orderDTOs);
+                var orders = await _orderService.GetOrders();
+                return Ok(orders);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        private List<AttacmentDTO> rewrite_array
-            (List<AttachmentModels> attachmentModels)
-        {
-            var list_of_AttacmentDTO = new List<AttacmentDTO>();
-            foreach (var attachmentModel in attachmentModels)
-            {
-                var e = new AttacmentDTO();
-                e.AttachmentData= attachmentModel.AttachmentData;
-                e.Id=attachmentModel.Id;
-                list_of_AttacmentDTO.Add(e);
-            }
-            return list_of_AttacmentDTO;
-        }
-        private readonly string path_to_files = "C:\\Uploads";
+        
         [HttpPost("createorder")]
         public async Task<ActionResult<OrderModels>> CreateOrder()
         {
@@ -99,59 +62,12 @@ namespace netcorereactapp.Server.Controllers.Orders
                     // Пример доступа к файлам
                     //C:\Uploads
                     var file = form.Files.GetFile("StatusModels.Attachments");
-                    string temp_file_name = "";
-                    if (file != null && file.Length > 0)
+                    var result = await _orderService.CreateOrder(file, capt );
+                    if (result != null)
                     {
-                        // Генерируем уникальное имя файла
-                        var fileName = Path.GetFileNameWithoutExtension(file.FileName)
-                            + DateTime.Now.ToString("yyyyMMddHHmmss")
-                        + Path.GetExtension(file.FileName);
-                        temp_file_name = Path.Combine(path_to_files, fileName);
-
-                        // Сохраняем файл на диск
-                        using (var stream = new FileStream(temp_file_name, FileMode.Create))
-                        {
-                            await file.CopyToAsync(stream);
-                        }
+                        return Ok();
                     }
-
-                    var newlst = new List<StatusModels>();
-                    // Сохраняем путь к файлу в базу данных
-                   var attachment =new AttachmentModels
-                    {
-                        AttachmentData = temp_file_name,
-                    };
-                    newlst.Add(new StatusModels
-                    {
-                        date_of_creature = DateTime.UtcNow,
-                        type = TypesStatus.Start,
-                        Attachments=new List<AttachmentModels> { attachment },
-                    });
-                    _dbContext.Orders.Add(new OrderModels
-                    {
-                        caption = capt,
-                        date_of_creature = DateTime.UtcNow,
-                        date_of_edited = DateTime.UtcNow,
-                        StatusModels = newlst
-                    });
-                    // Добавление нового заказа в контекст базы данных
-                    await _dbContext.SaveChangesAsync();
-
-                    var lastCreatedOrder = _dbContext.Orders.OrderByDescending(o => o.id).FirstOrDefault();
-
-                    // Создание нового объекта StatusEvent (история создания)
-                    var statusEvent = new StatusEvent
-                    {
-                        OrderId = lastCreatedOrder.id,
-                        DateOfChange = DateTime.UtcNow,
-                        Message = $"Новое событие: создание нового заказа под номером {lastCreatedOrder.id}",
-                    };
-                    _dbContext.StatusEventsOfModels.Add(statusEvent);
-                    await _dbContext.SaveChangesAsync();
-                    // Возвращаем созданный заказ
-                    return Ok();// CreatedAtAction(nameof(GetOrder), new { id = lastCreatedOrder.id }, lastCreatedOrder);
                 }
-
                 return BadRequest("Invalid order data");
             }
             catch (Exception ex)

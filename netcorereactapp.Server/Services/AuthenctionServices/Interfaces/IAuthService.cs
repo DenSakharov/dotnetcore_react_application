@@ -2,6 +2,6 @@
 {
     public interface IAuthService
     {
-        string Get_Token(string login,string role);
+        Task<string> Get_Token(string login,string role);
     }
 }
