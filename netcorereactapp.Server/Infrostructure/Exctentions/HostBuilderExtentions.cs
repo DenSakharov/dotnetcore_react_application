@@ -11,6 +11,8 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Microsoft.AspNetCore.Mvc.Filters;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices;
+using netcorereactapp.Server.Services.FileServices.Interfaces;
+using netcorereactapp.Server.Services.FileServices;
 
 namespace netcorereactapp.Server.Infrostructure.Exctentions
 {
@@ -180,6 +182,7 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                 services.AddScoped<IAuthService, AuthService>();
                 services.AddScoped<IPostgreService, PostgreService>();
                 services.AddScoped<IOrderService,OrderSevice>();
+                services.AddScoped<IFileService, FileService>();
             });
             return hostBuilder;
         }

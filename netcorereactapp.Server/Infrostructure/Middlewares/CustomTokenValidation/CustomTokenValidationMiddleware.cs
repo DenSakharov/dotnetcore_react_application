@@ -13,7 +13,7 @@ public class CustomTokenValidationMiddleware
         _tokenService = tokenService;
     }
 
-    public async Task Invoke(HttpContext context, IAuthService tokenService)
+    public async Task Invoke(HttpContext context)
     {
         // Получаем имя пользователя из токена
         var identity = context.User.Identity as ClaimsIdentity;
@@ -23,7 +23,7 @@ public class CustomTokenValidationMiddleware
         var role = identity?.FindFirst(ClaimTypes.Role)?.Value;
 
         // Генерируем новый токен, используя параметры из токена
-        var newToken = await tokenService.Get_Token(login, role);
+        var newToken = await _tokenService.Get_Token(login, role);
 
         // Добавляем новый токен в ответ
         context.Response.Headers["New-Token"] = newToken;

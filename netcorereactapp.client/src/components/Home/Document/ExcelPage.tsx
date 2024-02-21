@@ -1,7 +1,7 @@
 ﻿import { useParams } from 'react-router-dom';
 import ExcelViewer from './ExcelViewer';
 import { useEffect, useState } from 'react';
-import { downloadFile } from '../SelectedOrder';
+import  downloadFile  from '../Services/DownloadFileService';
 
 const ExcelPage =()=> {
     const { fileId } = useParams(); // Получаем fileId из параметров маршрута
@@ -14,33 +14,31 @@ const ExcelPage =()=> {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const base64Data = await downloadFile(fileIdNumber); // Ожидание получения строки base64
-                if (base64Data) {
-                    //console.log('response - \n' + base64Data);
-                    setBase64doc(base64Data);
-                    setLoading(false); // Устанавливаем состояние загрузки в false
-                } else {
-                    // В случае ошибки выводим сообщение
-                    console.error('Failed to download file');
-                    setError('Failed to download file');
-                    setLoading(false); // Устанавливаем состояние загрузки в false
-                }
-            } catch (error) {
-                console.error('Error downloading file:', error);
-                setError(error.message);
-                setLoading(false); // Устанавливаем состояние загрузки в false
-            }
-        }
-
         fetchData();
 
         return () => {
             // Очистка эффекта, если это необходимо
         };
     }, [fileIdNumber]);
-
+    async function fetchData() {
+        try {
+            const base64Data = await downloadFile(fileIdNumber); // Ожидание получения строки base64
+            if (base64Data) {
+                //console.log('response - \n' + base64Data);
+                setBase64doc(base64Data);
+                setLoading(false); // Устанавливаем состояние загрузки в false
+            } else {
+                // В случае ошибки выводим сообщение
+                console.error('Failed to download file');
+                setError('Failed to download file');
+                setLoading(false); // Устанавливаем состояние загрузки в false
+            }
+        } catch (error) {
+            console.error('Error downloading file:', error);
+            setError(error.message);
+            setLoading(false); // Устанавливаем состояние загрузки в false
+        }
+    }
     if (loading) {
         return <div>Loading...</div>; // Отображаем загрузочное сообщение
     }

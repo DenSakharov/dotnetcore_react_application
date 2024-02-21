@@ -2,11 +2,6 @@
 import axios from 'axios';
 
 
-enum TypesStatus {
-    Start,
-    Proccess,
-    End
-}
 
 const AddOrderForm = ({ onOrderAdded }) => {
     const [newOrder, setNewOrder] = useState({

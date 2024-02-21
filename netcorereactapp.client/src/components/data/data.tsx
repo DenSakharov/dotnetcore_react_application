@@ -38,6 +38,7 @@ const Data = () => {
                 setViewTable(true);
             } catch (error) {
                 console.error('Ошибка при получении защищенных данных:', error);
+                alert('Ошибка при получении защищенных данных:', error);
             }
         } catch (error) {
             // Обработка ошибок

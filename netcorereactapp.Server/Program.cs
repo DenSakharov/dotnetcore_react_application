@@ -31,12 +31,11 @@ app.UseCors("CorsPolicy");
 
 app.UseRouting();
 
-//app.UseMiddleware<CustomTokenValidationMiddleware>();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-//app.UseMiddleware<RequestLoggingMiddleware>();
+//app.UseMiddleware<CustomTokenValidationMiddleware>();
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseEndpoints(endpoints =>endpoints.MapControllers());
 

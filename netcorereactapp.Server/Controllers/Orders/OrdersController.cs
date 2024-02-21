@@ -7,6 +7,7 @@ using netcorereactapp.Server.Models.DataTransferObjects;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
 using System.Linq;
+using System.Net.Mail;
 using System.Text.Json;
 
 namespace netcorereactapp.Server.Controllers.Orders
@@ -48,7 +49,7 @@ namespace netcorereactapp.Server.Controllers.Orders
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        
+
         [HttpPost("createorder")]
         public async Task<ActionResult<OrderModels>> CreateOrder()
         {
@@ -62,7 +63,7 @@ namespace netcorereactapp.Server.Controllers.Orders
                     // Пример доступа к файлам
                     //C:\Uploads
                     var file = form.Files.GetFile("StatusModels.Attachments");
-                    var result = await _orderService.CreateOrder(file, capt );
+                    var result = await _orderService.CreateOrder(file, capt);
                     if (result != null)
                     {
                         return Ok();
@@ -92,68 +93,17 @@ namespace netcorereactapp.Server.Controllers.Orders
             return Ok(order); // Возвращаем заказ в случае успеха
         }
         [HttpPut("{orderId}/updatestatus")]
-        public async Task<IActionResult> UpdateStatus(int orderId, [FromBody] dynamic statusUpdateModel)
+        public async Task<IActionResult> UpdateStatus(int orderId, IFormCollection form)
         {
-            var jsonObject = JsonSerializer.Deserialize<UpdateStatusClass>(statusUpdateModel);
+            // Получаем статус из FormData
+            string statu = form["status"];
 
-            // Check if jsonObject or selectedStatus is null
-            if (jsonObject == null || jsonObject.status == null)
-            {
-                return BadRequest("Invalid status update data");
-            }
+            // Получаем файл из FormData
+            IFormFile file = form.Files["file"];
 
-            // Use Enum.TryParse to handle invalid enum values
-            //if (!Enum.TryParse<TypesStatus>(jsonObject.status, out TypesStatus status))
-            //{
-            //    return BadRequest("Invalid status value");
-            //}
+            var res=await _orderService.UpdateStatus(orderId, statu, file);
 
-            try
-            {
-                // Получаем заказ из базы данных
-                var existingOrder = await _dbContext.Orders
-                    .Include(o => o.StatusModels)
-                    .FirstOrDefaultAsync(o => o.id == orderId);
-
-                // Проверяем, существует ли заказ с указанным ID
-                if (existingOrder == null)
-                {
-                    return NotFound("Order not found");
-                }
-
-                if (existingOrder.StatusModels != null)
-                {
-                    TypesStatus status = (TypesStatus)Enum.Parse(typeof(TypesStatus), jsonObject.status);
-                    // Создание нового объекта StatusEvent (история создания)
-                    var lastStatusIndex = existingOrder.StatusModels.Count - 1; // Индекс предыдущего статуса
-                    var previousStatus = existingOrder.StatusModels.ElementAtOrDefault(lastStatusIndex);
-
-                    var statusEvent = new StatusEvent
-                    {
-                        OrderId = orderId,
-                        DateOfChange = DateTime.UtcNow,
-                        Message =
-                        $"Новое событие: Изменение статуса заказа под номером {orderId}" +
-                        $" с {previousStatus.type}" +
-                        $" на {status}",
-                    };
-                    existingOrder.StatusModels.Add(
-                        new StatusModels
-                        {
-                            type = status,
-                            date_of_creature = DateTime.UtcNow,
-                        });
-                    
-                    _dbContext.StatusEventsOfModels.Add(statusEvent);
-                }
-                await _dbContext.SaveChangesAsync();
-
-                return Ok("Status updated successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal Server Error: {ex.Message}");
-            }
+            return Ok($"Status updated successfully {res}");
         }
 
         [HttpDelete("{orderId}")]

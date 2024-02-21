@@ -35,7 +35,7 @@ namespace netcorereactapp.Server.Infrostructure.Middlewares
                 context.Request.Body = originalBodyStream;
 
                 // Log response information
-                LogResponseInformation(context, originalBodyStream);
+                await LogResponseInformation(context, originalBodyStream);
             }
         }
 
@@ -47,20 +47,20 @@ namespace netcorereactapp.Server.Infrostructure.Middlewares
             // Логирование другой информации о запросе, если необходимо
         }
 
-        private void LogResponseInformation(HttpContext context, Stream originalBodyStream)
+        private async Task LogResponseInformation(HttpContext context, Stream originalBodyStream)
         {
             _logger.LogInformation($"Response {context.Response?.StatusCode}");
-            Console.WriteLine($"Response {context.Response?.StatusCode}");
 
             if (context.Response.Body is MemoryStream responseBody)
             {
                 responseBody.Seek(0, SeekOrigin.Begin);
-                var responseBodyText = new StreamReader(responseBody).ReadToEnd();
-                Console.WriteLine($"Response Body: {responseBodyText}");
+                var responseBodyText = await new StreamReader(responseBody).ReadToEndAsync();
+                _logger.LogInformation($"Response Body: {responseBodyText}");
 
                 responseBody.Seek(0, SeekOrigin.Begin);
-                responseBody.CopyToAsync(originalBodyStream);
+                await responseBody.CopyToAsync(originalBodyStream);
             }
         }
+
     }
 }

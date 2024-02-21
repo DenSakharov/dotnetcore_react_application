@@ -1,12 +1,15 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using netcorereactapp.Server.Controllers.Orders;
 using netcorereactapp.Server.Models;
 using netcorereactapp.Server.Models.DataTransferObjects;
+using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
+using System.Text.Json.Nodes;
 
 namespace netcorereactapp.Server.Services.ModelServices
 {
@@ -14,10 +17,12 @@ namespace netcorereactapp.Server.Services.ModelServices
     {
         private readonly ApplicationContext _dbContext;
         private readonly ILogger<OrderSevice> _logger;
-        public OrderSevice(ApplicationContext dbContext , ILogger<OrderSevice> logger)
+        private readonly IFileService _fileService;
+        public OrderSevice(ApplicationContext dbContext , ILogger<OrderSevice> logger,IFileService fileService)
         {
             _dbContext = dbContext;
             _logger = logger;
+            _fileService = fileService;
         }
         public async Task< IEnumerable<OrderDTO>> GetOrders()
         {
@@ -77,21 +82,7 @@ namespace netcorereactapp.Server.Services.ModelServices
         {
             try
             {
-                string temp_file_name = "";
-                if (file != null && file.Length > 0)
-                {
-                    // Генерируем уникальное имя файла
-                    var fileName = Path.GetFileNameWithoutExtension(file.FileName)
-                        + DateTime.Now.ToString("yyyyMMddHHmmss")
-                    + Path.GetExtension(file.FileName);
-                    temp_file_name = Path.Combine(path_to_files, fileName);
-
-                    // Сохраняем файл на диск
-                    using (var stream = new FileStream(temp_file_name, FileMode.Create))
-                    {
-                        await file.CopyToAsync(stream);
-                    }
-                }
+                string temp_file_name = await _fileService.SaveFile(file);
 
                 var newlst = new List<StatusModels>();
                 // Сохраняем путь к файлу в базу данных
@@ -135,6 +126,60 @@ namespace netcorereactapp.Server.Services.ModelServices
                 _logger.LogCritical(""+ex);
                 return null;
             }
+        }
+
+        public async Task<int> UpdateStatus(int orderId, string statu, IFormFile file)
+        {
+            try
+            {
+                TypesStatus status = (TypesStatus)Enum.Parse(typeof(TypesStatus), statu);
+                // Получаем заказ из базы данных
+                var existingOrder = await _dbContext.Orders
+                    .Include(o => o.StatusModels)
+                    .FirstOrDefaultAsync(o => o.id == orderId);
+
+                // Проверяем, существует ли заказ с указанным ID
+                if (existingOrder == null)
+                {
+                    return 0;
+                }
+
+                if (existingOrder.StatusModels != null)
+                {
+
+                    // Создание нового объекта StatusEvent (история создания)
+                    var lastStatusIndex = existingOrder.StatusModels.Count - 1; // Индекс предыдущего статуса
+                    var previousStatus = existingOrder.StatusModels.ElementAtOrDefault(lastStatusIndex);
+
+                    var statusEvent = new StatusEvent
+                    {
+                        OrderId = orderId,
+                        DateOfChange = DateTime.UtcNow,
+                        Message =
+                        $"Новое событие: Изменение статуса заказа под номером {orderId}" +
+                        $" с {previousStatus.type}" +
+                        $" на {status}",
+                    };
+                    string path=await _fileService.SaveFile(file);
+                    existingOrder.StatusModels.Add(
+                        new StatusModels
+                        {
+                            type = status,
+                            date_of_creature = DateTime.UtcNow,
+                            Attachments = new List<AttachmentModels> {
+                                new AttachmentModels
+                                {
+                                    AttachmentData=path
+                                }
+                            }
+                        });
+
+                    _dbContext.StatusEventsOfModels.Add(statusEvent);
+                }
+                await _dbContext.SaveChangesAsync();
+            }
+            finally { _dbContext.Dispose(); }
+            return orderId;
         }
     }
 }
