@@ -36,7 +36,7 @@ export default OrderModel;
 
 const OrdersPage: React.FC = () => {
     const [orders, setOrders] = useState<OrderModel[]>([]);
-   
+
     useEffect(() => {
         const fetchOrders = async () => {
             try {
@@ -84,8 +84,6 @@ const OrdersPage: React.FC = () => {
 
         fetchOrders();
     }, []);
-
-    const [showAddForm, setShowAddForm] = useState(false);
     const handleOrderAdded = (newOrder) => {
         // Обновление списка заказов после добавления нового заказа
         setOrders([...orders, newOrder]);
@@ -93,6 +91,7 @@ const OrdersPage: React.FC = () => {
         setShowAddForm(false);
     };
 
+    const [showAddForm, setShowAddForm] = useState(false);
     const toggleAddForm = () => {
         // Переключение видимости формы добавления
         setShowAddForm(!showAddForm);
@@ -101,10 +100,9 @@ const OrdersPage: React.FC = () => {
     const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
     const [isModal, setModal] = useState(false)
     const onRowClick = (order: OrderModel | null) => {
-        setSelectedOrderId(order); 
+        setSelectedOrderId(order);
         setModal(true)
     };
-   
     const onClose = () => {
         setModal(false)
         window.location.reload();
@@ -118,8 +116,9 @@ const OrdersPage: React.FC = () => {
                 <Modal
                     visible={showAddForm}
                     title='Add Order'
-                    content={<AddOrderForm onOrderAdded={handleOrderAdded} onClose={toggleAddForm} />}
+                    content={<AddOrderForm onOrderAdded={handleOrderAdded} />}
                     footer={<button onClick={toggleAddForm}>Close</button>}
+                    onClose={toggleAddForm} 
                 />
             )}
             <table className="styled-table">

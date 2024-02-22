@@ -6,9 +6,11 @@ import { About } from './About';
 import { Home } from './components/Home/Home';
 import Register from './components/login/register';
 import  ExcelPage  from './components/Home/Document/ExcelPage';
-import DocumnetViewer from './components/Home/Document/DocumentViewer';
+import PDFViewer from './components/Home/Document/PDFViewer';
+import WordViewer from './components/Home/Document/WordViewer';
 
 import './styles/MainPage.css';
+
 
 export function MainPage() {
     return (
@@ -24,7 +26,8 @@ export function MainPage() {
                         <Route path="/data" element={<CheckAccessToData />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/excel/:fileId" element={<ExcelPage />} />
-                        <Route path="/pdf/:fileId" element={<DocumnetViewer />} />
+                        <Route path="/pdf/:fileId" element={<PDFViewer />} />
+                        <Route path="/file/:fileId" element={<WordViewer />} />
                     </Routes>
                 </div>
             </HashRouter>

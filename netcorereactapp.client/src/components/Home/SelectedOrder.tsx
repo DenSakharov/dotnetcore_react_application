@@ -1,14 +1,16 @@
 ﻿import axios from "axios";
 import React, { useEffect, useState } from "react";
 import OrderModel, { TypesStatus, statusMap } from "./OrdersPage";
-import DocumnetViewer from '../Home/Document/DocumentViewer'
 import ExcelViewer from '../Home/Document/ExcelViewer'
 
 import '../../styles/SelectedOrder.css'
 import AddStatus from "./StatusOfOrder/AddStatus";
+import {fetchFile} from "./Document/WordViewer.tsx";
 
-export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal: () => void }>
+export const SelectedOrder:
+    React.FC<{ orderInput: OrderModel | null; closeModal: () => void }>
     = ({ orderInput, closeModal }) => {
+
         const [order, setOrder] = useState<OrderModel | null>(orderInput);
         useEffect(() => {
             setOrder(orderInput);
@@ -41,7 +43,7 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal
             //*/
         }, [orderInput]);
         const [base64doc, setBase64doc] = useState('')
-        const [showDocument, setShowDocument] = useState(false);
+        //const [showDocument, setShowDocument] = useState(false);
 
         const handleDownload = async (attachment) => {
             const fileId = attachment.id;
@@ -50,8 +52,12 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal
                 window.location.href = `https://localhost:5173/#/excel/${fileId}`;
             } else if (extension === 'pdf') {
                 window.location.href = `https://localhost:5173/#/pdf/${fileId}`;
-            } else {
-                // Действия при неизвестном формате файла
+            } else if (extension === 'doc' || extension === 'docx') {
+               // window.location.href = `https://localhost:5173/#/file/${fileId}`;
+               await fetchFile(fileId)
+            }
+            else{
+                alert("Невозможно открыть файл данного типа расширения !")
             }
         };
 
@@ -104,7 +110,7 @@ export const SelectedOrder: React.FC<{ orderInput: OrderModel | null; closeModal
                                                 <p>Data: {attachment.attachmentData}</p>
                                                 <div>
                                                     <button onClick={() => handleDownload(attachment)}>Download File</button>
-                                                    {showDocument && renderDocument()}
+                                                    {/*{showDocument && renderDocument()}*/}
                                                 </div>
                                             </div>
                                         ))}

@@ -2,6 +2,7 @@ using netcorereactapp.Server.Infrostructure.Exctentions;
 using netcorereactapp.Server.Services.PostgreService;
 using Microsoft.EntityFrameworkCore;
 using netcorereactapp.Server.Infrostructure.Middlewares;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,10 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 builder.Services.Configure<IISServerOptions>(options =>
 {
     options.AllowSynchronousIO = true;
+});
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 52428800; // максимальный размер тела запроса в байтах ( 50 МБ)
 });
 
 var app = builder.Build();

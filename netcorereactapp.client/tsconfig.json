@@ -20,6 +20,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [ "src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.json", "src/**/*.css" ],
+  "include": [ "src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.json", "src/**/*.css", "src/components/Home/Document/FileViewer.js",
+    "src/components/Home/Document/WordViewer"
+  ],
   "references": [ { "path": "./tsconfig.node.json" } ]
 }

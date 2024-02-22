@@ -12,10 +12,12 @@
   "dependencies": {
     "@types/node": "^20.11.5",
     "axios": "^1.6.5",
+    "file-type": "^19.0.0",
     "jwt-decode": "^4.0.0",
     "lorem-ipsum": "^2.0.8",
     "pdfjs-dist": "^4.0.379",
     "react": "^18.2.0",
+    "react-doc-viewer": "^0.1.5",
     "react-dom": "^18.2.0",
     "react-pdf": "^7.7.0",
     "react-router-dom": "^6.21.3",

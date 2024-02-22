@@ -6,7 +6,7 @@ import downloadFile from '../Services/DownloadFileService';
 // Укажите путь к pdf.worker.js
 pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-const DocumnetViewer = () => {
+const PDFViewer = () => {
     const { fileId } = useParams(); // Получаем fileId из параметров маршрута
     const fileIdNumber = parseInt(fileId); // Преобразуем fileId в число
     const [numPages, setNumPages] = useState(null);
@@ -71,5 +71,5 @@ const DocumnetViewer = () => {
     );
 };
 
-export default DocumnetViewer;
+export default PDFViewer;
 
