@@ -78,13 +78,9 @@ namespace netcorereactapp.Server.Controllers.Orders
         }
 
         [HttpGet("{orderId}")]
-        public async Task<ActionResult<OrderModels>> GetOrder(int orderId)
+        public async Task<ActionResult> GetOrder(int orderId)
         {
-            var order = await _dbContext.Orders
-            .Include(o => o.StatusModels)
-            .FirstOrDefaultAsync(o => o.id == orderId);
-
-
+            var order = await _orderService.GetOrder(orderId);
             if (order == null)
             {
                 return NotFound(); // Возвращаем 404 Not Found, если заказ не найден

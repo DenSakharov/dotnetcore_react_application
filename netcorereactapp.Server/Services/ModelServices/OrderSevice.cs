@@ -64,6 +64,53 @@ namespace netcorereactapp.Server.Services.ModelServices
                 return null;
             }
         }
+        public async Task<OrderDTO> GetOrder(int id)
+        {
+            try
+            {
+                var order = await _dbContext.Orders.Where(o=>o.id==id)
+                    .Include(o => o.StatusModels)
+                    .ThenInclude(s => s.Attachments)
+                    .Include(o => o.StatusEvents)
+                    .FirstOrDefaultAsync();
+                var list_of_attachments = new List<AttacmentDTO>();
+                var orderDTOs =  new OrderDTO
+                {
+                    Id = order.id,
+                    Caption = order.caption,
+                    DateOfCreature = order.date_of_creature,
+                    DateOfEdited = order.date_of_edited,
+                    Statuses = order.StatusModels.Select(status => new StatusDTO
+                    {
+                        Id = status.Id,
+                        Type = status.type,
+                        DateOfCreature = status.date_of_creature,
+                        Attachments = rewrite_array(status.Attachments),
+                    }).ToList(),
+                    Events = order.StatusEvents.Select(status => new StatusEventDTO
+                    {
+                        DateOfChange = status.DateOfChange,
+                        Id = status.Id,
+                        Message = status.Message
+                    }).ToList()
+                };
+                //try
+                //{
+                //    _logger.LogInformation("DateOfCreature - " + orderDTOs.Statuses.FirstOrDefault()
+                //        .Attachments.FirstOrDefault().AttachmentData);
+                //}
+                //finally
+                //{
+
+                //}
+                return orderDTOs;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("" + ex);
+                return null;
+            }
+        }
         private List<AttacmentDTO> rewrite_array
            (List<AttachmentModels> attachmentModels)
         {
@@ -161,6 +208,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                         $" на {status}",
                     };
                     string path=await _fileService.SaveFile(file);
+                    existingOrder.date_of_edited = statusEvent.DateOfChange;
                     existingOrder.StatusModels.Add(
                         new StatusModels
                         {

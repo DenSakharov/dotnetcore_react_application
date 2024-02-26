@@ -36,54 +36,53 @@ export default OrderModel;
 
 const OrdersPage: React.FC = () => {
     const [orders, setOrders] = useState<OrderModel[]>([]);
-
+    const fetchOrders = async () => {
+        try {
+            const tokenValue = localStorage.getItem("authToken");
+            const response =
+                await axios.get<OrderModel[]>('https://localhost:7294/orders/getorders', {
+                headers: {
+                    Authorization: `Bearer ${tokenValue}`,
+                },
+            });
+            //console.log(response.data)
+            setOrders(response.data);
+            /*
+            response.data.forEach(order => {
+                console.log(`Order ID: ${order.id}`);
+                console.log(`Caption: ${order.caption}`);
+                console.log(`Date of Creation: ${order.dateOfCreature}`);
+                console.log(`Date of Editing: ${order.dateOfEdited}`);
+                if (order.statuses) {
+                    order.statuses.forEach(status => {
+                        console.log(`Status ID: ${status.id}`);
+                        console.log(`Status Type: ${status.type}`);
+                        console.log(`Date of Creation: ${status.dateOfCreature}`);
+                        if (status.attachments) {
+                            status.attachments.forEach(attachment => {
+                                console.log(`Attachment ID: ${attachment.id}`);
+                                console.log(`Attachment Data: ${attachment.attachmentData}`);
+                            });
+                        }
+                    });
+                }
+                if (order.events) {
+                    order.events.forEach(event => {
+                        console.log(`Event ID: ${event.id}`);
+                        console.log(`Date of Change: ${event.dateOfChange}`);
+                        console.log(`Message: ${event.message}`);
+                    });
+                }
+                console.log('---------------------------');
+            });
+            */
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+        }
+    };
     useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const tokenValue = localStorage.getItem("authToken");
-                const response = await axios.get<OrderModel[]>('https://localhost:7294/orders/getorders', {
-                    headers: {
-                        Authorization: `Bearer ${tokenValue}`,
-                    },
-                });
-                //console.log(response.data)
-                setOrders(response.data);
-                /*
-                response.data.forEach(order => {
-                    console.log(`Order ID: ${order.id}`);
-                    console.log(`Caption: ${order.caption}`);
-                    console.log(`Date of Creation: ${order.dateOfCreature}`);
-                    console.log(`Date of Editing: ${order.dateOfEdited}`);
-                    if (order.statuses) {
-                        order.statuses.forEach(status => {
-                            console.log(`Status ID: ${status.id}`);
-                            console.log(`Status Type: ${status.type}`);
-                            console.log(`Date of Creation: ${status.dateOfCreature}`);
-                            if (status.attachments) {
-                                status.attachments.forEach(attachment => {
-                                    console.log(`Attachment ID: ${attachment.id}`);
-                                    console.log(`Attachment Data: ${attachment.attachmentData}`);
-                                });
-                            }
-                        });
-                    }
-                    if (order.events) {
-                        order.events.forEach(event => {
-                            console.log(`Event ID: ${event.id}`);
-                            console.log(`Date of Change: ${event.dateOfChange}`);
-                            console.log(`Message: ${event.message}`);
-                        });
-                    }
-                    console.log('---------------------------');
-                });
-                */
-            } catch (error) {
-                console.error('Error fetching orders:', error);
-            }
-        };
-
         fetchOrders();
-    }, []);
+    }, [orders]);
     const handleOrderAdded = (newOrder) => {
         // Обновление списка заказов после добавления нового заказа
         setOrders([...orders, newOrder]);
@@ -105,7 +104,7 @@ const OrdersPage: React.FC = () => {
     };
     const onClose = () => {
         setModal(false)
-        window.location.reload();
+        //window.location.reload();
     }
     //pagination data
     const [currentPage, setCurrentPage] = useState(1);
@@ -140,6 +139,7 @@ const OrdersPage: React.FC = () => {
                     onClose={toggleAddForm}
                 />
             )}
+            <div className="table-with-buttons">
             <table className="styled-table">
                 <thead>
                 <tr>
@@ -156,8 +156,15 @@ const OrdersPage: React.FC = () => {
                     <tr key={order.id} onClick={() => onRowClick(order)}>
                         <td>{order.id}</td>
                         <td>{order.caption}</td>
-                        <td>{order.dateOfCreature}</td>
-                        <td>{order.dateOfEdited}</td>
+
+                        <td>
+                            {/*корректное отображение даты создания*/}
+                            {new Date(order.dateOfCreature).toLocaleString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </td>
+                        <td>
+                            {order.dateOfEdited && new Date(order.dateOfEdited).toLocaleString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </td>
+
                         <td>{order.statuses && order.statuses.length > 0
                             ? statusMap[order.statuses.sort((a, b) =>
                                 new Date(b.dateOfCreature).getTime() - new Date(a.dateOfCreature).getTime())[0]
@@ -171,10 +178,11 @@ const OrdersPage: React.FC = () => {
                 ))}
                 </tbody>
             </table>
-            <button onClick={handlePrevPage} disabled={currentPage === 1}>Назад</button>
-            <button onClick={handleNextPage}
+                <button onClick={handlePrevPage} disabled={currentPage === 1}>Назад</button>
+                <button onClick={handleNextPage}
                     disabled={currentPage === Math.ceil(orders.length / itemsPerPage)}>Вперед
             </button>
+            </div>
             {selectedOrderId && (
                 <Modal
                     visible={isModal}

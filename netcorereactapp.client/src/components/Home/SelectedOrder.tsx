@@ -1,19 +1,28 @@
 ﻿import axios from "axios";
 import React, { useEffect, useState } from "react";
 import OrderModel, { TypesStatus, statusMap } from "./OrdersPage";
-import ExcelViewer from '../Home/Document/ExcelViewer'
-
-import '../../styles/SelectedOrder.css'
 import AddStatus from "./StatusOfOrder/AddStatus";
 import {fetchFile} from "./Document/WordViewer.tsx";
+import {get_current_order} from "./Services/GetCurrentOrder.tsx";
+
+import '../../styles/SelectedOrder.css'
 
 export const SelectedOrder:
     React.FC<{ orderInput: OrderModel | null; closeModal: () => void }>
     = ({ orderInput, closeModal }) => {
 
     const [order, setOrder] = useState<OrderModel | null>(orderInput);
+    const fetchOrder = async () => {
+        try {
+            const resp = await get_current_order(orderInput.id);
+            console.log(resp);
+            setOrder(resp);
+        } catch (error) {
+            console.error('Error fetching order:', error);
+        }
+    };
     useEffect(() => {
-            setOrder(orderInput);
+        fetchOrder();
             /*
             console.log(`Order ID: ${order.id}`);
             console.log(`Caption: ${order.caption}`);
@@ -41,8 +50,7 @@ export const SelectedOrder:
             }
             console.log('---------------------------');
             //*/
-        }, [orderInput]);
-
+        }, []);
     const handleDownload = async (attachment) => {
             const fileId = attachment.id;
             const extension = attachment.attachmentData.split('.').pop().toLowerCase();
@@ -94,13 +102,14 @@ export const SelectedOrder:
     // Функция для получения индексов элементов для текущей страницы
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = order.statuses.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = order.statuses
+        ? order.statuses.slice(indexOfFirstItem, indexOfLastItem)
+        : [];
 
     // Функции для переключения страниц
     const handleNextPage = () => {
         setCurrentPage(currentPage +  1);
     };
-
     const handlePrevPage = () => {
         if (currentPage >  1) {
             setCurrentPage(currentPage -  1);
@@ -141,7 +150,9 @@ export const SelectedOrder:
                         {currentItems.map((status) => (
                             <tr key={status.Id}>
                                 <td>{statusMap[status.type]}</td>
-                                <td>{status.dateOfCreature}</td>
+                                <td>
+                                    {status.dateOfCreature && new Date(status.dateOfCreature).toLocaleString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                </td>
                                 <td>
                                     {status.attachments && status.attachments.map((attachment) => (
                                         <div key={attachment.id}> {/* Или используйте уникальный идентификатор */}
