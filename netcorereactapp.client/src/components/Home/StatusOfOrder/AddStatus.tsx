@@ -45,7 +45,6 @@ export default function AddStatus({ order, closeModal }: { order: OrderModel | n
             console.error(error);
         }
     };
-
     const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newValue = event.target.value;
         setSelectedStatus((prevStatus) => {
@@ -53,7 +52,6 @@ export default function AddStatus({ order, closeModal }: { order: OrderModel | n
             return newValue;
         });
     };
-
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         setSelectedFile(file);
@@ -61,31 +59,6 @@ export default function AddStatus({ order, closeModal }: { order: OrderModel | n
     if (!order) {
         return <p>Invalid orderId or order data is not available</p>;
     }
-
-    const deleteOrder = async () => {
-        try {
-            const tokenValue = localStorage.getItem("authToken");
-            const id = order.id;
-            if (typeof closeModal === 'function') {
-                const response = await axios.delete(`https://localhost:7294/orders/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${tokenValue}`,
-                    },
-                });
-
-                // Проверяем успешность удаления
-                if (response.status === 200) {
-                    closeModal();
-                } else {
-                    console.error('Error deleting order. Unexpected status:', response.status);
-                }
-            } else {
-                console.log("no")
-            }
-        } catch (error) {
-            console.error('Error deleting order:', error);
-        }
-    };
     return (
         <div>
             <div className="select-status">
@@ -110,7 +83,7 @@ export default function AddStatus({ order, closeModal }: { order: OrderModel | n
             </div>
             <div className="action-buttons">
                 <button onClick={updateStatus}>Добавить статус</button>
-                <button onClick={deleteOrder}>Удалить заказ</button>
+
             </div>
         </div>
     )

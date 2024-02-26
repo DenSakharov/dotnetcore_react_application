@@ -107,6 +107,25 @@ const OrdersPage: React.FC = () => {
         setModal(false)
         window.location.reload();
     }
+    //pagination data
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5); // Примерное количество элементов на странице
+
+    // Функция для получения индексов элементов для текущей страницы
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = orders.slice(indexOfFirstItem, indexOfLastItem);
+
+    // Функции для переключения страниц
+    const handleNextPage = () => {
+        setCurrentPage(currentPage +  1);
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage >  1) {
+            setCurrentPage(currentPage -  1);
+        }
+    };
     return (
         <div>
             <h1>Orders</h1>
@@ -116,42 +135,46 @@ const OrdersPage: React.FC = () => {
                 <Modal
                     visible={showAddForm}
                     title='Add Order'
-                    content={<AddOrderForm onOrderAdded={handleOrderAdded} />}
+                    content={<AddOrderForm onOrderAdded={handleOrderAdded}/>}
                     footer={<button onClick={toggleAddForm}>Close</button>}
-                    onClose={toggleAddForm} 
+                    onClose={toggleAddForm}
                 />
             )}
             <table className="styled-table">
                 <thead>
-                    <tr>
-                        <th>№</th>
-                        <th>Название</th>
-                        <th>Дата создания</th>
-                        <th>Дата редактирования</th>
-                        <th>Статус</th>
-                        <th>История</th>
-                    </tr>
+                <tr>
+                    <th>№</th>
+                    <th>Название</th>
+                    <th>Дата создания</th>
+                    <th>Дата редактирования</th>
+                    <th>Статус</th>
+                    <th>История</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {orders.map(order => (
-                        <tr key={order.id} onClick={() => onRowClick(order)}>
-                            <td>{order.id}</td>
-                            <td>{order.caption}</td>
-                            <td>{order.dateOfCreature}</td>
-                            <td>{order.dateOfEdited}</td>
-                            <td>{order.statuses && order.statuses.length > 0
-                                ? statusMap[order.statuses.sort((a, b) =>
-                                    new Date(b.dateOfCreature).getTime() - new Date(a.dateOfCreature).getTime())[0]
-                                    .type]
-                                : ''}</td>
-                            <td>
-                                {order.events && order.events.length > 0 ?
-                                    order.events[order.events.length - 1].message : ''}
-                            </td>
-                        </tr>
-                    ))}
+                {currentItems.map(order => (
+                    <tr key={order.id} onClick={() => onRowClick(order)}>
+                        <td>{order.id}</td>
+                        <td>{order.caption}</td>
+                        <td>{order.dateOfCreature}</td>
+                        <td>{order.dateOfEdited}</td>
+                        <td>{order.statuses && order.statuses.length > 0
+                            ? statusMap[order.statuses.sort((a, b) =>
+                                new Date(b.dateOfCreature).getTime() - new Date(a.dateOfCreature).getTime())[0]
+                                .type]
+                            : ''}</td>
+                        <td>
+                            {order.events && order.events.length > 0 ?
+                                order.events[order.events.length - 1].message : ''}
+                        </td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
+            <button onClick={handlePrevPage} disabled={currentPage === 1}>Назад</button>
+            <button onClick={handleNextPage}
+                    disabled={currentPage === Math.ceil(orders.length / itemsPerPage)}>Вперед
+            </button>
             {selectedOrderId && (
                 <Modal
                     visible={isModal}
