@@ -45,7 +45,7 @@ const OrdersPage: React.FC = () => {
                     Authorization: `Bearer ${tokenValue}`,
                 },
             });
-            //console.log(response.data)
+            console.log(response.data)
             setOrders(response.data);
             /*
             response.data.forEach(order => {
@@ -82,7 +82,7 @@ const OrdersPage: React.FC = () => {
     };
     useEffect(() => {
         fetchOrders();
-    }, [orders]);
+    }, []);
     const handleOrderAdded = (newOrder) => {
         // Обновление списка заказов после добавления нового заказа
         setOrders([...orders, newOrder]);

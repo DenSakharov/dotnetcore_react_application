@@ -56,9 +56,12 @@ export const SelectedOrder:
             const extension = attachment.attachmentData.split('.').pop().toLowerCase();
             if (extension === 'xlsx') {
                 window.location.href = `https://localhost:5173/#/excel/${fileId}`;
-            } else if (extension === 'pdf') {
+            }
+            //function view pdf file
+            else if (extension === 'pdf') {
                 window.location.href = `https://localhost:5173/#/pdf/${fileId}`;
-            } else if (extension === 'doc' || extension === 'docx') {
+            }
+            else if (extension === 'doc' || extension === 'docx') {
                // window.location.href = `https://localhost:5173/#/file/${fileId}`;
                await fetchFile(fileId)
             }
