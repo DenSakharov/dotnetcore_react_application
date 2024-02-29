@@ -10,19 +10,25 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-pdf-viewer/core": "^3.12.0",
+    "@react-pdf-viewer/page-navigation": "^3.12.0",
+    "@react-pdf-viewer/thumbnail": "^3.12.0",
     "@types/node": "^20.11.5",
     "axios": "^1.6.5",
     "file-type": "^19.0.0",
+    "html-pdf": "^3.0.1",
     "jwt-decode": "^4.0.0",
     "lorem-ipsum": "^2.0.8",
+    "mammoth": "^1.7.0",
     "react": "^18.2.0",
-    "react-doc-viewer": "^0.1.5",
+    "react-docx": "^1.0.1",
     "react-dom": "^18.2.0",
     "react-pdf": "^7.7.1",
     "react-router-dom": "^6.21.3",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/html-pdf": "^3.0.3",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "^6.14.0",

@@ -13,8 +13,8 @@ namespace netcorereactapp.Server.Controllers.File
     public class FileController : ControllerBase
     {
         private readonly ApplicationContext _dbContext;
-        private readonly ILogger<OrdersController> _logger;
-        public FileController(ApplicationContext dbContext, ILogger<OrdersController> logger)
+        private readonly ILogger<FileController> _logger;
+        public FileController(ApplicationContext dbContext, ILogger<FileController> logger)
         {
             try
             {

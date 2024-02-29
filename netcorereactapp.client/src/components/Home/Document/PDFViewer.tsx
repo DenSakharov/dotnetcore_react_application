@@ -1,17 +1,19 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import downloadFile from "../Services/DownloadFileService.tsx";
+import {Viewer, Worker} from "@react-pdf-viewer/core";
+import {PDFViewerTemplate} from "./PDFViewerTemplate.tsx";
 function PDFViewer() {
     const { fileId } = useParams(); // Получаем fileId из параметров маршрута
     const fileIdNumber = parseInt(fileId); // Преобразуем fileId в число
-    const [base64doc, setBase64doc] = useState('');
+    const [fileData, setFileData] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         //console.log("test")
         fetchData();
-        console.log("base 64 - "+base64doc)
+        //console.log("base 64 - "+fileData)
         return () => {
             // Очистка эффекта, если это необходимо
         };
@@ -21,7 +23,7 @@ function PDFViewer() {
             const base64Data = await downloadFile(fileIdNumber); // Ожидание получения строки base64
             if (base64Data) {
                 //console.log('response - \n' + base64Data);
-                setBase64doc(base64Data);
+                setFileData(base64Data);
                 setLoading(false); // Устанавливаем состояние загрузки в false
             } else {
                 // В случае ошибки выводим сообщение
@@ -42,14 +44,12 @@ function PDFViewer() {
     if (error) {
         return <div>Error: {error}</div>; // Отображаем сообщение об ошибке
     }
-
     return (
         <div>
             <h2>Document Viewer</h2>
-            {base64doc && (
+            {fileData && (
                 <div>
-                        <iframe src={`data:application/pdf;base64,${base64doc}`}
-                                width="75%" height="500px" />
+                    <PDFViewerTemplate fileData={fileData}/>
                 </div>
             )}
         </div>

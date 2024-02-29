@@ -1,44 +1,57 @@
-﻿import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
-import downloadFile from '../Services/DownloadFileService';
-export const fetchFile = async (fileId) => {
-    try {
-        const base64String = await downloadFile(parseInt(fileId));
-        const link = document.createElement('a');
-        link.href = 'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,' + base64String;
-        link.download = 'document.docx';
-        link.click();
-    } catch (error) {
-        console.error('Error fetching file:', error);
-    }
-};
+﻿import {useParams} from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import downloadFile, {load_convetered_doc_in_pdf} from '../Services/DownloadFileService';
+import {CharacterMap, Viewer, Worker, ProgressBar, TextDirection} from "@react-pdf-viewer/core";
+import {PDFViewerTemplate} from "./PDFViewerTemplate.tsx";
 export default function WordViewer() {
-    const [fileData, setFileData] = useState(); // Массив объектов файлов
-    const { fileId } = useParams(); // Пол
+    const [fileData, setFileData] = useState();
+    const [base64DataDoc, setBase64DataDoc] = useState();
+    const {fileId} = useParams(); // Пол
     useEffect(() => {
-        const fetchFile = async () => {
-            try {
-                const base64String = await downloadFile(parseInt(fileId));
-                const link = document.createElement('a');
-                link.href = 'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,' + base64String;
-                link.download = 'document.docx';
-                link.click();
-                setFileData(base64String)
-            } catch (error) {
-                console.error('Error fetching file:', error);
-            }
-        };
+        fetchData()
+    }, []);
+    const fetchData = async () => {
+        try {
+            //const base64Data = await downloadFile(fileId); // Ожидание получения строки base64
+            const base64Data = await load_convetered_doc_in_pdf(fileId);
+            if (base64Data) {
 
-        fetchFile();
-    },[] );
+                //console.log("result: ", base64Data);
+                setFileData(base64Data);
+            } else {
+                // В случае ошибки выводим сообщение
+                console.error('Failed to download file');
+            }
+        } catch (error) {
+            console.error('Error downloading file:', error);
+        }
+    }
+
+    async function downloadBase64File() {
+        const base64DataDoc = await downloadFile(fileId);
+        if (base64DataDoc) {
+            //console.log(base64DataDoc)
+            setBase64DataDoc(base64DataDoc)
+            const downloadLink = document.createElement("a");
+            downloadLink.href = `data: application/msword;base64,${base64DataDoc}`;
+            downloadLink.download = "test";
+            downloadLink.click();
+        } else {
+            // В случае ошибки выводим сообщение
+            console.error('Failed to download file');
+        }
+
+    }
     return (
         <div>
-            <h1>File Preview</h1>
-            <DocViewer
-                documents={[ { uri: `data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${fileData}` } ]}
-                pluginRenderers={DocViewerRenderers}
-            />
+            <h1>Doc Preview</h1>
+            {fileData &&
+                <div>
+                    <button onClick={downloadBase64File}>Скачать</button>
+                    <PDFViewerTemplate fileData={fileData}/>
+
+                </div>
+            }
         </div>
     );
 }

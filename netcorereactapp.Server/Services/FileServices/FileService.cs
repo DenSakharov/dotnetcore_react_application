@@ -1,4 +1,5 @@
 ﻿using netcorereactapp.Server.Services.FileServices.Interfaces;
+using Spire.Doc;
 
 namespace netcorereactapp.Server.Services.FileServices
 {
@@ -11,7 +12,7 @@ namespace netcorereactapp.Server.Services.FileServices
             {
                 // Генерируем уникальное имя файла
                 var fileName = Path.GetFileNameWithoutExtension(file.FileName)
-                    + DateTime.Now.ToString("yyyyMMddHHmmss")
+                    //+ DateTime.Now.ToString("yyyyMMddHHmmss")
                 + Path.GetExtension(file.FileName);
                 temp_file_name = Path.Combine(path_to_files, fileName);
 
@@ -22,6 +23,35 @@ namespace netcorereactapp.Server.Services.FileServices
                 }
             }
             return temp_file_name;
+        }
+        public async Task<string> ConvertToPDF(string filePath, string pdfOutputPath)
+        {
+            // Загрузка документа Word
+            Document doc = new Document();
+            doc.LoadFromFile(filePath);
+
+            // Создание потока для сохранения PDF
+            using (MemoryStream pdfStream = new MemoryStream())
+            {
+                // Сохранение документа Word в PDF
+                doc.SaveToStream(pdfStream, FileFormat.PDF);
+
+                // Перемещение указателя потока в начало
+                pdfStream.Seek(0, SeekOrigin.Begin);
+
+                // Чтение содержимого потока в виде массива байтов
+                byte[] pdfBytes = pdfStream.ToArray();
+
+                // Преобразовать байтовый массив в строку base64
+                string base64String = Convert.ToBase64String(pdfBytes);
+
+               /* using (FileStream fileStream = new FileStream(pdfOutputPath, FileMode.Create, FileAccess.Write))
+                {
+                    pdfStream.CopyTo(fileStream);
+                    Console.WriteLine("\n!!!\nFile saved -> "+ pdfOutputPath + "\n!!!\n");
+                }*/
+                return base64String;
+            }
         }
     }
 }

@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from "react";
 import OrderModel, { TypesStatus, statusMap } from "./OrdersPage";
 import AddStatus from "./StatusOfOrder/AddStatus";
-import {fetchFile} from "./Document/WordViewer.tsx";
 import {get_current_order} from "./Services/GetCurrentOrder.tsx";
 
 import '../../styles/SelectedOrder.css'
+import {fetchFile} from "./Services/DownloadFileService.tsx";
 
 export const SelectedOrder:
     React.FC<{ orderInput: OrderModel | null; closeModal: () => void }>
@@ -62,11 +62,12 @@ export const SelectedOrder:
                 window.location.href = `https://localhost:5173/#/pdf/${fileId}`;
             }
             else if (extension === 'doc' || extension === 'docx') {
-               // window.location.href = `https://localhost:5173/#/file/${fileId}`;
-               await fetchFile(fileId)
+                window.location.href = `https://localhost:5173/#/doc/${fileId}`;
+               //await fetchFile(fileId)
             }
             else{
-                alert("Невозможно открыть файл данного типа расширения !")
+                await fetchFile(fileId)
+                //alert("Невозможно открыть файл данного типа расширения !")
             }
         };
     const deleteOrder = async () => {

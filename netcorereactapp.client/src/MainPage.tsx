@@ -27,7 +27,8 @@ export function MainPage() {
                         <Route path="/about" element={<About />} />
                         <Route path="/excel/:fileId" element={<ExcelPage />} />
                         <Route path="/pdf/:fileId" element={<PDFViewer />} />
-                        <Route path="/file/:fileId" element={<WordViewer />} />
+                        <Route path="/doc/:fileId" element={<WordViewer />} />
+
                     </Routes>
                 </div>
             </HashRouter>

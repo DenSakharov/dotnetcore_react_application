@@ -1,0 +1,10 @@
+.pdf-viewer-container {
+    width: 70%;
+    height: 500px;
+    border: 1px solid #ccc;
+
+    margin: 0 auto; /* Центрирование по горизонтали */
+    display: flex;
+    justify-content: center; /* Выравнивание по горизонтали */
+    align-items: center; /* Выравнивание по вертикали */
+}
