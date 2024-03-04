@@ -128,9 +128,5 @@ namespace netcorereactapp.Server.Controllers.Orders
             }
         }
 
-        public class UpdateStatusClass
-        {
-            public string status { get; set; }
-        }
     }
 }

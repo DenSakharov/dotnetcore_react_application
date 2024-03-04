@@ -1,8 +1,5 @@
 ﻿import React, { useState } from 'react';
 import axios from 'axios';
-
-
-
 const AddOrderForm = ({ onOrderAdded }) => {
     const [newOrder, setNewOrder] = useState({
         caption: '',

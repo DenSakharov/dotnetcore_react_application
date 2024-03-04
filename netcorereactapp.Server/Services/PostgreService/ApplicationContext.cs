@@ -8,12 +8,12 @@ namespace netcorereactapp.Server.Services.PostgreService
     public class ApplicationContext : DbContext
     {
         public DbSet<LoginModel> Users { get; set; } = null!;
-        public DbSet<OrderModels> Orders { get; set; } = null!; 
+        public DbSet<OrderModels> Orders { get; set; } = null!;
         public DbSet<StatusModels> StatusesOfOrders { get; set; } = null!;
         public DbSet<AttachmentModels> AttachmentsOfStatuses { get; set; } = null!;
         public DbSet<StatusEvent> StatusEventsOfModels { get; set; } = null!;
         private readonly ILogger<ApplicationContext> _logger;
-        public ApplicationContext(DbContextOptions<ApplicationContext> options, ILogger<ApplicationContext> logger) 
+        public ApplicationContext(DbContextOptions<ApplicationContext> options, ILogger<ApplicationContext> logger)
             : base(options)
         {
             _logger = logger;
@@ -41,6 +41,12 @@ namespace netcorereactapp.Server.Services.PostgreService
                 .WithMany(order => order.StatusModels)
                 .HasForeignKey(status => status.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<StatusModels>()
+                .HasMany(status => status.ChildStatuses)           // Один родительский статус имеет много дочерних статусов
+                .WithOne(childStatus => childStatus.ParentStatus) // Каждый дочерний статус имеет один родительский статус
+                .HasForeignKey(childStatus => childStatus.ParentStatusId) // Внешний ключ для связи дочерних статусов с родительским статусом
+                .OnDelete(DeleteBehavior.Cascade); // При удалении родительского статуса, дочерние статусы также будут удалены
 
             modelBuilder.Entity<StatusEvent>()
                 .HasOne(order => order.Order)

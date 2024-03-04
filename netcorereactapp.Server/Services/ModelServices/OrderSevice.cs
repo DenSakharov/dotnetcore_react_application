@@ -9,6 +9,7 @@ using netcorereactapp.Server.Models.DataTransferObjects;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
+using System.Text;
 using System.Text.Json.Nodes;
 
 namespace netcorereactapp.Server.Services.ModelServices
@@ -18,13 +19,13 @@ namespace netcorereactapp.Server.Services.ModelServices
         private readonly ApplicationContext _dbContext;
         private readonly ILogger<OrderSevice> _logger;
         private readonly IFileService _fileService;
-        public OrderSevice(ApplicationContext dbContext , ILogger<OrderSevice> logger,IFileService fileService)
+        public OrderSevice(ApplicationContext dbContext, ILogger<OrderSevice> logger, IFileService fileService)
         {
             _dbContext = dbContext;
             _logger = logger;
             _fileService = fileService;
         }
-        public async Task< IEnumerable<OrderDTO>> GetOrders()
+        public async Task<IEnumerable<OrderDTO>> GetOrders()
         {
             try
             {
@@ -33,7 +34,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                     .ThenInclude(s => s.Attachments)
                     .Include(o => o.StatusEvents)
                     .ToListAsync();
-                var list_of_attachments = new List<AttacmentDTO>();
+                var list_of_attachments = new List<AttachmentDTO>();
                 var orderDTOs = orders.Select(order => new OrderDTO
                 {
                     Id = order.id,
@@ -44,8 +45,10 @@ namespace netcorereactapp.Server.Services.ModelServices
                     {
                         Id = status.Id,
                         Type = status.type,
+                        ParentId= status.ParentStatusId.HasValue ? status.ParentStatusId.Value : 0,
                         DateOfCreature = status.date_of_creature,
-                        Attachments = rewrite_array(status.Attachments),
+                        Attachments = MapAttachments(status.Attachments),
+                        ChildStatuses= status.ChildStatuses.Count != 0 ? rewrite_array_to_ChildStatusesDTO(status) : new List<StatusDTO>()
                     }).ToList(),
                     Events = order.StatusEvents.Select(status => new StatusEventDTO
                     {
@@ -60,7 +63,7 @@ namespace netcorereactapp.Server.Services.ModelServices
             }
             catch (Exception ex)
             {
-                _logger.LogError(""+ex);
+                _logger.LogError("" + ex);
                 return null;
             }
         }
@@ -68,13 +71,54 @@ namespace netcorereactapp.Server.Services.ModelServices
         {
             try
             {
-                var order = await _dbContext.Orders.Where(o=>o.id==id)
+                var order = await _dbContext.Orders.Where(o => o.id == id)
                     .Include(o => o.StatusModels)
                     .ThenInclude(s => s.Attachments)
                     .Include(o => o.StatusEvents)
                     .FirstOrDefaultAsync();
-                var list_of_attachments = new List<AttacmentDTO>();
-                var orderDTOs =  new OrderDTO
+
+                var orderDTO = new OrderDTO
+                {
+                    Id = order.id,
+                    Caption = order.caption,
+                    DateOfCreature = order.date_of_creature,
+                    DateOfEdited = order.date_of_edited,
+                    Statuses = MapChildStatuses(order.StatusModels), // Вызываем метод маппинга для дочерних статусов
+                    Events = order.StatusEvents.Select(status => new StatusEventDTO
+                    {
+                        DateOfChange = status.DateOfChange,
+                        Id = status.Id,
+                        Message = status.Message
+                    }).ToList()
+                };
+
+                return orderDTO;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("" + ex);
+                return null;
+            }
+        }
+
+        #region
+        /*public async Task<OrderDTO> GetOrder(int id)
+        {
+            try
+            {
+                var order = await _dbContext.Orders.Where(o => o.id == id)
+                    .Include(o => o.StatusModels)
+                    .ThenInclude(s => s.Attachments)
+                    .Include(o => o.StatusEvents)
+                    .FirstOrDefaultAsync();
+               *//* StringBuilder sb = new StringBuilder();
+                foreach (StatusModels status in order.StatusModels)
+                {
+                    ProcessChildStatuses(status, sb);
+                }
+                Console.WriteLine("\n\n\n" + sb.ToString() + "\n\n\n");*//*
+                var list_of_attachments = new List<AttachmentDTO>();
+                var orderDTOs = new OrderDTO
                 {
                     Id = order.id,
                     Caption = order.caption,
@@ -84,8 +128,10 @@ namespace netcorereactapp.Server.Services.ModelServices
                     {
                         Id = status.Id,
                         Type = status.type,
+                        ParentId = status.ParentStatusId.HasValue ? status.ParentStatusId.Value : 0,
                         DateOfCreature = status.date_of_creature,
-                        Attachments = rewrite_array(status.Attachments),
+                        Attachments = rewrite_array_to_AttachmentDTO(status.Attachments),
+                        ChildStatuses = status.ChildStatuses.Count!=0 ? rewrite_array_to_ChildStatusesDTO(status) : new List<StatusDTO>()
                     }).ToList(),
                     Events = order.StatusEvents.Select(status => new StatusEventDTO
                     {
@@ -94,35 +140,138 @@ namespace netcorereactapp.Server.Services.ModelServices
                         Message = status.Message
                     }).ToList()
                 };
-                //try
-                //{
-                //    _logger.LogInformation("DateOfCreature - " + orderDTOs.Statuses.FirstOrDefault()
-                //        .Attachments.FirstOrDefault().AttachmentData);
-                //}
-                //finally
-                //{
+               *//* try
+                {
+                    _logger.LogInformation("DateOfCreature - " + orderDTOs.Statuses.FirstOrDefault()
+                        .Attachments.FirstOrDefault().AttachmentData);
+                }
+                finally
+                {
 
-                //}
-                return orderDTOs;
-            }
-            catch (Exception ex)
+                }*/
+
+        /*  sb =new StringBuilder();
+          foreach (StatusDTO statusDTO in orderDTOs.Statuses)
+          {
+              ProcessChildStatusesDTO(statusDTO,sb);
+          }
+          Console.WriteLine("\n\n\n"+sb.ToString()+ "\n\n\n");*//*
+          return orderDTOs;
+      }
+      catch (Exception ex)
+      {
+          _logger.LogError("" + ex);
+          return null;
+      }
+  }*/
+        #endregion
+        void ProcessChildStatuses(StatusModels statusDTO, StringBuilder sb)
+        {
+            // Проверяем, есть ли у статуса дочерние статусы
+            if (statusDTO.ChildStatuses.Count != 0)
             {
-                _logger.LogError("" + ex);
-                return null;
+                // Обрабатываем каждый дочерний статус
+                foreach (var childStatus in statusDTO.ChildStatuses)
+                {
+                    sb.AppendLine("parent -> " + statusDTO.Id + " ; child -> " + childStatus.Id);
+                    ProcessChildStatuses(childStatus, sb);
+                }
             }
         }
-        private List<AttacmentDTO> rewrite_array
+        void ProcessChildStatusesDTO(StatusDTO statusDTO, StringBuilder sb)
+        {
+            // Проверяем, есть ли у статуса дочерние статусы
+            if (statusDTO.ChildStatuses.Count != 0)
+            {
+                // Обрабатываем каждый дочерний статус
+                foreach (var childStatus in statusDTO.ChildStatuses)
+                {
+                    sb.AppendLine("parent -> "+ statusDTO.Id+" ; child -> "+childStatus.Id);
+                    ProcessChildStatusesDTO(childStatus, sb);
+                }
+            }
+        }
+        private List<AttachmentDTO> MapAttachments
            (List<AttachmentModels> attachmentModels)
         {
-            var list_of_AttacmentDTO = new List<AttacmentDTO>();
+            var list_of_AttacmentDTO = new List<AttachmentDTO>();
             foreach (var attachmentModel in attachmentModels)
             {
-                var e = new AttacmentDTO();
+                var e = new AttachmentDTO();
                 e.AttachmentData = attachmentModel.AttachmentData;
                 e.Id = attachmentModel.Id;
                 list_of_AttacmentDTO.Add(e);
             }
             return list_of_AttacmentDTO;
+        }
+        private List<StatusDTO> rewrite_array_to_ChildStatusesDTO
+          (StatusModels statusModel)
+        {
+            var list_of_AttacmentDTO = new List<StatusDTO>();
+
+            var e = new StatusDTO();
+            e.DateOfCreature = statusModel.date_of_creature;
+            e.Attachments = MapAttachments(statusModel.Attachments);
+            e.Type = statusModel.type;
+            e.Id = statusModel.Id;
+            e.ParentId = statusModel.ParentStatusId.HasValue ? statusModel.ParentStatusId.Value : 0;
+            // Проверяем наличие дочерних статусов
+            if (statusModel.ChildStatuses != null && statusModel.ChildStatuses.Count!=0)
+            {
+                // Рекурсивно вызываем функцию для каждого дочернего статуса
+                foreach (var childStatus in statusModel.ChildStatuses)
+                {
+                    e.ChildStatuses = rewrite_array_to_ChildStatusesDTO(childStatus);
+                }
+            }
+            list_of_AttacmentDTO.Add(e);
+            return list_of_AttacmentDTO;
+        }
+        private List<StatusDTO> MapChildStatuses(List<StatusModels> allStatuses)
+        {
+            var childStatusDTOs = new List<StatusDTO>();
+            foreach (var status in allStatuses)
+            {
+                // Проверяем, соответствует ли родительский идентификатор
+                if (status.ParentStatusId == null)
+                {
+                    // Создаем и добавляем дочерний статус в список
+                    var childStatusDTO = new StatusDTO
+                    {
+                        Id = status.Id,
+                        Type = status.type,
+                        DateOfCreature = status.date_of_creature,
+                        ParentId = status.ParentStatusId,
+                        Attachments = MapAttachments(status.Attachments),
+                        ChildStatuses = MapChildStatusesRecursive(allStatuses, status.Id) // Рекурсивный вызов для вложенных статусов
+                    };
+                    childStatusDTOs.Add(childStatusDTO);
+                }
+            }
+            return childStatusDTOs;
+        }
+        List<StatusDTO> MapChildStatusesRecursive(List<StatusModels> childStatuses, int parentId)
+        {
+            var childStatusDTOs = new List<StatusDTO>();
+            foreach (var childStatus in childStatuses)
+            {
+                // Проверяем, соответствует ли родительский идентификатор
+                if (childStatus.ParentStatusId == parentId)
+                {
+                    // Создаем и добавляем дочерний статус в список
+                    var childStatusDTO = new StatusDTO
+                    {
+                        Id = childStatus.Id,
+                        Type = childStatus.type,
+                        DateOfCreature = childStatus.date_of_creature,
+                        ParentId = childStatus.ParentStatusId,
+                        Attachments = MapAttachments(childStatus.Attachments),
+                        ChildStatuses = MapChildStatusesRecursive(childStatus.ChildStatuses, childStatus.Id) 
+                    };
+                    childStatusDTOs.Add(childStatusDTO);
+                }
+            }
+            return childStatusDTOs;
         }
         private readonly string path_to_files = "C:\\Uploads";
         public async Task<OrderModels> CreateOrder(IFormFile file, string capt)
@@ -168,9 +317,9 @@ namespace netcorereactapp.Server.Services.ModelServices
                 await _dbContext.SaveChangesAsync();
                 return newOrder;
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
-                _logger.LogCritical(""+ex);
+                _logger.LogCritical("" + ex);
                 return null;
             }
         }
@@ -207,7 +356,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                         $" с {previousStatus.type}" +
                         $" на {status}",
                     };
-                    string path=await _fileService.SaveFile(file);
+                    string path = await _fileService.SaveFile(file);
                     existingOrder.date_of_edited = statusEvent.DateOfChange;
                     existingOrder.StatusModels.Add(
                         new StatusModels

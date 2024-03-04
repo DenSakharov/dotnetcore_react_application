@@ -1,12 +1,14 @@
 ﻿import axios from "axios";
 import React, { useEffect, useState } from "react";
-import OrderModel, { TypesStatus, statusMap } from "./OrdersPage";
-import AddStatus from "./StatusOfOrder/AddStatus";
-import {get_current_order} from "./Services/GetCurrentOrder.tsx";
+import AddStatus from "../StatusOfOrder/AddStatus.tsx";
+import {get_current_order} from "../Services/GetCurrentOrder.tsx";
+import {fetchFile} from "../Services/DownloadFileService.tsx";
+import OrderModel, {statusMap} from "../../../Models/OrderModel.tsx";
+import {AttachmentModel} from "../../../Models/AttachmentModel.tsx";
+import BodyElementStatuses from "../BodyElementStatuses.tsx";
+import {ModalStatusWindow} from "./ModalStatusWindow.tsx";
 
-import '../../styles/SelectedOrder.css'
-import {fetchFile} from "./Services/DownloadFileService.tsx";
-
+import '../../../styles/SelectedOrder.css'
 export const SelectedOrder:
     React.FC<{ orderInput: OrderModel | null; closeModal: () => void }>
     = ({ orderInput, closeModal }) => {
@@ -15,7 +17,7 @@ export const SelectedOrder:
     const fetchOrder = async () => {
         try {
             const resp = await get_current_order(orderInput.id);
-            console.log(resp);
+            //console.log(resp);
             setOrder(resp);
         } catch (error) {
             console.error('Error fetching order:', error);
@@ -51,7 +53,7 @@ export const SelectedOrder:
             console.log('---------------------------');
             //*/
         }, []);
-    const handleDownload = async (attachment) => {
+    const handleDownload = async (attachment: AttachmentModel) => {
             const fileId = attachment.id;
             const extension = attachment.attachmentData.split('.').pop().toLowerCase();
             if (extension === 'xlsx') {
@@ -66,7 +68,7 @@ export const SelectedOrder:
                //await fetchFile(fileId)
             }
             else{
-                await fetchFile(fileId)
+                await fetchFile(fileId, attachment.attachmentData)
                 //alert("Невозможно открыть файл данного типа расширения !")
             }
         };
@@ -99,7 +101,8 @@ export const SelectedOrder:
     const toggleVisibility = () => {
         setIsVisible(!isVisible);
     };
-    //pagination data
+
+    // #region Блок 1: Pagination data
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(5); // Примерное количество элементов на странице
 
@@ -119,69 +122,81 @@ export const SelectedOrder:
             setCurrentPage(currentPage -  1);
         }
     };
+    // #endregion
+
+    // #region логика отображение модального окна для добавления дочернего  статуса
+    const[selectedChildStatusId,setSelectedChildStatusId]=useState<number|null>()
+    const [isMoadlStatusWindow, setMoadlStatusWindow] = useState(false)
+    const onCloseMoadlStatusWindow = () => {
+        setMoadlStatusWindow(false)
+        //window.location.reload();
+    }
+    const handleAddChildStatus=(id: number)=>{
+        //console.log("handleAddChildStatus -> "+id)
+        setSelectedChildStatusId(id)
+        setMoadlStatusWindow(true)
+    }
+    // #endregion
     return (
-            <div className="order-container">
-                <div className="order-details">
-                    <p>Идентификатор : {order.id}</p>
-                    <p>Название заказа : {order.caption}</p>
-                    <p>
-                        Текущий статус заказа : {order.statuses && order.statuses.length > 0
-                        ? statusMap[order.statuses.sort((a, b) =>
-                            new Date(b.dateOfCreature).getTime() - new Date(a.dateOfCreature).getTime())[0]
-                            .type]
-                        : ''}
-                    </p>
-                    <button onClick={deleteOrder}>Удалить заказ</button>
-                </div>
-                <div className="add-status">
+        <div className="order-container">
+            <div className="order-details">
+                <p>Идентификатор : {order.id}</p>
+                <p>Название заказа : {order.caption}</p>
+                <p>
+                    Текущий статус заказа : {order.statuses && order.statuses.length > 0
+                    ? statusMap[order.statuses.sort((a, b) =>
+                        new Date(b.dateOfCreature).getTime() - new Date(a.dateOfCreature).getTime())[0]
+                        .type]
+                    : ''}
+                </p>
+                <button onClick={deleteOrder}>Удалить заказ</button>
+            </div>
+            <div className="add-status">
                 <button onClick={toggleVisibility}>
                     {isVisible ? "-" : "Добавить статус заказа"}
                 </button>
                 {isVisible && order && typeof closeModal === 'function' && (
-                    <AddStatus order={order} closeModal={closeModal} />
+                    <AddStatus order={order} closeModal={closeModal}/>
                 )}
-                </div>
-                <div className="divTable">
-                    <table className="styled-table">
-                        <thead>
-                        <tr>
-                            <th>Статус</th>
-                            <th>Дата создания</th>
-                            <th>Файл</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {currentItems.map((status) => (
-                            <tr key={status.Id}>
-                                <td>{statusMap[status.type]}</td>
-                                <td>
-                                    {status.dateOfCreature && new Date(status.dateOfCreature).toLocaleString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                                </td>
-                                <td>
-                                    {status.attachments && status.attachments.map((attachment) => (
-                                        <div key={attachment.id}> {/* Или используйте уникальный идентификатор */}
-                                            <p>Data: {attachment.attachmentData}</p>
-                                            <div>
-                                                <button onClick={() => handleDownload(attachment)}>Download File
-                                                </button>
-                                                {/*{showDocument && renderDocument()}*/}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                    <button onClick={handlePrevPage} disabled={currentPage === 1}>Назад</button>
-                    <button onClick={handleNextPage}
-                            disabled={currentPage === Math.ceil(order.statuses.length / itemsPerPage)}>Вперед
-                    </button>
-                </div>
             </div>
-
+            <div className="table-container">
+                <table className="styled-table">
+                    <thead>
+                    <tr>
+                        <th>Номер статуса</th>
+                        <th>Статус</th>
+                        <th>Дата создания</th>
+                        <th>Файл</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <BodyElementStatuses
+                        currentItems={currentItems}
+                        handleDownload={handleDownload}
+                        handleAddChildStatus={handleAddChildStatus}
+                    />
+                    </tbody>
+                </table>
+            </div>
+            <button onClick={handlePrevPage} disabled={currentPage === 1}>Назад</button>
+            <button onClick={handleNextPage}
+                    disabled={currentPage === Math.ceil(order.statuses.length / itemsPerPage)}>Вперед
+            </button>
+            {selectedChildStatusId && (
+                <ModalStatusWindow
+                    visible={isMoadlStatusWindow}
+                    title='Добавление нового дочернего статуса'
+                    selectedChildStatusId={selectedChildStatusId}
+                    footer={<button onClick={onCloseMoadlStatusWindow}>Закрыть</button>}
+                    onClose={onCloseMoadlStatusWindow}
+                />
+            )}
+        </div>
     );
 };
+
+
 
 
 

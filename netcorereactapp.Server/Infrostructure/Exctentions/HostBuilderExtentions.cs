@@ -183,6 +183,7 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                 services.AddScoped<IPostgreService, PostgreService>();
                 services.AddScoped<IOrderService,OrderSevice>();
                 services.AddScoped<IFileService, FileService>();
+                services.AddScoped<IStatusService, StatusService>();
             });
             return hostBuilder;
         }

@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="DocXToPdfConverter" Version="1.0.5" />
-    <PackageReference Include="FreeSpire.Doc" Version="11.6.0" />
+    <PackageReference Include="FreeSpire.Doc" Version="12.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">

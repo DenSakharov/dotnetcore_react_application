@@ -1,6 +1,7 @@
 ﻿import axios from "axios";
 import { useState } from "react";
-import OrderModel, { TypesStatus } from "../OrdersPage";
+import OrderModel from "../../../Models/OrderModel.tsx";
+import {TypesStatus} from "../../../Models/TypesStatus.tsx";
 
 export default function AddStatus({ order, closeModal }: { order: OrderModel | null, closeModal: () => void }) {
     const [selectedStatus, setSelectedStatus] = useState("");

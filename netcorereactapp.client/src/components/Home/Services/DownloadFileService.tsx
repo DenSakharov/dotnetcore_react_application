@@ -18,12 +18,14 @@ export default async function downloadFile(fileId) {
         throw error; // Пробрасывает ошибку для обработки в вызывающем коде
     }
 }
-export const fetchFile = async (fileId) => {
+export const fetchFile = async (fileId: number, fileName: string) => {
     try {
+        const fileNam = fileName.split('\\').pop();
+        //console.log("fileName -> " + fileNam);
         const base64String = await downloadFile(parseInt(fileId));
         const link = document.createElement('a');
-        link.href = 'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,' + base64String;
-        link.download = 'document.docx';
+        link.href = 'data:application/file;base64,' + base64String;
+        link.download = fileNam;
         link.click();
     } catch (error) {
         console.error('Error fetching file:', error);

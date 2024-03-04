@@ -1,8 +1,6 @@
-﻿import React, { ReactElement, useEffect } from 'react';
-import '../../styles/Modal.css'
-import OrderModel from './OrdersPage';
-import { SelectedOrder } from './SelectedOrder';
-
+﻿import  { ReactElement, useEffect } from 'react';
+import { SelectedOrder } from './SelectedOrder.tsx';
+import '../../../styles/Modal.css'
 
 // интерфейс для пропсов
 interface ModalProps {
@@ -36,12 +34,6 @@ export const Modal = ({
     })
     // если компонент невидим, то не отображаем его
     if (!visible) return null
-
-    //console.log('Order prop in Modal:', order);
-    const closeModal = () => {
-        onClose(); // Закрыть модальное окно
-        window.location.reload();
-    };
     // или возвращаем верстку модального окна
     return (
         <div className='modal' onClick={onClose}>

@@ -14,7 +14,7 @@ export const get_current_order=async (id: number): Promise<OrderModel>=>{
         //console.log("response.data : "+ JSON.stringify(response.data))
         // Проверяем, есть ли данные в ответе
         if (response.data) {
-            const newObject: OrderModel = {
+            const newObject = {
                 id: response.data.id,
                 caption: response.data.caption,
                 dateOfCreature: response.data.dateOfCreature,

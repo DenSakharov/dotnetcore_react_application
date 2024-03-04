@@ -8,6 +8,8 @@ namespace netcorereactapp.Server.Models.DataTransferObjects
         public int Id { get; set; }
         public TypesStatus Type { get; set; }
         public DateTime DateOfCreature { get; set; }
-        public List<AttacmentDTO> Attachments { get; set; } = new List<AttacmentDTO>();
+        public int? ParentId { get; set; }
+        public List<AttachmentDTO> Attachments { get; set; } = new List<AttachmentDTO>();
+        public List<StatusDTO> ChildStatuses { get; set; } = new List<StatusDTO>();
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace netcorereactapp.Server.Models.DataTransferObjects
 {
-    public class AttacmentDTO
+    public class AttachmentDTO
     {
         public int Id { get; set; }
         public string AttachmentData { get; set; }

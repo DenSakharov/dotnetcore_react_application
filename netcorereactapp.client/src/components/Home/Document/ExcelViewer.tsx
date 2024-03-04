@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx'; // Try importing XLSX like this
 
-import './ExcelViewer.css';
+import './Styles/ExcelViewer.css';
 
 const ExcelViewer = ({ base64Data }) => {
     const [excelData, setExcelData] = useState([]);

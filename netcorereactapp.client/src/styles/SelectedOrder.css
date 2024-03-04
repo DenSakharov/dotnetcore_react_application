@@ -21,3 +21,7 @@
 .action-buttons button {
     margin: 10px;
 }
+.table-container {
+    max-height: 400px; /* Установите желаемую максимальную высоту */
+    overflow-y: auto;
+}
