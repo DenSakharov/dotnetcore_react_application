@@ -40,7 +40,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 //app.UseMiddleware<CustomTokenValidationMiddleware>();
-app.UseMiddleware<RequestLoggingMiddleware>();
+//app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseEndpoints(endpoints =>endpoints.MapControllers());
 

@@ -24,6 +24,26 @@ namespace netcorereactapp.Server.Services.FileServices
             }
             return temp_file_name;
         }
+        public async Task<bool> DeleteFile(string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                    return true; // Файл успешно удален
+                }
+                else
+                {
+                    return false; // Файл не найден
+                }
+            }
+            catch (Exception ex)
+            {
+                // Обработка ошибок при удалении файла
+                return false;
+            }
+        }
         public async Task<string> ConvertToPDF(string filePath, string pdfOutputPath)
         {
             // Загрузка документа Word

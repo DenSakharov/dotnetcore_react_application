@@ -1,8 +1,8 @@
 import add_status_to_status from "../Services/StatusService.tsx";
-import {TypesStatus} from "../../../Models/TypesStatus.tsx";
+import {TypesStatus} from "../../../Models/OderStatusLogicsRelationships/TypesStatus.tsx";
 import {useState} from "react";
-import {StatusModel} from "../../../Models/StatusModel.tsx";
-import {AttachmentModel} from "../../../Models/AttachmentModel.tsx";
+import {StatusModel} from "../../../Models/OderStatusLogicsRelationships/StatusModel.tsx";
+import {AttachmentModel} from "../../../Models/OderStatusLogicsRelationships/AttachmentModel.tsx";
 
 export const AddChildStatusToStatus =(props)=>{
     const statusChildId: number=props.selectedChildStatusId

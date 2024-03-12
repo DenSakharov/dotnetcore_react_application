@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "netcorereactapp.Server", "netcorereactapp.Server\netcorereactapp.Server.csproj", "{7CF760A1-9DAC-450C-9CFF-7DAD5D1F56F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "netcorereactapp.Server", "netcorereactapp.Server\netcorereactapp.Server.csproj", "{7CF760A1-9DAC-450C-9CFF-7DAD5D1F56F8}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "netcorereactapp.client", "netcorereactapp.client\netcorereactapp.client.esproj", "{53FB60C0-FC2C-4276-89E9-F4724505A256}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "netcore.console", "test\netcore.console.csproj", "{6BD5A56E-6362-46C2-B7C8-DC0E505E36DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassesLibrary", "ClassesLibrary\ClassesLibrary.csproj", "{7675FAA8-54AE-4CB4-A9DC-C6BF42E95148}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +27,14 @@ Global
 		{53FB60C0-FC2C-4276-89E9-F4724505A256}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53FB60C0-FC2C-4276-89E9-F4724505A256}.Release|Any CPU.Build.0 = Release|Any CPU
 		{53FB60C0-FC2C-4276-89E9-F4724505A256}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{6BD5A56E-6362-46C2-B7C8-DC0E505E36DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BD5A56E-6362-46C2-B7C8-DC0E505E36DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BD5A56E-6362-46C2-B7C8-DC0E505E36DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BD5A56E-6362-46C2-B7C8-DC0E505E36DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7675FAA8-54AE-4CB4-A9DC-C6BF42E95148}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7675FAA8-54AE-4CB4-A9DC-C6BF42E95148}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7675FAA8-54AE-4CB4-A9DC-C6BF42E95148}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7675FAA8-54AE-4CB4-A9DC-C6BF42E95148}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

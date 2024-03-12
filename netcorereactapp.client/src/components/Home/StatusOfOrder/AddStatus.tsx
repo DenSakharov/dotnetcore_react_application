@@ -1,7 +1,7 @@
 ﻿import axios from "axios";
 import { useState } from "react";
-import OrderModel from "../../../Models/OrderModel.tsx";
-import {TypesStatus} from "../../../Models/TypesStatus.tsx";
+import OrderModel from "../../../Models/OderStatusLogicsRelationships/OrderModel.tsx";
+import {TypesStatus} from "../../../Models/OderStatusLogicsRelationships/TypesStatus.tsx";
 
 export default function AddStatus({ order, closeModal }: { order: OrderModel | null, closeModal: () => void }) {
     const [selectedStatus, setSelectedStatus] = useState("");
@@ -15,7 +15,6 @@ export default function AddStatus({ order, closeModal }: { order: OrderModel | n
         try {
             if (order && selectedStatus !== undefined) {
                 const tokenValue = localStorage.getItem("authToken");
-
                 const status = selectedStatus
                 // Создаем объект FormData для передачи данных файла
                 const formData = new FormData();

@@ -1,5 +1,5 @@
 import axios from "axios";
-import {StatusModel} from "../../../Models/StatusModel.tsx";
+import {StatusModel} from "../../../Models/OderStatusLogicsRelationships/StatusModel.tsx";
 
 export default async function add_status_to_status(id_status: number,statusModel: FormData){
 

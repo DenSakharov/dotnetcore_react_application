@@ -22,6 +22,131 @@ namespace netcorereactapp.Server.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ClassesLibrary.Models.Attachemnt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AttachmentData")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Caption")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DateOfCreture")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateOfEdited")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("OperationId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProccedId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OperationId");
+
+                    b.HasIndex("ProccedId");
+
+                    b.ToTable("Attachemnts");
+                });
+
+            modelBuilder.Entity("ClassesLibrary.Models.History", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Caption")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DateOfCreture")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateOfEdited")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProccesId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProccesId");
+
+                    b.ToTable("Histories");
+                });
+
+            modelBuilder.Entity("ClassesLibrary.Models.Operation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Caption")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DateOfCreture")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateOfEdited")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("ParentOperationId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProccesId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentOperationId");
+
+                    b.HasIndex("ProccesId");
+
+                    b.ToTable("Operations");
+                });
+
+            modelBuilder.Entity("ClassesLibrary.Models.Procces", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Caption")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DateOfCreture")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateOfEdited")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Procceses");
+                });
+
             modelBuilder.Entity("netcorereactapp.Server.Models.AttachmentModels", b =>
                 {
                     b.Property<int>("Id")
@@ -151,6 +276,53 @@ namespace netcorereactapp.Server.Migrations
                     b.ToTable("StatusesOfOrders");
                 });
 
+            modelBuilder.Entity("ClassesLibrary.Models.Attachemnt", b =>
+                {
+                    b.HasOne("ClassesLibrary.Models.Operation", "Operation")
+                        .WithMany("Attachments")
+                        .HasForeignKey("OperationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClassesLibrary.Models.Procces", "Procces")
+                        .WithMany("Attachments")
+                        .HasForeignKey("ProccedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Operation");
+
+                    b.Navigation("Procces");
+                });
+
+            modelBuilder.Entity("ClassesLibrary.Models.History", b =>
+                {
+                    b.HasOne("ClassesLibrary.Models.Procces", "Procces")
+                        .WithMany("Histories")
+                        .HasForeignKey("ProccesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Procces");
+                });
+
+            modelBuilder.Entity("ClassesLibrary.Models.Operation", b =>
+                {
+                    b.HasOne("ClassesLibrary.Models.Operation", "ParentOperation")
+                        .WithMany("ChildsOperations")
+                        .HasForeignKey("ParentOperationId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ClassesLibrary.Models.Procces", "Procces")
+                        .WithMany("Operations")
+                        .HasForeignKey("ProccesId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("ParentOperation");
+
+                    b.Navigation("Procces");
+                });
+
             modelBuilder.Entity("netcorereactapp.Server.Models.AttachmentModels", b =>
                 {
                     b.HasOne("netcorereactapp.Server.Models.StatusModels", "StatusModel")
@@ -189,6 +361,22 @@ namespace netcorereactapp.Server.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("ParentStatus");
+                });
+
+            modelBuilder.Entity("ClassesLibrary.Models.Operation", b =>
+                {
+                    b.Navigation("Attachments");
+
+                    b.Navigation("ChildsOperations");
+                });
+
+            modelBuilder.Entity("ClassesLibrary.Models.Procces", b =>
+                {
+                    b.Navigation("Attachments");
+
+                    b.Navigation("Histories");
+
+                    b.Navigation("Operations");
                 });
 
             modelBuilder.Entity("netcorereactapp.Server.Models.OrderModels", b =>

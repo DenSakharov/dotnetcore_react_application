@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ClassesLibrary.Models;
+using Microsoft.EntityFrameworkCore;
 using netcorereactapp.Server.Controllers.Orders;
 using netcorereactapp.Server.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -12,6 +13,11 @@ namespace netcorereactapp.Server.Services.PostgreService
         public DbSet<StatusModels> StatusesOfOrders { get; set; } = null!;
         public DbSet<AttachmentModels> AttachmentsOfStatuses { get; set; } = null!;
         public DbSet<StatusEvent> StatusEventsOfModels { get; set; } = null!;
+
+        public DbSet<Procces>Procceses { get; set; } = null!;
+        public DbSet<Operation> Operations { get; set; } = null!;
+        public DbSet<Attachemnt> Attachemnts { get; set; } = null!;
+        public DbSet<History> Histories { get; set; } = null!;
         private readonly ILogger<ApplicationContext> _logger;
         public ApplicationContext(DbContextOptions<ApplicationContext> options, ILogger<ApplicationContext> logger)
             : base(options)
@@ -26,6 +32,7 @@ namespace netcorereactapp.Server.Services.PostgreService
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region Old dbset structure
             modelBuilder.Entity<OrderModels>()
                 .HasIndex(u => u.caption)
                 .IsUnique();
@@ -49,10 +56,39 @@ namespace netcorereactapp.Server.Services.PostgreService
                 .OnDelete(DeleteBehavior.Cascade); // При удалении родительского статуса, дочерние статусы также будут удалены
 
             modelBuilder.Entity<StatusEvent>()
-                .HasOne(order => order.Order)
+                .HasOne(statusEvent => statusEvent.Order)
                 .WithMany(ev => ev.StatusEvents)
                 .HasForeignKey(ev => ev.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
+            #endregion
+
+            #region
+            modelBuilder.Entity<Operation>()
+               .HasMany(operation => operation.Attachments)
+               .WithOne(attachment => attachment.Operation)
+               .HasForeignKey(attachment => attachment.OperationId)
+               .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Operation>()
+                .HasOne(operation => operation.Procces)
+                .WithMany(order => order.Operations)
+                .HasForeignKey(operation => operation.ProccesId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Operation>()
+                .HasMany(operation => operation.ChildsOperations)           
+                .WithOne(childOperation => childOperation.ParentOperation) 
+                .HasForeignKey(childOperation => childOperation.ParentOperationId) 
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<History>()
+               .HasOne(order => order.Procces)
+               .WithMany(ev => ev.Histories)
+               .HasForeignKey(ev => ev.ProccesId)
+               .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Attachemnt>()
+                .HasOne(attachment => attachment.Procces)
+                .WithMany(procces=> procces.Attachments)
+                .HasForeignKey(fk=>fk.ProccedId)
+                .OnDelete(DeleteBehavior.Cascade);
+            #endregion
         }
         public override void Dispose()
         {

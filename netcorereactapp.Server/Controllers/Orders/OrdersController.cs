@@ -1,14 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using netcorereactapp.Server.Models;
 using netcorereactapp.Server.Models.DataTransferObjects;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
-using System.Linq;
-using System.Net.Mail;
-using System.Text.Json;
 
 namespace netcorereactapp.Server.Controllers.Orders
 {

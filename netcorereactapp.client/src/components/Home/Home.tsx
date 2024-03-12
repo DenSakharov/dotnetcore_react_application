@@ -1,5 +1,5 @@
 ﻿import { useState } from 'react';
-import OrdersPage from './OrdersPage'
+import {OrdersPage} from './OrdersPage'
 
 import '../../styles/Home.css'
 

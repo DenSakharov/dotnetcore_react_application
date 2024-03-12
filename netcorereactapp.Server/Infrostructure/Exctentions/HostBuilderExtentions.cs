@@ -3,16 +3,16 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using netcorereactapp.Server.Controllers.Authentication;
 using netcorereactapp.Server.Infrostructure.Swagger;
-using netcorereactapp.Server.Services.AuthenctionServices.Interfaces;
 using netcorereactapp.Server.Services.AuthenctionServices;
-using System.Reflection;
-using netcorereactapp.Server.Services.PostgreService;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using Microsoft.AspNetCore.Mvc.Filters;
-using netcorereactapp.Server.Services.ModelServices.Interfaces;
-using netcorereactapp.Server.Services.ModelServices;
-using netcorereactapp.Server.Services.FileServices.Interfaces;
+using netcorereactapp.Server.Services.AuthenctionServices.Interfaces;
+using netcorereactapp.Server.Services.ExcelImportService;
+using netcorereactapp.Server.Services.ExcelImportService.Interfaces;
 using netcorereactapp.Server.Services.FileServices;
+using netcorereactapp.Server.Services.FileServices.Interfaces;
+using netcorereactapp.Server.Services.ModelServices;
+using netcorereactapp.Server.Services.ModelServices.Interfaces;
+using netcorereactapp.Server.Services.PostgreService;
+using System.Reflection;
 
 namespace netcorereactapp.Server.Infrostructure.Exctentions
 {
@@ -184,6 +184,9 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                 services.AddScoped<IOrderService,OrderSevice>();
                 services.AddScoped<IFileService, FileService>();
                 services.AddScoped<IStatusService, StatusService>();
+                services.AddScoped<IExcelImportService, ExcelImportService>();
+                services.AddScoped<IProccesService, ProccesService>();
+                services.AddScoped<IOperationService, OperationService>();
             });
             return hostBuilder;
         }

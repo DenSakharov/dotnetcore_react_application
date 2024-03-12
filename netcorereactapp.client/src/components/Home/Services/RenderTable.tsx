@@ -1,6 +1,5 @@
-import {StatusModel} from "../../../Models/StatusModel.tsx";
 import React from "react";
-import {statusMap} from "../../../Models/OrderModel.tsx";
+import {statusMap} from "../../../Models/OderStatusLogicsRelationships/OrderModel.tsx";
 export const renderStatus = (status, handleDownload, handleAddChildStatus) => {
     //console.log("status :\n"+status)
     return (
@@ -43,7 +42,7 @@ export const renderChildStatuses = (childStatuses, handleDownload, handleAddChil
             {renderStatus(childStatus, handleDownload, handleAddChildStatus)}
             {childStatus.childStatuses && childStatus.childStatuses.length > 0 && (
                 <tr>
-                    <td colSpan="5">
+                    <td colSpan="6">
                         <table>
                             <tbody>{renderChildStatuses(childStatus.childStatuses, handleDownload, handleAddChildStatus)}</tbody>
                         </table>

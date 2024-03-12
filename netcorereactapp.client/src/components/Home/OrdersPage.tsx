@@ -2,9 +2,10 @@
 import axios from 'axios';
 import AddOrderForm from './ModalWindows/AddOrderForm.tsx'
 import {Modal} from './ModalWindows/Modal.tsx';
-import OrderModel, {statusMap} from "../../Models/OrderModel.tsx";
+import OrderModel, {statusMap} from "../../Models/OderStatusLogicsRelationships/OrderModel.tsx";
+import {ModalCreateOrderFromExcel} from "./ModalWindows/ProccesComponents/ModalCreateOrderFromExcel.tsx";
 
-const OrdersPage: React.FC = () => {
+export const OrdersPage: React.FC = () => {
     const [orders, setOrders] = useState<OrderModel[]>([]);
     const fetchOrders = async () => {
         try {
@@ -84,8 +85,8 @@ const OrdersPage: React.FC = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = orders.slice(indexOfFirstItem, indexOfLastItem);
+    // #region Функции для переключения страниц
 
-    // Функции для переключения страниц
     const handleNextPage = () => {
         setCurrentPage(currentPage + 1);
     };
@@ -95,18 +96,34 @@ const OrdersPage: React.FC = () => {
             setCurrentPage(currentPage - 1);
         }
     };
+    //
+
+    const [isModalExcelExport, setModalExcelExport] = useState(false)
+    const clickExcelExport =(e)=>{
+        setModalExcelExport(!isModalExcelExport);
+    }
     return (
         <div>
-            <h1>Orders</h1>
-            <button onClick={toggleAddForm}>Add Order</button>
-
+            <h1>Заказы</h1>
+            <div>
+                <button onClick={toggleAddForm}>Добавить новый заказ</button>
+                <button onClick={clickExcelExport}>Добавить новый заказ по Excel шаблону</button>
+            </div>
             {showAddForm && (
                 <Modal
                     visible={showAddForm}
-                    title='Add Order'
+                    title='Добавить новый заказ'
                     content={<AddOrderForm onOrderAdded={handleOrderAdded}/>}
                     footer={<button onClick={toggleAddForm}>Close</button>}
                     onClose={toggleAddForm}
+                />
+            )}
+            {isModalExcelExport && (
+                <ModalCreateOrderFromExcel
+                    visible={isModalExcelExport}
+                    title='Импорт процесса из Excel'
+                    footer={<button onClick={clickExcelExport}>Close</button>}
+                    onClose={clickExcelExport}
                 />
             )}
             <div className="table-with-buttons">
@@ -179,5 +196,3 @@ const OrdersPage: React.FC = () => {
         </div>
     );
 };
-
-export default OrdersPage;

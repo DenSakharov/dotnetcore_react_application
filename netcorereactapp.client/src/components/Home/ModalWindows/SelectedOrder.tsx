@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import AddStatus from "../StatusOfOrder/AddStatus.tsx";
 import {get_current_order} from "../Services/GetCurrentOrder.tsx";
 import {fetchFile} from "../Services/DownloadFileService.tsx";
-import OrderModel, {statusMap} from "../../../Models/OrderModel.tsx";
-import {AttachmentModel} from "../../../Models/AttachmentModel.tsx";
+import OrderModel, {statusMap} from "../../../Models/OderStatusLogicsRelationships/OrderModel.tsx";
+import {AttachmentModel} from "../../../Models/OderStatusLogicsRelationships/AttachmentModel.tsx";
 import BodyElementStatuses from "../BodyElementStatuses.tsx";
 import {ModalStatusWindow} from "./ModalStatusWindow.tsx";
 

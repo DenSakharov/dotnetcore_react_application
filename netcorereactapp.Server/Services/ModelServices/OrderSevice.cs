@@ -1,16 +1,10 @@
-﻿using Azure.Core;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using netcorereactapp.Server.Controllers.Orders;
+﻿using Microsoft.EntityFrameworkCore;
 using netcorereactapp.Server.Models;
 using netcorereactapp.Server.Models.DataTransferObjects;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
 using System.Text;
-using System.Text.Json.Nodes;
 
 namespace netcorereactapp.Server.Services.ModelServices
 {
@@ -48,7 +42,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                         ParentId= status.ParentStatusId.HasValue ? status.ParentStatusId.Value : 0,
                         DateOfCreature = status.date_of_creature,
                         Attachments = MapAttachments(status.Attachments),
-                        ChildStatuses= status.ChildStatuses.Count != 0 ? rewrite_array_to_ChildStatusesDTO(status) : new List<StatusDTO>()
+                        //ChildStatuses= status.ChildStatuses.Count != 0 ? rewrite_array_to_ChildStatusesDTO(status) : new List<StatusDTO>()
                     }).ToList(),
                     Events = order.StatusEvents.Select(status => new StatusEventDTO
                     {
@@ -164,7 +158,7 @@ namespace netcorereactapp.Server.Services.ModelServices
           return null;
       }
   }*/
-        #endregion
+        
         void ProcessChildStatuses(StatusModels statusDTO, StringBuilder sb)
         {
             // Проверяем, есть ли у статуса дочерние статусы
@@ -204,29 +198,30 @@ namespace netcorereactapp.Server.Services.ModelServices
             }
             return list_of_AttacmentDTO;
         }
-        private List<StatusDTO> rewrite_array_to_ChildStatusesDTO
-          (StatusModels statusModel)
-        {
-            var list_of_AttacmentDTO = new List<StatusDTO>();
+        /*  private List<StatusDTO> rewrite_array_to_ChildStatusesDTO
+            (StatusModels statusModel)
+          {
+              var list_of_AttacmentDTO = new List<StatusDTO>();
 
-            var e = new StatusDTO();
-            e.DateOfCreature = statusModel.date_of_creature;
-            e.Attachments = MapAttachments(statusModel.Attachments);
-            e.Type = statusModel.type;
-            e.Id = statusModel.Id;
-            e.ParentId = statusModel.ParentStatusId.HasValue ? statusModel.ParentStatusId.Value : 0;
-            // Проверяем наличие дочерних статусов
-            if (statusModel.ChildStatuses != null && statusModel.ChildStatuses.Count!=0)
-            {
-                // Рекурсивно вызываем функцию для каждого дочернего статуса
-                foreach (var childStatus in statusModel.ChildStatuses)
-                {
-                    e.ChildStatuses = rewrite_array_to_ChildStatusesDTO(childStatus);
-                }
-            }
-            list_of_AttacmentDTO.Add(e);
-            return list_of_AttacmentDTO;
-        }
+              var e = new StatusDTO();
+              e.DateOfCreature = statusModel.date_of_creature;
+              e.Attachments = MapAttachments(statusModel.Attachments);
+              e.Type = statusModel.type;
+              e.Id = statusModel.Id;
+              e.ParentId = statusModel.ParentStatusId.HasValue ? statusModel.ParentStatusId.Value : 0;
+              // Проверяем наличие дочерних статусов
+              if (statusModel.ChildStatuses != null && statusModel.ChildStatuses.Count!=0)
+              {
+                  // Рекурсивно вызываем функцию для каждого дочернего статуса
+                  foreach (var childStatus in statusModel.ChildStatuses)
+                  {
+                      e.ChildStatuses = rewrite_array_to_ChildStatusesDTO(childStatus);
+                  }
+              }
+              list_of_AttacmentDTO.Add(e);
+              return list_of_AttacmentDTO;
+          }*/
+        #endregion
         private List<StatusDTO> MapChildStatuses(List<StatusModels> allStatuses)
         {
             var childStatusDTOs = new List<StatusDTO>();

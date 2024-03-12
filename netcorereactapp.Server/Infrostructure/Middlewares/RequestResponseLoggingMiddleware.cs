@@ -20,7 +20,7 @@ namespace netcorereactapp.Server.Infrostructure.Middlewares
             try
             {
 
-                LogRequestInformation(context);
+                await LogRequestInformation(context);
                 await _next(context);
             }
             catch (Exception ex)
@@ -39,9 +39,11 @@ namespace netcorereactapp.Server.Infrostructure.Middlewares
             }
         }
 
-        private void LogRequestInformation(HttpContext context)
+        private async Task LogRequestInformation(HttpContext context)
         {
+            var requestBody = await new StreamReader(context.Request.Body).ReadToEndAsync();
             _logger.LogInformation($"Request {context.Request?.Method} {context.Request?.Path.Value} => {context.Response?.StatusCode}");
+            _logger.LogInformation($"Request body: {requestBody}");
             Console.WriteLine($"Request {context.Request?.Method} {context.Request?.Path.Value} => {context.Response?.StatusCode}");
 
             // Логирование другой информации о запросе, если необходимо
