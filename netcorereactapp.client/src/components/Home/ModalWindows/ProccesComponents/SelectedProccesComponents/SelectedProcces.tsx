@@ -1,11 +1,11 @@
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Procces} from "../../../../../Models/ProccesOperation/Procces.tsx";
 import axios from "axios";
 import config from "../../../../../config/config.json";
-import {CircularProgress, List, ListItem, ListItemText, TextField, Typography} from "@mui/material";
+import {CircularProgress, Collapse, List, ListItem, ListItemText, TextField, Typography} from "@mui/material";
 import { styled } from '@mui/system';
 import {Operation} from "../../../../../Models/ProccesOperation/Operation.tsx";
-
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 export const SelectedProcces = ({ int }: { int: string }) =>{
     const [selectedProcces,setSelectedProcces]=useState<Procces|null>()
     const [operations,setOperations]=useState<Operation[]>()
@@ -32,7 +32,7 @@ export const SelectedProcces = ({ int }: { int: string }) =>{
                 })
             if(response)
             {
-                //console.log(response.data)
+                console.log(response.data)
                 setSelectedProcces(response.data);
             }
         }
@@ -51,7 +51,7 @@ export const SelectedProcces = ({ int }: { int: string }) =>{
     const handleTextFieldChange = (event) => {
         const { name, value } = event.target;
         const valu = inputRef.current.value;
-        console.log('Value changed:', valu);
+        //console.log('Value changed:', valu);
         setSelectedProcces(prevProcces => ({
             ...prevProcces,
             [name]: value
@@ -81,6 +81,15 @@ export const SelectedProcces = ({ int }: { int: string }) =>{
                             onChange={handleTextFieldChange}
                             autoFocus
                         />
+                        <div>
+                            { selectedProcces.attachments &&
+                                selectedProcces.attachments.map(attachment => (
+                                    <li key={attachment.id} >
+                                        {attachment.attachmentData}
+                                    </li>
+                                ))
+                            }
+                        </div>
                     </CenteredDivRow>
                     {operations!==undefined &&operations!==null &&(
                     <OperationList operations={operations}/>
@@ -94,32 +103,51 @@ interface Props {
     operations: Operation[];
 }
 
-export const OperationList: React.FC<Props> = ({ operations }) => {
+const OperationList = ({ operations }) => {
     return (
         <List>
-            {operations?.map( (operation) => {
-                console.info(operation.childsOperations)
-                return(
-                    <ListItem key={operation.id}>
-                        <ListItemText primary={`ID: ${operation.id}`}/>
-                        <ListItemText primary={`caption: ${operation.caption}`}/>
-                        <ListItemText primary={`Parent Operation ID: ${operation.parentOperationId}`}/>
-                        <ListItemText primary="Attachments:"/>
-                        <List>
-                            {operation.attachments?.map((attachment) => (
-                                <ListItem key={attachment.id}>
-                                    <ListItemText primary={`Attachment ID: ${attachment.id}`}/>
-                                    <ListItemText primary={`Attachment Data: ${attachment.attachmentData}`}/>
-                                </ListItem>
-                            ))}
-                        </List>
-                        <ListItemText primary="Child Operations:"/>
-                        <OperationList operations={operation.childsOperations}/>
-                    </ListItem>
-                )
-            }
-            )}
+            {/* Отображение каждой операции в виде списка */}
+            {operations.map(operation => (
+                <OperationListItem key={operation.id} operation={operation} />
+            ))}
         </List>
+    );
+};
+const OperationListItem = ({ operation }) => {
+    const [open, setOpen] = useState(false);
+
+    const handleClick = () => {
+        setOpen(!open);
+    };
+
+    return (
+        <>
+            <ListItem button onClick={handleClick}>
+                {/*<ListItemText primary={`Номер : ${operation.id}`} />*/}
+                <ListItemText primary={` ${operation.caption}`}/>
+                {/* <ListItemText primary={`Parent Operation ID: ${operation.parentOperationId}`} />*/}
+                <div>
+                    {operation.attachments &&
+                        operation.attachments.map(attachment => (
+                            <li key={attachment.id}>
+                                {attachment.attachmentData}
+                            </li>
+                        ))
+                    }
+                </div>
+                {open ? <ExpandLess/> : <ExpandMore/>}
+            </ListItem>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                    {/* Рекурсивный вызов OperationListItem для вложенных операций */}
+                    {operation.childsOperations &&
+                        operation.childsOperations.map(childOperation => (
+                            <OperationListItem key={childOperation.id} operation={childOperation}/>
+                        ))
+                    }
+                </List>
+            </Collapse>
+        </>
     );
 };
 export const CenteredDivRow = styled('div')({

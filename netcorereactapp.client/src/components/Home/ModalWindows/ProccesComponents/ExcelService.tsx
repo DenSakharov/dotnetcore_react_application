@@ -10,7 +10,7 @@ import config from '../../../../config/config.json';
 import "../../../../styles/ExcelService.css"
 
 export default function ExcelService(props) {
-    const [selectedFile, setSelectedFile] = useState(null)
+    const [selectedFile, setSelectedFile] = useState()
     const [errorMessage, setErrorMessage] = useState("");
     const [procces,setProcces]=useState<Procces>(null)
 
@@ -68,6 +68,9 @@ export default function ExcelService(props) {
     const confirmEditedOperation = async () => {
         const tokenValue = localStorage.getItem("authToken");
         //console.log(procces)
+        /*const formData = new FormData();
+        formData.append('files', selectedFiles);
+        formData.append('procces', procces);*/
         try {
             const response = await axios.put(
                 `${config.apiUrl}/procces/updatemodel`, // URL для обновления операции по ее идентификатору

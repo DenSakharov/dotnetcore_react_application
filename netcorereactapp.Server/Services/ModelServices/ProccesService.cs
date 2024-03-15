@@ -24,7 +24,9 @@ namespace netcorereactapp.Server.Services.ModelServices
             _dbContext.Entry(operation)
                 .Collection(o => o.ChildsOperations)
                 .Load();
-
+            _dbContext.Entry(operation)
+                .Collection(o => o.Attachments)
+                .Load();
             foreach (var childOperation in operation.ChildsOperations)
             {
                 LoadChildOperationsRecursive(childOperation);
@@ -40,6 +42,7 @@ namespace netcorereactapp.Server.Services.ModelServices
 
                 var existingProcces = _dbContext.Procceses
                     .Include(p => p.Operations)
+                        .ThenInclude(o => o.Attachments)
                     .Include(p => p.Attachments)
                     .FirstOrDefault(p => p.Id == id);
 
@@ -133,8 +136,11 @@ namespace netcorereactapp.Server.Services.ModelServices
                             await _dbContext.SaveChangesAsync();
                             existingSelectedProcces.Attachments.Add(attachment);
                             await _dbContext.SaveChangesAsync();
+
+
                         }
                     }
+                    await transaction.CommitAsync();
                     return existingSelectedProcces;
                 }
                 catch (Exception ex) { return null; }
