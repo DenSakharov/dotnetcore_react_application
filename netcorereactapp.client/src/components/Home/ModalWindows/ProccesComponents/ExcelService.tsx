@@ -1,18 +1,28 @@
 import axios from "axios";
-import  {useState} from "react";
+import {useEffect, useState} from "react";
 import {Procces} from "../../../../Models/ProccesOperation/Procces.tsx";
 import {OperationTable} from "./OperationTable.tsx";
 import {formatDate} from "../../Services/DateTimeConverterService.tsx";
 import {Operation} from "../../../../Models/ProccesOperation/Operation.tsx";
+import SelectingFiles from "./SelectingMultipleFilesForAttachments/SelectingFiles.tsx";
+import config from '../../../../config/config.json';
+
+import "../../../../styles/ExcelService.css"
 
 export default function ExcelService(props) {
     const [selectedFile, setSelectedFile] = useState(null)
     const [errorMessage, setErrorMessage] = useState("");
     const [procces,setProcces]=useState<Procces>(null)
+
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    useEffect(() => {
+        console.log("ExcelService useEffect selectedFiles :\n",selectedFiles)
+    }, [selectedFiles]);
     function handleFileChange(event) {
         const file = event.target.files[0];
         setSelectedFile(file)
     }
+
     const exportExcelFile = async () => {
         const tokenValue = localStorage.getItem("authToken");
         // Создаем объект FormData для передачи данных файла
@@ -20,7 +30,7 @@ export default function ExcelService(props) {
         formData.append('file', selectedFile);
 
         const response = await axios.post(
-            `https://localhost:7294/excelimport/import`,
+            `${config.apiUrl}/excelimport/import`,
             formData, // Передаем FormData вместо обычного объекта
             {
                 headers: {
@@ -60,7 +70,7 @@ export default function ExcelService(props) {
         //console.log(procces)
         try {
             const response = await axios.put(
-                `https://localhost:7294/procces/updatemodel`, // URL для обновления операции по ее идентификатору
+                `${config.apiUrl}/procces/updatemodel`, // URL для обновления операции по ее идентификатору
                 procces, // Передаем отредактированный объект
                 {
                     headers: {
@@ -69,8 +79,12 @@ export default function ExcelService(props) {
                     },
                 }
             );
-            console.log("Response from confirmEditedOperation:", response.data);
-            props.onClose()
+            //console.log("Response from confirmEditedOperation:", response.data);
+            if(response.status==200)
+            {
+               const res= await addingAttachmentsToProcces()
+                //props.onClose()
+            }
             // Возможно, здесь вы захотите обновить состояние приложения или выполнить другие действия
         } catch (error) {
             console.error("Error while confirming edited operation:", error);
@@ -86,8 +100,38 @@ export default function ExcelService(props) {
         };
         // Обновляем состояние процесса
         setProcces(updatedProcces);
-        console.log(procces)
+        //console.log(procces)
     };
+    //code for adding files to procces from component SelectingFiles
+    const handleSelectedFilesChange = (files) => {
+        //console.log("Files after added :\n",files)
+        setSelectedFiles(files);
+    };
+    const addingAttachmentsToProcces = async ()=>{
+        const tokenValue = localStorage.getItem("authToken");
+
+        const formData = new FormData();
+        //console.log("files",selectedFiles)
+        selectedFiles.forEach((file, index) => {
+            formData.append(`file${index}`, file);
+        });
+
+        const response = await axios.put(
+            `${config.apiUrl}/procces/${procces.id}/updatefile`,
+            formData, // Передаем FormData вместо обычного объекта
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Устанавливаем заголовок для FormData
+                    Authorization: `Bearer ${tokenValue}`,
+                },
+            }
+        );
+        //console.log(response.status)
+        if(response.status==200)
+        {
+            props.onClose()
+        }
+    }
     return (
         <div>
             <div className="file-upload">
@@ -102,15 +146,34 @@ export default function ExcelService(props) {
             <div>
                 {procces && (
                     <>
-                        <p>ID: {procces.id}</p>
-                        <p>Caption: <input type="text" name="caption" value={procces.caption}
-                                           onChange={onChangeLocal}/></p>
-                        <p>Date of Creation: <input type="datetime-local" name="dateOfCreation"
-                                                    value={formatDate(procces.dateOfCreture)}
-                                                    readOnly/></p>
-                        <p>Date of Editing: <input type="datetime-local" name="dateOfEditing"
-                                                   value={formatDate(procces.dateOfEdited)}
-                                                   readOnly/></p>
+                        <div className="container">
+                            <div className="grid">
+                                <div className="row">
+                                    <div className="col">
+                                        <h3>Номер : {procces.id}</h3>
+                                    </div>
+                                    <div className="col">
+                                        <h3>Название : <input type="text" name="caption" value={procces.caption}
+                                                           onChange={onChangeLocal}/></h3>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col">
+                                        <h3>Дата создания : <input type="datetime-local" name="dateOfCreation"
+                                                                    value={formatDate(procces.dateOfCreture)}
+                                                                    readOnly/></h3>
+                                    </div>
+                                    <div className="col">
+                                        <h3>Дата редактирования : <input type="datetime-local" name="dateOfEditing"
+                                                                   value={formatDate(procces.dateOfEdited)}
+                                                                   readOnly/></h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <SelectingFiles onSelectedFilesChange={handleSelectedFilesChange}/>
+                            </div>
+                        </div>
                         <OperationTable operations={procces.operations} onOperationUpdate={updateOperationInProcess}/>
                     </>
                 )}

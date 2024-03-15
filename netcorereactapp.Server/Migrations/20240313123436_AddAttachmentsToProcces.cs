@@ -10,12 +10,19 @@ namespace netcorereactapp.Server.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<int>(
+                name: "OperationId",
+                table: "Attachemnts",
+                type: "integer",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "integer");
+
             migrationBuilder.AddColumn<int>(
                 name: "ProccedId",
                 table: "Attachemnts",
                 type: "integer",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Attachemnts_ProccedId",
@@ -45,6 +52,16 @@ namespace netcorereactapp.Server.Migrations
             migrationBuilder.DropColumn(
                 name: "ProccedId",
                 table: "Attachemnts");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "OperationId",
+                table: "Attachemnts",
+                type: "integer",
+                nullable: false,
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "integer",
+                oldNullable: true);
         }
     }
 }

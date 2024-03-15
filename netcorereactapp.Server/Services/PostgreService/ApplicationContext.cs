@@ -70,7 +70,7 @@ namespace netcorereactapp.Server.Services.PostgreService
                .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Operation>()
                 .HasOne(operation => operation.Procces)
-                .WithMany(order => order.Operations)
+                .WithMany(procces => procces.Operations)
                 .HasForeignKey(operation => operation.ProccesId)
                 .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Operation>()
@@ -78,11 +78,13 @@ namespace netcorereactapp.Server.Services.PostgreService
                 .WithOne(childOperation => childOperation.ParentOperation) 
                 .HasForeignKey(childOperation => childOperation.ParentOperationId) 
                 .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<History>()
-               .HasOne(order => order.Procces)
-               .WithMany(ev => ev.Histories)
-               .HasForeignKey(ev => ev.ProccesId)
+               .HasOne(history => history.Procces)
+               .WithMany(procces => procces.Histories)
+               .HasForeignKey(history => history.ProccesId)
                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Attachemnt>()
                 .HasOne(attachment => attachment.Procces)
                 .WithMany(procces=> procces.Attachments)

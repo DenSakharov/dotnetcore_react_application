@@ -1,7 +1,8 @@
 ﻿import axios from "axios";
 import { useState } from "react";
-import OrderModel from "../../../Models/OderStatusLogicsRelationships/OrderModel.tsx";
-import {TypesStatus} from "../../../Models/OderStatusLogicsRelationships/TypesStatus.tsx";
+import OrderModel from "../../../../../Models/OderStatusLogicsRelationships/OrderModel.tsx";
+import {TypesStatus} from "../../../../../Models/OderStatusLogicsRelationships/TypesStatus.tsx";
+import config from '../../../../../config/config.json'
 
 export default function AddStatus({ order, closeModal }: { order: OrderModel | null, closeModal: () => void }) {
     const [selectedStatus, setSelectedStatus] = useState("");
@@ -22,7 +23,7 @@ export default function AddStatus({ order, closeModal }: { order: OrderModel | n
                 formData.append('file', selectedFile); // Предположим, что selectedFile содержит выбранный файл
 
                 const response = await axios.put(
-                    `https://localhost:7294/orders/${order.id}/updatestatus`,
+                    `${config.apiUrl}/orders/${order.id}/updatestatus`,
                     formData, // Передаем FormData вместо обычного объекта
                     {
                         headers: {

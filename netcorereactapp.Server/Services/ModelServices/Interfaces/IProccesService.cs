@@ -5,6 +5,10 @@ namespace netcorereactapp.Server.Services.ModelServices.Interfaces
 {
     public interface IProccesService
     {
-        public Task<Procces> test(ProccesDTO editedProcces);
+        public Task<ProccesDTO> GetCurrent(int id);
+
+        public Task<(List<Procces>, int)> GetAll(int page, int pageSize);
+        public Task<Procces> UpdateProcces(ProccesDTO editedProcces);
+        public Task<Procces> AddingAttachmentsToSelectedProcces(int proccesId, IFormFileCollection files);
     }
 }

@@ -1,0 +1,8 @@
+.container {
+    display: flex;
+    align-items: center; /* Выравниваем содержимое по вертикали */
+}
+
+.styled-button {
+    margin-left: 50px; /* Добавляем небольшой отступ между кнопкой и содержимым справа */
+}

@@ -1,5 +1,6 @@
-﻿import React, { useState } from 'react';
+﻿import { useState } from 'react';
 import axios from 'axios';
+import config from '../../../../config/config.json'
 const AddOrderForm = ({ onOrderAdded }) => {
     const [newOrder, setNewOrder] = useState({
         caption: '',
@@ -37,7 +38,7 @@ const AddOrderForm = ({ onOrderAdded }) => {
             const tokenValue = localStorage.getItem("authToken");
 
             // Отправляем объединенный объект FormData
-            const response = await axios.post('https://localhost:7294/orders/createorder', formDataData, {
+            const response = await axios.post(`${config.apiUrl}/orders/createorder`, formDataData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${tokenValue}`,

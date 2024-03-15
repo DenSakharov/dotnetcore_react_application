@@ -32,15 +32,35 @@ namespace netcorereactapp.Server.Controllers.ProccesController
             _fileService = fileService;
             _proccesService = proccesService;
             _operationService = operationService;
-            _logger.LogInformation("ProccesController is called.");
+            //_logger.LogInformation("ProccesController is called.");
+        }
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<ProccesDTO> GetCurrent(int id)
+        {
+            var proccesDTO = await _proccesService.GetCurrent(id);
+            return proccesDTO;
+        }
+        [HttpGet]
+        [Route("all")]
+        public async Task<List<Procces>> GetAll()
+        {
+            return _dbContext.Procceses.OrderByDescending(proc=>proc.Id).ToList();
+        }
+        [HttpGet]
+        [Route("all/{page}/{pagesize}")]
+        public async  Task<IActionResult> GetSelectedProcces(int page,int pagesize)
+        {
+            var (procceses, totalCount) = await _proccesService.GetAll(page, pagesize);
+
+            return Ok(new { procceses, totalCount });
         }
         [HttpPut]
         [Route("updatemodel")]
         public async Task<IActionResult> ConfirmEditedOperation( ProccesDTO editedProcces
             )
         {
-            
-            var res = await _proccesService.test(editedProcces);
+            var res = await _proccesService.UpdateProcces(editedProcces);
             if (res != null)
             {
                 return Ok(res);
@@ -50,43 +70,17 @@ namespace netcorereactapp.Server.Controllers.ProccesController
                 return StatusCode(500, $"Internal server error");
             }
         }
-    }
-    public class ProccesViewModel
-    {
-        public int Id { get; set; }
-        public string Caption { get; set; }
-        public DateTime DateOfCreation { get; set; }
-        public DateTime DateOfEdited { get; set; }
-        public List<OperationViewModel>? Operations { get; set; } = new List<OperationViewModel>();
-        public List<HistoryViewModel>? Histories { get; set; } = new List<HistoryViewModel>();
-    }
-
-    public class OperationViewModel
-    {
-        public int Id { get; set; }
-        public string Caption { get; set; }
-        public DateTime DateOfCreation { get; set; }
-        public DateTime DateOfEdited { get; set; }
-        public List<AttachmentViewModel>? Attachments { get; set; }= new List<AttachmentViewModel>();
-        public int? ParentOperationId { get; set; }
-        public List<OperationViewModel>? ChildsOperations { get; set; }=new List<OperationViewModel>();
-    }
-
-    public class AttachmentViewModel
-    {
-        public int Id { get; set; }
-        public string Caption { get; set; }
-        public DateTime DateOfCreation { get; set; }
-        public DateTime DateOfEdited { get; set; }
-        public string AttachmentData { get; set; }
-    }
-
-    public class HistoryViewModel
-    {
-        public int Id { get; set; }
-        public string Caption { get; set; }
-        public DateTime DateOfCreation { get; set; }
-        public DateTime DateOfEdited { get; set; }
-        public string Message { get; set; }
+        [HttpPut]
+        [Route("{proccedId}/updatefile")]
+        public async Task<IActionResult> UpdateProccesesFiles(int proccedId, IFormCollection form
+            )
+        {
+            var res=await _proccesService.AddingAttachmentsToSelectedProcces(proccedId,form.Files);
+            if (res != null)
+            {
+                return Ok(res);
+            }
+            return StatusCode(500, "Saving files error");
+        }
     }
 }

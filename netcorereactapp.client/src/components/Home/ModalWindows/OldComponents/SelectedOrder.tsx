@@ -1,14 +1,14 @@
 ﻿import axios from "axios";
 import React, { useEffect, useState } from "react";
-import AddStatus from "../StatusOfOrder/AddStatus.tsx";
-import {get_current_order} from "../Services/GetCurrentOrder.tsx";
-import {fetchFile} from "../Services/DownloadFileService.tsx";
-import OrderModel, {statusMap} from "../../../Models/OderStatusLogicsRelationships/OrderModel.tsx";
-import {AttachmentModel} from "../../../Models/OderStatusLogicsRelationships/AttachmentModel.tsx";
-import BodyElementStatuses from "../BodyElementStatuses.tsx";
+import AddStatus from "../../StatusOfOrder/AddStatus.tsx";
+import {get_current_order} from "../../Services/GetCurrentOrder.tsx";
+import {fetchFile} from "../../Services/DownloadFileService.tsx";
+import OrderModel, {statusMap} from "../../../../Models/OderStatusLogicsRelationships/OrderModel.tsx";
+import {AttachmentModel} from "../../../../Models/OderStatusLogicsRelationships/AttachmentModel.tsx";
+import BodyElementStatuses from "../../BodyElementStatuses.tsx";
 import {ModalStatusWindow} from "./ModalStatusWindow.tsx";
-
-import '../../../styles/SelectedOrder.css'
+import config from '../../../../config/config.json'
+import '../../../../styles/SelectedOrder.css'
 export const SelectedOrder:
     React.FC<{ orderInput: OrderModel | null; closeModal: () => void }>
     = ({ orderInput, closeModal }) => {
@@ -77,7 +77,7 @@ export const SelectedOrder:
             const tokenValue = localStorage.getItem("authToken");
             const id = order.id;
             if (typeof closeModal === 'function') {
-                const response = await axios.delete(`https://localhost:7294/orders/${id}`, {
+                const response = await axios.delete(`${config.apiUrl}/orders/${id}`, {
                     headers: {
                         Authorization: `Bearer ${tokenValue}`,
                     },

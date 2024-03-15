@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import config from '../../../config/config.json'
 import './History.css'
 interface HistoryItem {
     id: number;
@@ -12,7 +12,7 @@ export const History = ({ orderId }) => {
         const fetchData = async () => {
             try {
                 const tokenValue = localStorage.getItem("authToken");
-                const response = await axios.get(`https://localhost:7294/history/${orderId}`, {
+                const response = await axios.get(`${config.apiUrl}/history/${orderId}`, {
                     headers: {
                         Authorization: `Bearer ${tokenValue}`,
                     },

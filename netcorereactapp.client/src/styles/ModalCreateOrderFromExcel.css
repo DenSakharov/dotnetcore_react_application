@@ -1,0 +1,10 @@
+.modal-dialog{
+    max-width: 900px;
+
+}
+.modal-content{
+    overflow: scroll;
+    overflow-x: hidden;
+    scrollbar-color: darkgreen darkslategrey;
+    scrollbar-width: thin;
+}

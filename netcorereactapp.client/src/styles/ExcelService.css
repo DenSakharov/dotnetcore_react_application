@@ -1,0 +1,24 @@
+.container {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.row {
+    display: grid;
+    flex-direction: row;
+}
+
+.col {
+    flex: 2;
+}
+
+input {
+    /* Добавьте стили по вашему усмотрению */
+    font-weight: bold;
+}

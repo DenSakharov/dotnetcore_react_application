@@ -44,10 +44,10 @@ namespace netcorereactapp.Server.Migrations
                     b.Property<DateTime>("DateOfEdited")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("OperationId")
+                    b.Property<int?>("OperationId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ProccedId")
+                    b.Property<int?>("ProccedId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -281,14 +281,12 @@ namespace netcorereactapp.Server.Migrations
                     b.HasOne("ClassesLibrary.Models.Operation", "Operation")
                         .WithMany("Attachments")
                         .HasForeignKey("OperationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ClassesLibrary.Models.Procces", "Procces")
                         .WithMany("Attachments")
                         .HasForeignKey("ProccedId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Operation");
 

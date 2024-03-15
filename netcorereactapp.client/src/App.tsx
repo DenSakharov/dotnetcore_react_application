@@ -22,7 +22,6 @@ export const CheckAccessToData = () => {
     if (!isAuthenticated()) {
         return <Navigate to="/login" />;
     }
-
     return (
         <div>
             <Data/>

@@ -7,5 +7,6 @@ namespace ClassesLibrary.DataTransferObjects
        
         public List<OperationDTO>? Operations { get; set; } = new List<OperationDTO>();
         public List<HistoryDTO>? Histories { get; set; } = new List<HistoryDTO>();
+        public List<AttachmentDTO>? Attachments { get; set; } = new List<AttachmentDTO>();
     }
 }

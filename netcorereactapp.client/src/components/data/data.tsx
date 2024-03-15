@@ -1,5 +1,6 @@
 import React, { useState, useEffect, MouseEventHandler } from 'react';
 import axios from 'axios';
+import config from '../../config/config.json';
 import '../../styles/data.css'
 const Data = () => {
     const [secureData, setSecureData] = useState('');
@@ -7,7 +8,7 @@ const Data = () => {
         try {
             try {
                 const tokenValue = localStorage.getItem("authToken");
-                const response = await axios.get('https://localhost:7294/data/GetSecureData', {
+                const response = await axios.get(`${config.apiUrl}/data/GetSecureData`, {
                     headers: {
                         Authorization: `Bearer ${tokenValue}`,
                     },
@@ -28,7 +29,7 @@ const Data = () => {
         try {
             try {
                 const tokenValue = localStorage.getItem("authToken");
-                const response = await axios.get('https://localhost:7294/data/GetSecureDataForAdmin', {
+                const response = await axios.get(`${config.apiUrl}/data/GetSecureDataForAdmin`, {
                     headers: {
                         Authorization: `Bearer ${tokenValue}`,
                     },

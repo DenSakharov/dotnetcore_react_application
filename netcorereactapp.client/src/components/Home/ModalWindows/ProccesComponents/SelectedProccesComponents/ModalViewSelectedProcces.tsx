@@ -1,7 +1,7 @@
 import {useEffect} from "react";
-import ExcelService from "./ExcelService.tsx";
+import {SelectedProcces} from "./SelectedProcces.tsx";
 
-export const ModalCreateOrderFromExcel = (props) => {
+export default function ModalViewSelectedProcces(props){
     // обработчик нажатия клавиши Esc
     const onKeydown = ({ key }: KeyboardEvent) => {
         switch (key) {
@@ -27,7 +27,7 @@ export const ModalCreateOrderFromExcel = (props) => {
                     </span>
                 </div>
                 <div className='modal-content'>
-                    <ExcelService onClose={props.onClose}/>
+                    <SelectedProcces int={props.proccesId}/>
                 </div>
                 {props.footer && <div className='modal-footer'>{props.footer}</div>}
             </div>

@@ -10,6 +10,7 @@ namespace ClassesLibrary.Services
             var childOperationsDTOs = new List<OperationDTO>();
             foreach (var operation in operations)
             {
+                
                 // Создаем и добавляем дочерний статус в список
                 var childStatusDTO = new OperationDTO
                 {

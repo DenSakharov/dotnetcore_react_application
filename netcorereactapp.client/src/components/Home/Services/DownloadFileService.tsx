@@ -1,11 +1,12 @@
 ﻿import axios from "axios";
+import config from '../../../config/config.json'
 
 export default async function downloadFile(fileId) {
 
     try {
         const tokenValue = localStorage.getItem("authToken");
         //console.log(" - " + fileId)
-        const response = await axios.get(`https://localhost:7294/filedownload/${fileId}`, {
+        const response = await axios.get(`${config.apiUrl}/filedownload/${fileId}`, {
             headers: {
                 Authorization: `Bearer ${tokenValue}`,
             }
@@ -35,7 +36,7 @@ export const load_convetered_doc_in_pdf=async (fileId)=>{
     try {
         const tokenValue = localStorage.getItem("authToken");
         //console.log(" - " + fileId)
-        const response = await axios.get(`https://localhost:7294/converter/${fileId}`, {
+        const response = await axios.get(`${config.apiUrl}/converter/${fileId}`, {
             headers: {
                 Authorization: `Bearer ${tokenValue}`,
             }

@@ -1,12 +1,12 @@
-import OrderModel from "../OrdersPage.tsx";
+import OrderModel from "../HomeComponent.tsx";
 import axios from "axios";
-
+import config from '../../../config/config.json'
 export const get_current_order=async (id: number): Promise<OrderModel>=>{
     try {
         const tokenValue = localStorage.getItem("authToken");
         //console.log(" - " + fileId)
         const response =
-            await axios.get(`https://localhost:7294/orders/${id}`, {
+            await axios.get(`${config.apiUrl}/orders/${id}`, {
             headers: {
                 Authorization: `Bearer ${tokenValue}`,
             }

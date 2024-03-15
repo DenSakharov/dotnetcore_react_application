@@ -2,6 +2,7 @@ import React, { MouseEventHandler, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import Data from '../data/data';
+import config from '../../config/config.json'
 
 const Login = () => {
     const [login, setLogin] = useState('');
@@ -26,7 +27,7 @@ const Login = () => {
     
     const click_send_request: MouseEventHandler<HTMLButtonElement> = async () => {
         try {
-            const login_url = "https://localhost:7294/authentication/login";
+            const login_url = `${config.apiUrl}/authentication/login`;
             const response = await axios.post(login_url, {
                 login,
                 role,

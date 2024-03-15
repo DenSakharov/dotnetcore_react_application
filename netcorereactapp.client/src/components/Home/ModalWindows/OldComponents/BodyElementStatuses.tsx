@@ -1,5 +1,5 @@
 import React from "react";
-import {renderStatuses} from "./Services/RenderTable.tsx";
+import {renderStatuses} from "../../Services/RenderTable.tsx";
 
 export default function BodyElementStatuses (props){
     return (
