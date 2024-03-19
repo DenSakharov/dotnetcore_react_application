@@ -35,7 +35,7 @@ export const renderStatus = (status, handleDownload, handleAddChildStatus) => {
 
 export const renderChildStatuses = (childStatuses, handleDownload, handleAddChildStatus) =>{
 
-    console.log("childStatuses :\n")
+    //console.log("childStatuses :\n")
     return(
     childStatuses.map((childStatus) => (
         <React.Fragment key={childStatus.id}>

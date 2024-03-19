@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ClassesLibrary.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using netcorereactapp.Server.Controllers.Orders;
+using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
 
 namespace netcorereactapp.Server.Controllers.File
@@ -14,23 +16,17 @@ namespace netcorereactapp.Server.Controllers.File
     {
         private readonly ApplicationContext _dbContext;
         private readonly ILogger<FileController> _logger;
-        public FileController(ApplicationContext dbContext, ILogger<FileController> logger)
+        private readonly IFileService _fileService;
+        public FileController(ApplicationContext dbContext, ILogger<FileController> logger, IFileService fileService)
         {
-            try
-            {
-                _dbContext = dbContext;
-                _logger = logger;
-                //logger.LogInformation("FileController constructor called.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
+            _fileService = fileService;
+            _dbContext = dbContext;
+            _logger = logger;
         }
         [HttpGet("{fileId}")]
         public async Task<IActionResult> DownloadAttachment(int fileId)
         {
-            var attachment = await _dbContext.AttachmentsOfStatuses.FirstOrDefaultAsync(a => a.Id == fileId);
+            var attachment = await _fileService.GetCurrentAttachment(fileId) as Attachment;
             if (attachment == null)
             {
                 return NotFound();

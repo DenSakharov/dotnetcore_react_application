@@ -10,9 +10,10 @@ import PDFViewer from './components/Home/Document/PDFViewer';
 import WordViewer from './components/Home/Document/WordViewer';
 
 import './styles/MainPage.css';
+import {Notifications} from "./components/UniversalComponents/Notifications/Notifications.tsx";
 
 
-export function MainPage() {
+export function Router() {
     return (
         <div className="main-container"> {/* Добавьте класс для основного контейнера */}
          
@@ -31,6 +32,7 @@ export function MainPage() {
 
                     </Routes>
                 </div>
+                <Notifications />
             </HashRouter>
         </div>
     );

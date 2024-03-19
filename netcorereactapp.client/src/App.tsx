@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom';
 import Data from './components/data/data';
 
 import './styles/App.css';
-import { MainPage } from './MainPage';
+import { Router} from './Router.tsx';
 //Проверка аутентификации пользователя
 export const isAuthenticated = () => {
     const authToken = localStorage.getItem('authToken');
@@ -12,7 +12,7 @@ export const isAuthenticated = () => {
 
 function App() {
     return (
-        <MainPage></MainPage>
+        <Router/>
     );
 }
 export default App;

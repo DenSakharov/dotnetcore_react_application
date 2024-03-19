@@ -9,6 +9,6 @@ namespace ClassesLibrary.Models
         [JsonIgnore]
         public List<History> Histories { get; set; } = new List<History>();
         [JsonIgnore]
-        public List<Attachemnt> Attachments { get; set; } = new List<Attachemnt>();
+        public List<Attachment> Attachments { get; set; } = new List<Attachment>();
     }
 }

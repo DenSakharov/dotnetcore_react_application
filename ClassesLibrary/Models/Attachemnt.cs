@@ -2,7 +2,7 @@
 
 namespace ClassesLibrary.Models
 {
-    public class Attachemnt:Entity
+    public class Attachment:Entity
     {
         public string AttachmentData { get; set; }
         [JsonIgnore]

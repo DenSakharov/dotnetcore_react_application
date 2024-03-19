@@ -2,10 +2,13 @@ import React, {useEffect, useRef, useState} from "react";
 import {Procces} from "../../../../../Models/ProccesOperation/Procces.tsx";
 import axios from "axios";
 import config from "../../../../../config/config.json";
-import {CircularProgress, Collapse, List, ListItem, ListItemText, TextField, Typography} from "@mui/material";
-import { styled } from '@mui/system';
+import {CircularProgress, TextField, Typography} from "@mui/material";
+import {styled} from '@mui/system';
 import {Operation} from "../../../../../Models/ProccesOperation/Operation.tsx";
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import OperationListComponent from "./OperationListComponents/OperationListComponent.tsx";
+import {OperationTableComponent} from "./OperationTableComponent/OperationTableComponent.tsx";
+import {CenteredDivRow} from "./OperationListComponents/CenteredDivRow.tsx";
+
 export const SelectedProcces = ({ int }: { int: string }) =>{
     const [selectedProcces,setSelectedProcces]=useState<Procces|null>()
     const [operations,setOperations]=useState<Operation[]>()
@@ -32,7 +35,7 @@ export const SelectedProcces = ({ int }: { int: string }) =>{
                 })
             if(response)
             {
-                console.log(response.data)
+                //console.log(response.data)
                 setSelectedProcces(response.data);
             }
         }
@@ -41,12 +44,7 @@ export const SelectedProcces = ({ int }: { int: string }) =>{
         }
     }
 
-    const StyledTextField = styled(TextField)({
-        width: '50ch',
-        '& .MuiInputBase-input, & .MuiInputBase-multiline, & .MuiInputLabel-root, & .MuiFormHelperText-root': {
-            color: 'white',
-        },
-    });
+
     const inputRef = useRef(null);
     const handleTextFieldChange = (event) => {
         const { name, value } = event.target;
@@ -57,7 +55,14 @@ export const SelectedProcces = ({ int }: { int: string }) =>{
             [name]: value
         }));
     };
+    const [view, setView] = useState(false);
 
+    const click_view_table = (e: any) => {
+        if(view)
+            setView(false)
+        else
+            setView(true)
+    }
     return (
         <>
             {!selectedProcces && (
@@ -82,87 +87,51 @@ export const SelectedProcces = ({ int }: { int: string }) =>{
                             autoFocus
                         />
                         <div>
-                            { selectedProcces.attachments &&
+                            {selectedProcces.attachments &&
                                 selectedProcces.attachments.map(attachment => (
-                                    <li key={attachment.id} >
+                                    <li key={attachment.id}>
                                         {attachment.attachmentData}
                                     </li>
                                 ))
                             }
                         </div>
                     </CenteredDivRow>
-                    {operations!==undefined &&operations!==null &&(
-                    <OperationList operations={operations}/>
-                    )}
+                    <button className="styled-button"
+                            title={view ? "Показать таблицу" : "Показать Список"} onClick={click_view_table}>
+                        {view ? "Показать таблицу" : "Показать Список"}
+                    </button>
+                    {
+                        view ?(
+                        operations !== undefined && operations !== null &&
+                            <OperationListComponent operations={operations}/>
+                        )
+                            :
+                            (
+                                operations !== undefined && operations !== null &&
+                                <div>
+                                    <OperationTableComponent operations={operations}/>
+                                </div>
+                            )
+                        /* :
+                         (
+                             <div>
+                                 <CenteredDivRow>
+                                     <CircularProgress/>
+                                 </CenteredDivRow>
+                             </div>
+                         )*/
+                    }
+
                 </div>
             )}
         </>
     )
 }
-interface Props {
-    operations: Operation[];
-}
-
-const OperationList = ({ operations }) => {
-    return (
-        <List>
-            {/* Отображение каждой операции в виде списка */}
-            {operations.map(operation => (
-                <OperationListItem key={operation.id} operation={operation} />
-            ))}
-        </List>
-    );
-};
-const OperationListItem = ({ operation }) => {
-    const [open, setOpen] = useState(false);
-
-    const handleClick = () => {
-        setOpen(!open);
-    };
-
-    return (
-        <>
-            <ListItem button onClick={handleClick}>
-                {/*<ListItemText primary={`Номер : ${operation.id}`} />*/}
-                <ListItemText primary={` ${operation.caption}`}/>
-                {/* <ListItemText primary={`Parent Operation ID: ${operation.parentOperationId}`} />*/}
-                <div>
-                    {operation.attachments &&
-                        operation.attachments.map(attachment => (
-                            <li key={attachment.id}>
-                                {attachment.attachmentData}
-                            </li>
-                        ))
-                    }
-                </div>
-                {open ? <ExpandLess/> : <ExpandMore/>}
-            </ListItem>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                    {/* Рекурсивный вызов OperationListItem для вложенных операций */}
-                    {operation.childsOperations &&
-                        operation.childsOperations.map(childOperation => (
-                            <OperationListItem key={childOperation.id} operation={childOperation}/>
-                        ))
-                    }
-                </List>
-            </Collapse>
-        </>
-    );
-};
-export const CenteredDivRow = styled('div')({
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '50%',
-    width:'100%',
+export const StyledTextField = styled(TextField)({
+    margin:'5px',
+    width: '50ch',
+    '& .MuiInputBase-input, & .MuiInputBase-multiline, & .MuiInputLabel-root, & .MuiFormHelperText-root': {
+        color: 'white',
+    },
 });
-export const CenteredDivColumn = styled('div')({
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '50%',
-    width:'100%',
-});
+

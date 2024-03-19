@@ -49,7 +49,7 @@ namespace ClassesLibrary.Services
             return childOperationsDTOs;
         }
         public static List<AttachmentDTO> MapAttachments
-         (List<Attachemnt> attachmentModels)
+         (List<Attachment> attachmentModels)
         {
             var list_of_AttacmentDTO = new List<AttachmentDTO>();
             foreach (var attachmentModel in attachmentModels)
@@ -104,12 +104,12 @@ namespace ClassesLibrary.Services
             return operations;
         }
 
-        public static List<Attachemnt> MapAttachments(List<AttachmentDTO> attachmentDTOs)
+        public static List<Attachment> MapAttachments(List<AttachmentDTO> attachmentDTOs)   
         {
-            var attachments = new List<Attachemnt>();
+            var attachments = new List<Attachment>();
             foreach (var attachmentDTO in attachmentDTOs)
             {
-                var attachment = new Attachemnt
+                var attachment = new Attachment
                 {
                     Id = attachmentDTO.Id,
                     AttachmentData = attachmentDTO.AttachmentData

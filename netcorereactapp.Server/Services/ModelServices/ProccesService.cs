@@ -128,7 +128,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                         if (existingSelectedProcces != null)
                         {
                             var path = await _fileService.SaveFile(file);
-                            var attachment = new Attachemnt();
+                            var attachment = new Attachment();
                             attachment.DateOfCreture = DateTime.UtcNow;
                             attachment.Caption = Path.GetFileNameWithoutExtension(path);
                             attachment.AttachmentData = path;

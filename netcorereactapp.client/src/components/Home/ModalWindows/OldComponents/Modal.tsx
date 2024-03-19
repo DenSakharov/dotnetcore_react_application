@@ -1,6 +1,7 @@
 ﻿import  { ReactElement, useEffect } from 'react';
 import { SelectedOrder } from './SelectedOrder.tsx';
 import '../../../../styles/Modal.css'
+import OrderModel from "../../../../Models/OderStatusLogicsRelationships/OrderModel.tsx";
 
 // интерфейс для пропсов
 interface ModalProps {

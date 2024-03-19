@@ -1,11 +1,35 @@
-﻿using netcorereactapp.Server.Services.FileServices.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using netcorereactapp.Server.Services.FileServices.Interfaces;
+using netcorereactapp.Server.Services.ModelServices;
+using netcorereactapp.Server.Services.PostgreService;
 using Spire.Doc;
 
 namespace netcorereactapp.Server.Services.FileServices
 {
     public class FileService: IFileService
     {
+        private readonly ApplicationContext _dbContext;
+        private readonly ILogger<FileService> _logger;
+        public FileService(ApplicationContext dbContext, ILogger<FileService> logger)
+        {
+            _dbContext = dbContext;
+            _logger = logger;
+        }
         private readonly string path_to_files = "C:\\Uploads";
+        public async Task<object> GetCurrentAttachment(int fileId)
+        {
+            var attachment = await _dbContext.Attachemnts.FirstOrDefaultAsync(a => a.Id == fileId);
+            if (attachment == null)
+            {
+                var attachmentOld = await _dbContext.AttachmentsOfStatuses.FirstOrDefaultAsync(a => a.Id == fileId);
+                if (attachmentOld == null)
+                {
+                    return null;
+                }
+                return attachmentOld;
+            }
+            return attachment;
+        }
         public async Task< string> SaveFile(IFormFile file) {
             string temp_file_name = "";
             if (file != null && file.Length > 0)

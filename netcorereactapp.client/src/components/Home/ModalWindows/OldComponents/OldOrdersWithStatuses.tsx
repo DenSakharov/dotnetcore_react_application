@@ -1,13 +1,12 @@
 import {useEffect, useState} from "react";
-import OrderModel, {statusMap} from "../../Models/OderStatusLogicsRelationships/OrderModel.tsx";
 import axios from "axios";
-import config from "../../config/config.json";
-import {Modal} from "./ModalWindows/Modal.tsx";
-import AddOrderForm from "./ModalWindows/AddOrderForm.tsx";
+import OrderModel, {statusMap} from "../../../../Models/OderStatusLogicsRelationships/OrderModel.tsx";
+import config from '../../../../config/config.json'
+import {Modal} from "./Modal.tsx";
+import AddOrderForm from "./AddOrderForm.tsx";
 
 export default function OldOrdersWithStatuses(){
     const [view, setView] = useState(false);
-
     const click_view_table = (e: any) => {
         if(view)
             setView(false)

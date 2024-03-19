@@ -1,7 +1,6 @@
 import {useEffect} from "react";
-import {AddChildStatusToStatus} from "../StatusOfOrder/AddChildStatusToStatus.tsx";
-
-import '../../../styles/Modal.css'
+import {AddChildStatusToStatus} from "./StatusOfOrder/AddChildStatusToStatus.tsx";
+import '../../../../styles/Modal.css'
 export const ModalStatusWindow = (props) => {
     // обработчик нажатия клавиши Esc
     const onKeydown = ({ key }: KeyboardEvent) => {

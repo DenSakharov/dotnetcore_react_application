@@ -49,17 +49,23 @@ export const OperationEditor = (props) => {
     }
     return (
         <div>
-            <label>ID:</label>
-            <input type="text" name="id" value={props.operation.id} readOnly/>
+            <div>
+                <label>ID:</label>
+                <input type="text" name="id" value={props.operation.id} readOnly/>
+            </div>
+            <div>
+                <label>Caption:</label>
+                <input type="text" name="caption" value={props.operation.caption} onChange={onChangeLocal}/>
+            </div>
+            <div>
+                <label>Date of Creation:</label>
+                <input type="datetime-local" name="dateOfCreation" value={formatDate(props.operation.dateOfCreture)}
+                       readOnly/>
 
-            <label>Caption:</label>
-            <input type="text" name="caption" value={props.operation.caption} onChange={onChangeLocal}/>
-
-            <label>Date of Creation:</label>
-            <input  type="datetime-local" name="dateOfCreation" value={formatDate(props.operation.dateOfCreture) } readOnly/>
-
-            <label>Date of Editing:</label>
-            <input type="datetime-local" name="dateOfEditing" value={formatDate(props.operation.dateOfEdited)} readOnly/>
+                <label>Date of Editing:</label>
+                <input type="datetime-local" name="dateOfEditing" value={formatDate(props.operation.dateOfEdited)}
+                       readOnly/>
+            </div>
             <SelectingFiles onSelectedFilesChange={handleSelectedFilesChange}/>
             <button onClick={onSave}>Save</button>
         </div>

@@ -10,11 +10,12 @@ import config from '../../../config/config.json'
 import {MRT_Localization_RU} from "material-react-table/locales/ru";
 import ModalViewSelectedProcces
     from "../ModalWindows/ProccesComponents/SelectedProccesComponents/ModalViewSelectedProcces.tsx";
+import {Box} from "@mui/material";
 
 export default function Table() {
     const [data, setData] = useState<Procces[]>([])
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(1);
+    const [pageSize, setPageSize] = useState(5);
     const [totalPages, setTotalPages] = useState(1);
     /*const [pagination, setPagination] = useState({
         pageIndex: 0,
@@ -56,17 +57,17 @@ export default function Table() {
             {
                 accessorKey: 'caption',
                 header: 'Название',
-                size: 150,
+                size: 50,
             },
             {
                 accessorKey: 'dateOfCreture', //normal accessorKey
                 header: 'Дата создания',
-                size: 200,
+                size: 50,
             },
             {
                 accessorKey: 'dateOfEdited',
                 header: 'Дата редактирования',
-                size: 150,
+                size: 50,
             },
         ],
         [],
@@ -109,15 +110,23 @@ export default function Table() {
             {isModalExcelExport && (
             <ModalViewSelectedProcces
                 visible={isModalExcelExport}
-                title='Импорт процесса из Excel'
+                title='Карточка выбранного процесса'
                 footer={<button onClick={clickExcelExport}>Close</button>}
                 proccesId={selectedProccesId}
                 onClose={clickExcelExport}
             />
             )}
-            <MaterialReactTable table={table}/>
-            <PageSizeSelector value={pageSize} onChange={handleChangePageSize} />
-            <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange}/>
+            <Box sx={{
+                maxWidth: '800px',
+                margin: '0 auto',
+                borderRadius: '80px', // Применяем закругление границ
+                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', // Добавляем тень для эффекта поднятости
+                p: '50px', // Добавляем внутренние отступы для контента
+            }}>
+                <MaterialReactTable table={table}/>
+                <PageSizeSelector value={pageSize} onChange={handleChangePageSize}/>
+                <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange}/>
+            </Box>
         </div>
     );
 }
@@ -142,13 +151,15 @@ export const PageSizeSelector = ({ value, onChange }) => {
     return (
         <div>
             <select value={value} onChange={handlePageSizeChange}>
+                <option value={5}>5</option>
                 <option value={10}>10</option>
                 <option value={20}>20</option>
                 <option value={50}>50</option>
                 <option value={100}>100</option>
-                <option value={()=>{
+                <option value={() => {
                     setValueLocal("custom")
-                }}>Введите желаемый размер страницы</option>
+                }}>Введите желаемый размер страницы
+                </option>
                 {/* Добавляем опцию для пользовательского значения */}
             </select>
             {valueLocal === "Введите желаемый размер страницы" && ( // Показываем текстовое поле только при выборе пользовательского значения

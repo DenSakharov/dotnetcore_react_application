@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using netcorereactapp.Server.Controllers.Orders;
-using netcorereactapp.Server.Services.FileServices;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
+using ClassesLibrary.Models;
 
 namespace netcorereactapp.Server.Controllers.File
 {
@@ -25,12 +23,7 @@ namespace netcorereactapp.Server.Controllers.File
         [HttpGet("{fileId}")]
         public async Task<IActionResult> ConvertDocToPDF(int fileId)
         {
-            var attachment = await _dbContext.AttachmentsOfStatuses.FirstOrDefaultAsync(a => a.Id == fileId);
-            if (attachment == null)
-            {
-                return NotFound();
-            }
-
+            var attachment =await _fileService.GetCurrentAttachment(fileId) as Attachment; ;
             var filePath = attachment.AttachmentData; // Путь к файлу на сервере
             var resp = await _fileService.ConvertToPDF(filePath, Path.GetFileNameWithoutExtension(filePath)+".pdf");
             return Ok(resp);

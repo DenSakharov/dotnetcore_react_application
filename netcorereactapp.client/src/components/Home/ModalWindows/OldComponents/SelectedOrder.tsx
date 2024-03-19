@@ -1,14 +1,14 @@
 ﻿import axios from "axios";
 import React, { useEffect, useState } from "react";
-import AddStatus from "../../StatusOfOrder/AddStatus.tsx";
 import {get_current_order} from "../../Services/GetCurrentOrder.tsx";
 import {fetchFile} from "../../Services/DownloadFileService.tsx";
 import OrderModel, {statusMap} from "../../../../Models/OderStatusLogicsRelationships/OrderModel.tsx";
 import {AttachmentModel} from "../../../../Models/OderStatusLogicsRelationships/AttachmentModel.tsx";
-import BodyElementStatuses from "../../BodyElementStatuses.tsx";
 import {ModalStatusWindow} from "./ModalStatusWindow.tsx";
 import config from '../../../../config/config.json'
 import '../../../../styles/SelectedOrder.css'
+import AddStatus from "./StatusOfOrder/AddStatus.tsx";
+import BodyElementStatuses from "./BodyElementStatuses.tsx";
 export const SelectedOrder:
     React.FC<{ orderInput: OrderModel | null; closeModal: () => void }>
     = ({ orderInput, closeModal }) => {

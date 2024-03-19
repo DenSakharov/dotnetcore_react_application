@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace netcorereactapp.Server.Services.ModelServices
@@ -22,7 +23,44 @@ namespace netcorereactapp.Server.Services.ModelServices
         }
         public async Task Get(int id)
         {
-            var operation=await _dbContext.Operations.FindAsync(id);
+            var operation = await _dbContext.Operations.FindAsync(id);
+        }
+        public async Task<OperationDTO> UpdateOperation(int operationId, IFormCollection form)
+        {
+
+            try
+            {
+                var existingSelectedOperation = await _dbContext.Operations.FirstOrDefaultAsync(operation => operation.Id == operationId);
+
+                if (existingSelectedOperation != null)
+                {
+                    // Получаем статус из FormData
+                    string jsonString = form["operation"];
+                    Operation operation = JsonConvert.DeserializeObject<Operation>(jsonString);
+
+                    existingSelectedOperation.Caption = operation.Caption;
+                    existingSelectedOperation.DateOfEdited = DateTime.UtcNow;
+                    //existingSelectedOperation.ChildsOperations = operation.ChildsOperations;
+                    // Сохраняем изменения в базе данных
+                    await _dbContext.SaveChangesAsync();
+                    // Получаем файл из FormData
+                    IFormFileCollection files = form.Files;
+                    foreach (var file in files)
+                    {
+                        var path = await _fileService.SaveFile(file);
+                        var attachment = new Attachment();
+                        attachment.DateOfCreture = DateTime.UtcNow;
+                        attachment.Caption = Path.GetFileNameWithoutExtension(path);
+                        attachment.AttachmentData = path;
+                        _dbContext.Attachemnts.Add(attachment);
+                        await _dbContext.SaveChangesAsync();
+                        existingSelectedOperation.Attachments.Add(attachment);
+                        await _dbContext.SaveChangesAsync();
+                    }
+                }
+                return MapService.MapChildOperations(new List<Operation> { existingSelectedOperation }).First();
+            }
+            catch (Exception ex) { return null; }
         }
         public async Task<int> SaveProccesWithOperations(Procces procces, List<Operation> operations)
         {
@@ -57,7 +95,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                     if (existingSelectedOperation != null)
                     {
                         var path = await _fileService.SaveFile(file);
-                        var attachment = new Attachemnt();
+                        var attachment = new Attachment();
                         attachment.DateOfCreture = DateTime.UtcNow;
                         attachment.Caption = Path.GetFileNameWithoutExtension(path);
                         attachment.AttachmentData = path;
@@ -71,6 +109,6 @@ namespace netcorereactapp.Server.Services.ModelServices
             }
             catch (Exception ex) { return null; }
         }
-      
+
     }
 }

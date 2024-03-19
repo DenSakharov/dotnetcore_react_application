@@ -41,6 +41,16 @@ namespace netcorereactapp.Server.Controllers.Operation
             }*/
             return StatusCode(500, "Saving files error");
         }
+        [HttpPut("{operationId}")]
+        public async Task<IActionResult> UpdateOperation(int operationId, IFormCollection form)
+        {
+            var res=await _operationService.UpdateOperation(operationId, form);
+            if (res != null)
+            {
+                return Ok(res);
+            }
+            return StatusCode(500, "Saving files error");
+        }
         [HttpPut]
         [Route("{operationId}/updatefile")]
         public async Task<IActionResult> UpdateOperationsFiles(int operationId, IFormCollection form

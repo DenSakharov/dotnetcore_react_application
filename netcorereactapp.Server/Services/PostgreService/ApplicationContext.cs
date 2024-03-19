@@ -16,7 +16,7 @@ namespace netcorereactapp.Server.Services.PostgreService
 
         public DbSet<Procces>Procceses { get; set; } = null!;
         public DbSet<Operation> Operations { get; set; } = null!;
-        public DbSet<Attachemnt> Attachemnts { get; set; } = null!;
+        public DbSet<Attachment> Attachemnts { get; set; } = null!;
         public DbSet<History> Histories { get; set; } = null!;
         private readonly ILogger<ApplicationContext> _logger;
         public ApplicationContext(DbContextOptions<ApplicationContext> options, ILogger<ApplicationContext> logger)
@@ -85,7 +85,7 @@ namespace netcorereactapp.Server.Services.PostgreService
                .HasForeignKey(history => history.ProccesId)
                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Attachemnt>()
+            modelBuilder.Entity<Attachment>()
                 .HasOne(attachment => attachment.Procces)
                 .WithMany(procces=> procces.Attachments)
                 .HasForeignKey(fk=>fk.ProccedId)

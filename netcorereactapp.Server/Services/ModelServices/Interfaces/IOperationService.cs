@@ -5,6 +5,7 @@ namespace netcorereactapp.Server.Services.ModelServices.Interfaces
 {
     public interface IOperationService
     {
+        public Task<OperationDTO> UpdateOperation(int operationId, IFormCollection form);
         public Task<int> SaveProccesWithOperations(Procces procces, List<Operation> operations);
         public Task<OperationDTO> AddingAttachmentsToSelectedOperation(int operationId, IFormFileCollection files);
     }

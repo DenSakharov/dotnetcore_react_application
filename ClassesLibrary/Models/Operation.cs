@@ -15,6 +15,6 @@ namespace ClassesLibrary.Models
         [JsonIgnore]
         public List<Operation> ChildsOperations { get; set; } = new List<Operation>();
         [JsonIgnore]
-        public List<Attachemnt> Attachments { get; set; } = new List<Attachemnt>();
+        public List<Attachment> Attachments { get; set; } = new List<Attachment>();
     }
 }
