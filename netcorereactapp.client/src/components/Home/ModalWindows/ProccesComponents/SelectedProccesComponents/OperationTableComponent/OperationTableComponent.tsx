@@ -1,88 +1,19 @@
 import {MaterialReactTable, type MRT_ColumnDef, useMaterialReactTable} from "material-react-table";
-import React, {useEffect, useMemo, useState} from "react";
+import  {useEffect, useMemo, useState} from "react";
 import {MRT_Localization_RU} from "material-react-table/locales/ru";
 import {Operation} from "../../../../../../Models/ProccesOperation/Operation.tsx";
 import {
     Button,
-    Collapse,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     List,
-    ListItem,
-    ListItemText,
-    Typography
 } from "@mui/material";
-import {fetchFile} from "../../../../Services/DownloadFileService.tsx";
-import img from '../../../../../../assets/react.svg'
-import {Attachment} from "../../../../../../Models/ProccesOperation/Attachment.tsx";
-import {OperationEditor} from "../../EditingCurrentOperation/OperationEditor.tsx";
 import {SeletedOperationEditor} from "./SelectedOperationEditor/SeletedOperationEditor.tsx";
 import {Notifications} from "../../../../../UniversalComponents/Notifications/Notifications.tsx";
-interface NestedListProps {
-    items: string[];
-}
-
-const AttachmentsNestedList: React.FC<NestedListProps> = ({ items }: Attachment[]) => {
-    let[local,setLocal]=useState(items)
-    useEffect(() => {
-        //console.info('NestedList',local)
-    }, [local]);
-    const handleDownload = async (attachment) => {
-        console.info('attachment\n',attachment)
-        const fileId = attachment.id;
-        const extension = attachment.attachmentData.split('.').pop().toLowerCase();
-        if (extension === 'xlsx') {
-            window.location.href = `https://localhost:5173/#/excel/${fileId}`;
-        }
-        //function view pdf file
-        else if (extension === 'pdf') {
-            window.location.href = `https://localhost:5173/#/pdf/${fileId}`;
-        }
-        else if (extension === 'doc' || extension === 'docx') {
-            window.location.href = `https://localhost:5173/#/doc/${fileId}`;
-            //await fetchFile(fileId)
-        }
-        else{
-            await fetchFile(fileId, attachment.attachmentData)
-            //alert("Невозможно открыть файл данного типа расширения !")
-        }
-    };
-    return (
-        <List>
-            {items.map((item, index) => (
-                <ListItem key={index}>
-                    <ListItemText>
-                        <Typography variant="body2">{item.attachmentData}</Typography>
-                        <button onClick={() => handleDownload(item)}>
-                            <img src={img} alt="Загрузить"/>
-                        </button>
-                    </ListItemText>
-                </ListItem>
-            ))}
-        </List>
-    );
-};
-const ChildOperationsNestedList: React.FC<NestedListProps> = ({ items }) => {
-    let[local,setLocal]=useState(items)
-    useEffect(() => {
-        //console.info('NestedList',local)
-    }, [local]);
-
-    return (
-        <List>
-            {items.map((item, index) => (
-                <ListItem key={index}>
-                    <ListItemText>
-                        <Typography variant="body2">{item}</Typography>
-                    </ListItemText>
-                </ListItem>
-            ))}
-        </List>
-    );
-};
-export let OperationTableComponent = (operations) => {
+import {renderAttachments} from "../../../../Services/AttachmentService.tsx";
+export const OperationTableComponent = (operations) => {
     useEffect(() => {
         //console.info(operations)
     },[operations])
@@ -103,7 +34,7 @@ export let OperationTableComponent = (operations) => {
                 header: 'Название',
                 size: 50,
             },
-            {
+            /*{
                 accessorKey: 'dateOfCreture', //normal accessorKey
                 header: 'Дата создания',
                 size: 50,
@@ -112,53 +43,30 @@ export let OperationTableComponent = (operations) => {
                 accessorKey: 'dateOfEdited',
                 header: 'Дата редактирования',
                 size: 50,
-            },
+            },*/
             {
                 accessorKey: 'attachments',
                 header: 'Вложения',
                 size: 50,
                 Cell: (( value ) => {
-                    let[attachments,setAttachments]=useState<Operation[]>()
+                    const[attachments,setAttachments]
+                        =useState<Operation[]>()
                     useEffect(() => {
                         setAttachments(value.cell.row._valuesCache.attachments)
                     }, [value]);
                     //console.log('value\n',value.cell.row._valuesCache.attachments)
                     return(
                         <div>
-                            <Collapse in={attachments
-                                && attachments.length > 0} timeout="auto" unmountOnExit>
-                                {attachments &&
-                                    <AttachmentsNestedList
-                                        items={attachments.map((attachment) => attachment)}/>}
-                            </Collapse>
+                        {attachments &&
+                        <List>
+                            {renderAttachments (attachments)}
+                        </List>
+                        }
                         </div>
+
                     )
                 }),
             },
-           /* {
-                accessorKey: 'childsOperations',
-                header: 'Дочерние операции',
-                size: 50,
-                Cell: (( value ) => {
-                    let[operations,setOperations]=useState<Operation[]>()
-                    useEffect(() => {
-                        setOperations(value.cell.row._valuesCache.childsOperations)
-                    }, [value]);
-                    //console.log('value\n',value.cell.row._valuesCache.childsOperations)
-                    return(
-                        operations!== undefined
-                        &&
-                        operations!== null &&
-                        <Collapse in={operations
-                            &&
-                            operations.length> 0} timeout="auto" unmountOnExit>
-                            {
-                                operations&& <ChildOperationsNestedList items={operations.map((operation) => operation.caption)}/>
-                            }
-                        </Collapse>
-                    )
-                }),
-            },*/
 
         ],
         [localOperations],
@@ -200,11 +108,18 @@ export let OperationTableComponent = (operations) => {
     const handleClick = () => {
         setOpenNotification(true);
     };
-    return(
+    return (
         <div>
             {openNotification &&
-                <Notifications message='Операция обновленна успешно!' open={openNotification}/>}
-            <Dialog open={open} onClose={handleClose}  PaperProps={{ sx: { backgroundColor: 'darkgreen' } }} >
+                <Notifications message='Операция обновлена успешно!' open={openNotification}/>}
+
+            <Dialog open={open} onClose={handleClose}
+                    PaperProps={{
+                        sx: {
+                            backgroundColor: 'darkgreen',
+                            color: 'white'
+                        }
+                    }}>
                 <DialogTitle>Модальное окно</DialogTitle>
                 <DialogContent>
                     {/*<p>Содержимое модального окна...</p>*/}
@@ -214,6 +129,7 @@ export let OperationTableComponent = (operations) => {
                     <Button onClick={handleClose}>Закрыть</Button>
                 </DialogActions>
             </Dialog>
+
             <MaterialReactTable table={table}/>
         </div>
     )

@@ -14,6 +14,7 @@ import {Box} from "@mui/material";
 
 export default function Table() {
     const [data, setData] = useState<Procces[]>([])
+
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(5);
     const [totalPages, setTotalPages] = useState(1);
@@ -59,7 +60,7 @@ export default function Table() {
                 header: 'Название',
                 size: 50,
             },
-            {
+           /* {
                 accessorKey: 'dateOfCreture', //normal accessorKey
                 header: 'Дата создания',
                 size: 50,
@@ -68,7 +69,7 @@ export default function Table() {
                 accessorKey: 'dateOfEdited',
                 header: 'Дата редактирования',
                 size: 50,
-            },
+            },*/
         ],
         [],
     );

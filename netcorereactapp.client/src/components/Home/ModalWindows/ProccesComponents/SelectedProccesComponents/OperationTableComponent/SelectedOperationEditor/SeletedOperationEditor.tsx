@@ -2,10 +2,16 @@ import {Operation} from "../../../../../../../Models/ProccesOperation/Operation.
 import React, {useEffect, useRef, useState} from "react";
 import {StyledTextField} from "../../SelectedProcces.tsx";
 import {CenteredDivColumn} from "../../OperationListComponents/CenteredDivRow.tsx";
-import {Button, IconButton, Snackbar} from "@mui/material";
+import {
+    Button,
+    Grid, IconButton,
+    List,
+    Typography
+} from "@mui/material";
 import axios from "axios";
 import config from "../../../../../../../config/config.json";
-import { Notifications} from "../../../../../../UniversalComponents/Notifications/Notifications.tsx";
+import {renderAttachments} from "../../../../../Services/AttachmentService.tsx";
+import SelectingFiles from "../../../SelectingMultipleFilesForAttachments/SelectingFiles.tsx";
 export const SeletedOperationEditor=({operation,onClose,notif})=>{
     let [oper,setOper]=useState<Operation>()
     useEffect(() => {
@@ -22,6 +28,11 @@ export const SeletedOperationEditor=({operation,onClose,notif})=>{
             [name]: value
         }));
     };
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const addAttachments=async (files)=>{
+        //console.log("Files after added :\n",files)
+        setSelectedFiles(files);
+    }
     const saveEdtingOper = async (e) => {
         try {
             await saveOperation(); // Ждем завершения выполнения функции saveOperation
@@ -32,15 +43,14 @@ export const SeletedOperationEditor=({operation,onClose,notif})=>{
             // Можно добавить обработку ошибок здесь
         }
     };
-
     const saveOperation = async () => {
         try {
             const tokenValue = localStorage.getItem("authToken");
             const formData = new FormData();
-            /* selectedFiles.forEach((file, index) => {
+             selectedFiles.forEach((file, index) => {
                 formData.append(`file${index}`, file);
-            }); */
-            console.info(oper)
+            });
+            //console.info(oper)
             formData.append("operation", JSON.stringify(oper))
             const response = await axios.put(
                 `${config.apiUrl}/operation/${operation.id}`,
@@ -60,7 +70,6 @@ export const SeletedOperationEditor=({operation,onClose,notif})=>{
             throw error; // Передаем ошибку дальше, чтобы ее обработать в вызывающем коде
         }
     };
-
     return(
         <div>
             {oper
@@ -77,6 +86,15 @@ export const SeletedOperationEditor=({operation,onClose,notif})=>{
                         onChange={handleTextFieldChange}
                         autoFocus
                     />
+                    <Grid item xs={1} md={1}>
+                        <Typography sx={{ mt: 1, mb: 1 }} variant="h6" component="div">
+                           Вложения операции :
+                        </Typography>
+                            <List>
+                                {renderAttachments (oper.attachments)}
+                            </List>
+                    </Grid>
+                    <SelectingFiles onSelectedFilesChange={addAttachments}/>
                     <Button onClick={saveEdtingOper}>Сохранить</Button>
                 </CenteredDivColumn>
             }

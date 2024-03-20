@@ -8,6 +8,7 @@ import SelectingFiles from "./SelectingMultipleFilesForAttachments/SelectingFile
 import config from '../../../../config/config.json';
 
 import "../../../../styles/ExcelService.css"
+import {addingAttachmentsToProcces} from "../../Services/AttachmentService.tsx";
 
 export default function ExcelService(props) {
     const [selectedFile, setSelectedFile] = useState()
@@ -67,7 +68,7 @@ export default function ExcelService(props) {
     }
     const confirmEditedOperation = async () => {
         const tokenValue = localStorage.getItem("authToken");
-        //console.log(procces)
+        console.log(procces)
         /*const formData = new FormData();
         formData.append('files', selectedFiles);
         formData.append('procces', procces);*/
@@ -85,7 +86,7 @@ export default function ExcelService(props) {
             //console.log("Response from confirmEditedOperation:", response.data);
             if(response.status==200)
             {
-               const res= await addingAttachmentsToProcces()
+               const res= await addingAttachmentsToProcces(procces.id,selectedFiles,props.onClose())
                 //props.onClose()
             }
             // Возможно, здесь вы захотите обновить состояние приложения или выполнить другие действия
@@ -110,31 +111,7 @@ export default function ExcelService(props) {
         //console.log("Files after added :\n",files)
         setSelectedFiles(files);
     };
-    const addingAttachmentsToProcces = async ()=>{
-        const tokenValue = localStorage.getItem("authToken");
 
-        const formData = new FormData();
-        //console.log("files",selectedFiles)
-        selectedFiles.forEach((file, index) => {
-            formData.append(`file${index}`, file);
-        });
-
-        const response = await axios.put(
-            `${config.apiUrl}/procces/${procces.id}/updatefile`,
-            formData, // Передаем FormData вместо обычного объекта
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data', // Устанавливаем заголовок для FormData
-                    Authorization: `Bearer ${tokenValue}`,
-                },
-            }
-        );
-        //console.log(response.status)
-        if(response.status==200)
-        {
-            props.onClose()
-        }
-    }
     return (
         <div>
             <div className="file-upload">

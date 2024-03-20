@@ -2,8 +2,7 @@
 using ClassesLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using netcorereactapp.Server.Controllers.ExcelImport;
+using Microsoft.AspNetCore.Mvc.Filters;
 using netcorereactapp.Server.Services.ExcelImportService.Interfaces;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
@@ -11,6 +10,39 @@ using netcorereactapp.Server.Services.PostgreService;
 
 namespace netcorereactapp.Server.Controllers.ProccesController
 {
+    public class ValidateModelAttribute : ActionFilterAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            if (!context.ModelState.IsValid)
+            {
+                context.Result = new BadRequestObjectResult(context.ModelState);
+            }
+        }
+    }
+    public class LoggingActionFilter : IActionFilter
+    {
+        private readonly ILogger _logger;
+
+        public LoggingActionFilter(ILogger<LoggingActionFilter> logger)
+        {
+            _logger = logger;
+        }
+
+        public void OnActionExecuting(ActionExecutingContext context)
+        {
+            // Логирование того, что происходит перед выполнением метода действия контроллера
+            _logger.LogInformation("Executing action {Action} on controller {Controller}",
+                context.ActionDescriptor.DisplayName, context.Controller.GetType().Name);
+        }
+
+        public void OnActionExecuted(ActionExecutedContext context)
+        {
+            // Логирование того, что происходит после выполнения метода действия контроллера
+            _logger.LogInformation("Executed action {Action} on controller {Controller}",
+                context.ActionDescriptor.DisplayName, context.Controller.GetType().Name);
+        }
+    }
     [Authorize]
     [ApiController]
     [Route("procces")]
@@ -32,7 +64,7 @@ namespace netcorereactapp.Server.Controllers.ProccesController
             _fileService = fileService;
             _proccesService = proccesService;
             _operationService = operationService;
-            //_logger.LogInformation("ProccesController is called.");
+            _logger.LogInformation("ProccesController is called.");
         }
         [HttpGet]
         [Route("{id}")]

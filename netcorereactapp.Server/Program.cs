@@ -41,7 +41,11 @@ app.UseAuthorization();
 
 //app.UseMiddleware<CustomTokenValidationMiddleware>();
 //app.UseMiddleware<RequestLoggingMiddleware>();
-
-app.UseEndpoints(endpoints =>endpoints.MapControllers());
+app.UseEndpoints(
+    endpoints =>
+    {
+        endpoints.MapControllers().RequireAuthorization();
+    }
+);
 
 app.Run();

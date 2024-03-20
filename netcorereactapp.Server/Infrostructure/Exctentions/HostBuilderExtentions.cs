@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using netcorereactapp.Server.Controllers.Authentication;
+using netcorereactapp.Server.Controllers.ProccesController;
 using netcorereactapp.Server.Infrostructure.Swagger;
 using netcorereactapp.Server.Services.AuthenctionServices;
 using netcorereactapp.Server.Services.AuthenctionServices.Interfaces;
@@ -73,6 +74,8 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
             {
                 services.AddControllers(options =>
                 {
+                    options.Filters.Add(typeof(ValidateModelAttribute));
+                    options.Filters.Add(typeof(LoggingActionFilter));
                 });
             });
             return builder;
@@ -187,6 +190,7 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                 services.AddScoped<IExcelImportService, ExcelImportService>();
                 services.AddScoped<IProccesService, ProccesService>();
                 services.AddScoped<IOperationService, OperationService>();
+                 services.AddScoped<LoggingActionFilter>();
             });
             return hostBuilder;
         }

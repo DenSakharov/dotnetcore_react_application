@@ -1,6 +1,11 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
+import {IconButton, ListItem, ListItemAvatar, ListItemText} from "@mui/material";
+import AttachFileSharpIcon from "@mui/icons-material/AttachFileSharp";
+import {CenteredDivColumn} from "../SelectedProccesComponents/OperationListComponents/CenteredDivRow.tsx";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function SelectingFiles(props ) {
+    const fileInputRef = useRef(null);
     const [selectedFiles, setSelectedFiles] = useState([]);
     useEffect(() => {
         //console.log("SelectingFiles useEffect selectedFiles :\n",selectedFiles)
@@ -16,7 +21,10 @@ export default function SelectingFiles(props ) {
         setSelectedFiles(prevSelectedFiles => [...prevSelectedFiles, ...files]);
 
     };
-
+    const addAttachments = () => {
+        // Вызовет нажатие на скрытый input
+        fileInputRef.current.click();
+    };
     const onChangeLocal = (event) => {
         const files = event.target.files;
         console.log("files into SelectingFiles component :\n",files)
@@ -29,31 +37,45 @@ export default function SelectingFiles(props ) {
     };
     return (
         <div>
-            {/* Область для перетаскивания */}
-            <div
-                style={{
-                    border: '2px dashed #cccccc',
-                    padding: '20px',
-                    textAlign: 'center'
-                }}
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-            >
-                Перетащите файлы сюда или нажмите для выбора
-            </div>
+            <CenteredDivColumn>
+                {/* Область для перетаскивания */}
+                <div
+                    style={{
+                        border: '2px dashed #cccccc',
+                        padding: '20px',
+                        textAlign: 'center'
+                    }}
+                    onDragOver={handleDragOver}
+                    onDrop={handleDrop}
+                >
+                    Перетащите файлы сюда или нажмите для выбора
+                </div>
 
-            {/* Инпут для выбора файла */}
-            <input type="file" multiple onChange={onChangeLocal} />
-
-            {/* Список выбранных файлов */}
-            <ul>
-                {selectedFiles.map((file, index) => (
-                    <li key={index}>
-                        {file.name}
-                        <button onClick={() => removeFile(index)}>-</button>
-                    </li>
-                ))}
-            </ul>
+                {/* Инпут для выбора файла */}
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    onChange={onChangeLocal}
+                    style={{display: 'none'}} // Скрытый input
+                />
+                <IconButton onClick={addAttachments}>
+                    <AttachFileSharpIcon/>
+                </IconButton>
+                {/* Список выбранных файлов */}
+                <ul>
+                    {selectedFiles.map((file, index) => (
+                        <ListItem key={index}>
+                            <ListItemText primary={file.name} />
+                            <ListItemAvatar>
+                                <IconButton onClick={() => removeFile(index)} edge="end" aria-label="delete">
+                                    <DeleteIcon  />
+                                </IconButton>
+                            </ListItemAvatar>
+                        </ListItem>
+                    ))}
+                </ul>
+            </CenteredDivColumn>
         </div>
     );
 }

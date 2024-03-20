@@ -1,13 +1,12 @@
 import {formatDate} from "../../../Services/DateTimeConverterService.tsx";
 import SelectingFiles from "../SelectingMultipleFilesForAttachments/SelectingFiles.tsx";
 import {useEffect, useState} from "react";
-import axios from "axios";
-import config from '../../../../../config/config.json'
+import {SaveAttachmentsToOperation} from "../../../Services/AttachmentService.tsx";
 export const OperationEditor = (props) => {
     //console.log(props.operation.dateOfCreture+"\n"+props.operation.dateOfEdited)
     const [selectedFiles, setSelectedFiles] = useState([]);
     useEffect(() => {
-        console.log("OperationEditor component useEffect selectedFiles :\n",selectedFiles)
+        //console.log("OperationEditor component useEffect selectedFiles :\n",selectedFiles)
     }, [selectedFiles]);
     const onChangeLocal = (event) => {
         const { name, value } = event.target;
@@ -23,30 +22,7 @@ export const OperationEditor = (props) => {
         //console.log("Files after added :\n",files)
         setSelectedFiles(files);
     };
-    const onSave=async()=>{
 
-        const tokenValue = localStorage.getItem("authToken");
-        const formData = new FormData();
-        //console.log("files",selectedFiles)
-        selectedFiles.forEach((file, index) => {
-            formData.append(`file${index}`, file);
-        });
-        const response = await axios.put(
-            `${config.apiUrl}/operation/${props.operation.id}/updatefile`,
-            formData, // Передаем FormData вместо обычного объекта
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data', // Устанавливаем заголовок для FormData
-                    Authorization: `Bearer ${tokenValue}`,
-                },
-            }
-        );
-        //console.log(response.status)
-        if(response.status==200)
-        {
-            props.onClose()
-        }
-    }
     return (
         <div>
             <div>
@@ -67,7 +43,10 @@ export const OperationEditor = (props) => {
                        readOnly/>
             </div>
             <SelectingFiles onSelectedFilesChange={handleSelectedFilesChange}/>
-            <button onClick={onSave}>Save</button>
+            <button onClick={
+                ()=>SaveAttachmentsToOperation(props.operation.id,selectedFiles,props.onClose)
+            }
+            >Save</button>
         </div>
     );
 };

@@ -1,6 +1,30 @@
 ﻿import axios from "axios";
 import config from '../../../config/config.json'
+import {IconButton, ListItem, ListItemAvatar, ListItemText} from "@mui/material";
+import FolderIcon from "@mui/icons-material/Folder";
+import DeleteIcon from "@mui/icons-material/Delete";
+import React from "react";
 
+export const handleDownload = async (attachment) => {
+    //console.info('attachment\n',attachment)
+    const fileId = attachment.id;
+    const extension = attachment.attachmentData.split('.').pop().toLowerCase();
+    if (extension === 'xlsx') {
+        window.location.href = `https://localhost:5173/#/excel/${fileId}`;
+    }
+    //function view pdf file
+    else if (extension === 'pdf') {
+        window.location.href = `https://localhost:5173/#/pdf/${fileId}`;
+    }
+    else if (extension === 'doc' || extension === 'docx') {
+        window.location.href = `https://localhost:5173/#/doc/${fileId}`;
+        //await fetchFile(fileId)
+    }
+    else{
+        await fetchFile(fileId, attachment.attachmentData)
+        //alert("Невозможно открыть файл данного типа расширения !")
+    }
+};
 export default async function downloadFile(fileId) {
 
     try {

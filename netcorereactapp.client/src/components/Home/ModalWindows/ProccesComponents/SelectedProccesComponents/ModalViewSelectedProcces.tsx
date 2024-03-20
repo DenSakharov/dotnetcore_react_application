@@ -27,7 +27,7 @@ export default function ModalViewSelectedProcces(props){
                     </span>
                 </div>
                 <div className='modal-content'>
-                    <SelectedProcces int={props.proccesId}/>
+                    <SelectedProcces int={props.proccesId} onClose={props.onClose}/>
                 </div>
                 {props.footer && <div className='modal-footer'>{props.footer}</div>}
             </div>

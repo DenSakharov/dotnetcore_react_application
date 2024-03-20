@@ -1,5 +1,6 @@
 ﻿using ClassesLibrary.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using netcorereactapp.Server.Controllers.Orders;
 using netcorereactapp.Server.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -23,11 +24,12 @@ namespace netcorereactapp.Server.Services.PostgreService
             : base(options)
         {
             _logger = logger;
-            _logger.LogInformation("ApplicationContext created.");
+            //_logger.LogInformation("ApplicationContext created.");
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
+            //optionsBuilder.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.MultipleCollectionIncludeWarning));
             base.OnConfiguring(optionsBuilder);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
