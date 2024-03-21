@@ -116,6 +116,32 @@ namespace netcorereactapp.Server.Services.ModelServices
                 return null; // Возвращаем 500 Internal Server Error в случае ошибки
             }
         }
+        public async Task<Procces> UpdateProcces(Procces editedProcces)
+        {
+            try
+            {
+                // Проверяем, существует ли операция с указанным ID в базе данных
+                var existingProcces = await _dbContext.Procceses.FindAsync(editedProcces.Id);
+                if (existingProcces == null)
+                {
+                    return null; // Возвращаем 404 Not Found, если операция не найдена
+                }
+
+                // Обновляем существующую операцию данными из отредактированной операции
+                existingProcces.Caption = editedProcces.Caption;
+                existingProcces.DateOfCreture = editedProcces.DateOfCreture;
+                existingProcces.DateOfEdited = DateTime.UtcNow;
+                //existingProcces.Operations =editedProcces.Operations;
+                // Сохраняем изменения в базе данных
+                await _dbContext.SaveChangesAsync();
+
+                return existingProcces; // Возвращаем 200 OK в случае успешного обновления операции
+            }
+            catch (Exception ex)
+            {
+                return null; // Возвращаем 500 Internal Server Error в случае ошибки
+            }
+        }
         public async Task<Procces> AddingAttachmentsToSelectedProcces(int proccesId, IFormFileCollection files)
         {
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())

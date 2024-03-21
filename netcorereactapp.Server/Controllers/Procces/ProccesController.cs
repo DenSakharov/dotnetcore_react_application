@@ -87,12 +87,27 @@ namespace netcorereactapp.Server.Controllers.ProccesController
 
             return Ok(new { procceses, totalCount });
         }
-        [HttpPut]
+       /* [HttpPut]
         [Route("updatemodel")]
-        public async Task<IActionResult> ConfirmEditedOperation( ProccesDTO editedProcces
+        public async Task<IActionResult> ConfirmEditedOperation(ProccesDTO editedProcces
             )
         {
             var res = await _proccesService.UpdateProcces(editedProcces);
+            if (res != null)
+            {
+                return Ok(res);
+            }
+            else
+            {
+                return StatusCode(500, $"Internal server error");
+            }
+        }*/
+        [HttpPut]
+        [Route("updatemodel")]
+        public async Task<IActionResult> ConfirmEditedOperation( Procces editedProcces
+            )
+        {
+            var res= await _proccesService.UpdateProcces(editedProcces);
             if (res != null)
             {
                 return Ok(res);

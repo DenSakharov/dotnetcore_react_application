@@ -6,7 +6,6 @@ using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
 
 namespace netcorereactapp.Server.Services.ModelServices
 {
@@ -24,6 +23,22 @@ namespace netcorereactapp.Server.Services.ModelServices
         public async Task Get(int id)
         {
             var operation = await _dbContext.Operations.FindAsync(id);
+        }
+        public async Task<OperationDTO> CreateNewChildOperationForParentOperation(int parentId,string caption)
+        {
+            var existingSelectedOperation = await _dbContext.Operations.FirstOrDefaultAsync(operation => operation.Id == parentId);
+            var mapDTOoper = new OperationDTO();
+
+            if (existingSelectedOperation != null)
+            {
+                var childOperation = new Operation();
+                childOperation.Caption = caption;
+                childOperation.DateOfCreture = DateTime.UtcNow;
+                existingSelectedOperation.ChildsOperations.Add(childOperation);
+                await _dbContext.SaveChangesAsync();
+                mapDTOoper=MapService.MapChildOperations(new List<Operation> { childOperation }).FirstOrDefault();
+            }
+            return mapDTOoper;
         }
         public async Task<OperationDTO> UpdateOperation(int operationId, IFormCollection form)
         {

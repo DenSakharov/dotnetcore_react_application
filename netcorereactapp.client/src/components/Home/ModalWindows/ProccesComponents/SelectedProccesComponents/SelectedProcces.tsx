@@ -115,6 +115,11 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
             {selectedProcces && (
                 <div>
                     <CenteredDivRow>
+                        <ListItemAvatar>
+                            <IconButton onClick={confirmEditedOperation} edge="end" aria-label="delete">
+                                <AssignmentTurnedInSharpIcon style={{ fontSize: 60, color: 'white' }} />
+                            </IconButton>
+                        </ListItemAvatar>
                         <Typography variant="body1">
                             ID: {selectedProcces ? selectedProcces.id : ''}
                         </Typography>
@@ -150,11 +155,7 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                             title={view ? "Показать таблицу" : "Показать Список"} onClick={click_view_table}>
                         {view ? "Показать таблицу" : "Показать Список"}
                     </button>
-                    <ListItemAvatar>
-                        <IconButton onClick={confirmEditedOperation} edge="end" aria-label="delete">
-                            <AssignmentTurnedInSharpIcon  />
-                        </IconButton>
-                    </ListItemAvatar>
+
                     {
                         view ? (
                                 operations !== undefined && operations !== null &&
