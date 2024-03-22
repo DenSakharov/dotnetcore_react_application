@@ -1,15 +1,14 @@
 import {Button, Card, CardContent, IconButton, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
-import {Operation} from "../../../../../Models/ProccesOperation/Operation.tsx";
 import {styled} from "@mui/system";
 import axios from "axios";
 import config from "../../../../../config/config.json";
 
-export const EditorFieldsOperations=(operation, onClose: ()=>void)=>{
-    const [parentOperation,setParentOperation]=useState<Operation>()
+export const EditorFieldsOperations=({operation, onClose})=>{
+    const [parentOperation,setParentOperation]=useState()
     useEffect(() => {
         //console.log(operation)
-        setParentOperation(operation.operation)
+        setParentOperation(operation)
     }, [operation]);
     useEffect(() => {
         //console.log(parentOperation)
@@ -17,6 +16,7 @@ export const EditorFieldsOperations=(operation, onClose: ()=>void)=>{
     const[captionChildOperartion,setCaptionChildOperartion]=useState()
     const handleCaptionChange =async (e: React.ChangeEvent<HTMLInputElement>) => {
         const captionChildOPeration=e.target.value
+        //console.log(captionChildOPeration)
         setCaptionChildOperartion(captionChildOPeration)
         /*setParentOperation(prevState => ({
             ...prevState,
@@ -25,9 +25,9 @@ export const EditorFieldsOperations=(operation, onClose: ()=>void)=>{
     };
     const saveChangesFiledsOperation=async()=>{
         const tokenValue = localStorage.getItem("authToken");
-        //console.log(" - " + fileId)
+        console.log(" - ", parentOperation.id)
         const response =
-            await axios.post(`${config.apiUrl}/operation/${parentOperation?.id}/operation`,
+            await axios.post(`${config.apiUrl}/operation/${parentOperation.id}/operation`,
                 captionChildOperartion,
                 {
                     headers: {
@@ -36,7 +36,7 @@ export const EditorFieldsOperations=(operation, onClose: ()=>void)=>{
                     }
                 });
         if(response?.status==200){
-            console.log(onClose)
+            console.log(typeof onClose)
             onClose()
         }
     }

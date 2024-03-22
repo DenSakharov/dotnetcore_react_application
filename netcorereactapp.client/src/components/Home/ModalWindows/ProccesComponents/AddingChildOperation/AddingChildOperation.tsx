@@ -1,24 +1,25 @@
 import {GeneralModalWindow} from "../../GeneralModalWindow.tsx";
 import {EditorFieldsOperations} from "./EditorFieldsOperations.tsx";
 import {useEffect, useState} from "react";
-import {Operation} from "../../../../../Models/ProccesOperation/Operation.tsx";
 
 interface AddingChildOperationProps {
-    parentOperation: Operation;
+    parentOperation;
     open: boolean; // Пропс для управления открытием модального окна
     onClose: () => void;
 }
 
 export const AddingChildOperation = ({ parentOperation, open, onClose }: AddingChildOperationProps) => {
-    const [operation, setOperation] = useState<Operation>(parentOperation);
+    const [operation, setOperation] = useState(parentOperation);
 
     useEffect(() => {
         //console.log('oper\n',parentOperation)
+        //console.log(typeof onClose)
         setOperation(parentOperation);
     }, [parentOperation]);
 
     return (
         <div>
+            {operation &&
             <GeneralModalWindow
                 modalCaption="Добавление дочереней операции к объекту"
                 open={open} // Передаем пропс open в GeneralModalWindow
@@ -28,6 +29,7 @@ export const AddingChildOperation = ({ parentOperation, open, onClose }: AddingC
                     operation: operation
                 }}
             />
+            }
         </div>
     );
 };

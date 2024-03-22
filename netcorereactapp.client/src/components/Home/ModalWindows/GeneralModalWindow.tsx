@@ -5,7 +5,7 @@ import {Operation} from "../../../Models/ProccesOperation/Operation.tsx";
 // Интерфейс для пропсов компонента-потомка
 interface ChildComponentProps {
     onClose: () => void;
-    operation: Operation;
+    operation;
 }
 
 // Интерфейс для пропсов модального окна
@@ -20,6 +20,7 @@ interface GeneralModalWindowProps {
 export const GeneralModalWindow =({ modalCaption, open, childComponent: ChildComponent, childComponentProps }: GeneralModalWindowProps) => {
     //console.log(open)
     const handleClose = () => {
+        //console.log('test')
         childComponentProps.onClose(); // Вызываем функцию onClose из пропсов childComponentProps
     };
 

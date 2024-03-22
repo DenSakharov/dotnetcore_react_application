@@ -16,30 +16,39 @@ import {Notifications} from "../../../../../UniversalComponents/Notifications/No
 import {renderAttachments} from "../../../../Services/AttachmentService.tsx";
 import AutoAwesomeMotionRoundedIcon from '@mui/icons-material/AutoAwesomeMotionRounded';
 import {AddingChildOperation} from "../../AddingChildOperation/AddingChildOperation.tsx";
-export const OperationTableComponent = (operations) => {
+
+export const OperationTableComponent = ({operations,update}) => {
 
     const [localOperations, setLocalOperations]
         = useState<Operation[]>([]);
 
     useEffect(() => {
-        setLocalOperations(operations.operations);
+        setLocalOperations(operations);
     }, [operations.operations]);
 
-    const[parentOperation,setParenetOperation]=useState<Operation>()
+    const[parentOperation,setParenetOperation]=useState()
     const [openModalWindowWithAddingChildOperation,
         setOpenModalWindowWithAddingChildOperation]=useState(false)
-    const handler_Add_Child_Operation_In_ParentOperation = (oper: Operation) => {
+    const handler_Add_Child_Operation_In_ParentOperation = (oper) => {
         //alert(int)
-        //console.log('oper\n',oper.caption)
+        //console.log('oper\n',oper)
         setParenetOperation(oper)
         setOpenModalWindowWithAddingChildOperation(true)
     }
     const closeModalWindowWithAddingChildOperation=()=>{
+        setParenetOperation()
+        update()
         setOpenModalWindowWithAddingChildOperation(false)
+
     }
-    const[obj,setObj]=useState()
     const columns_Of_Operartions_From_Selected_Procces = useMemo<MRT_ColumnDef<Operation>[]>(
         () => [
+            {
+                accessorKey: 'id',
+                header: 'Номер',
+                size: 50,
+                hidden: true // Указываем, что колонка должна быть скрытой
+            },
             {
                 accessorKey: 'caption',
                 header: 'Название',
@@ -67,32 +76,8 @@ export const OperationTableComponent = (operations) => {
                     }, [value]);
                     //console.log('value\n',value.cell.row._valuesCache.attachments)
                     const handleAddChildOperationClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-                        event.stopPropagation(); // Предотвращаем распространение события нажатия на строку
-                        /*
-                        Из за разных типов данных в ячейке таблицы вот такая хрень для ячейки строки и под строки
-                         */
-                        //console.log("value.cell.row\n",value.cell.row.originalSubRows[0] )
-                        try {
-                            console.log(value.cell.row)
-                            setObj(value.cell.row.original);
-                            {obj &&
-
-                            handler_Add_Child_Operation_In_ParentOperation(obj//value.cell.row.original
-                            )
-                            }
-                            /*if (typeof obj === 'undefined') {
-                                console.log(obj)
-                                handler_Add_Child_Operation_In_ParentOperation(value.cell.row.original)
-                            }
-                                else {
-                                console.log(obj)
-                                handler_Add_Child_Operation_In_ParentOperation(obj);
-                            }*/
-                        }
-                        catch (e){
-                            console.error(e)
-                        }
-
+                        event.stopPropagation();
+                        handler_Add_Child_Operation_In_ParentOperation(value.cell.row._valuesCache)
                     };
                     return (
 
@@ -119,6 +104,7 @@ export const OperationTableComponent = (operations) => {
     const [open, setOpen] = useState(false);
     const handleClose = () => {
         setOpen(false);
+        update()
     };
     const [selectedOperation, setSelectedOperation] = useState<Operation>()
     const editingSelectedOperation = (operation: Operation) => {

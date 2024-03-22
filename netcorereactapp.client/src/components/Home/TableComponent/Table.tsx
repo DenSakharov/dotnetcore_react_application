@@ -137,7 +137,8 @@ export const PageSizeSelector = ({ value, onChange }) => {
     const handlePageSizeChange = (event) => {
         const selectedValue = event.target.value;
         setValueLocal(selectedValue);
-        if (selectedValue === "Введите желаемый размер страницы") {
+        if (selectedValue === "custom") {
+            setValueLocal("custom")
             setCustomPageSize(""); // Сбрасываем пользовательский размер страницы при выборе опции "Custom"
         } else {
             onChange(parseInt(selectedValue)); // Вызываем onChange для обновления размера страницы
@@ -157,13 +158,14 @@ export const PageSizeSelector = ({ value, onChange }) => {
                 <option value={20}>20</option>
                 <option value={50}>50</option>
                 <option value={100}>100</option>
-                <option value={() => {
+                {/*<option value={"custom"}>Желаемый размер страницы</option>*/}
+                {/* <option value={() => {
                     setValueLocal("custom")
                 }}>Введите желаемый размер страницы
-                </option>
+                </option>*/}
                 {/* Добавляем опцию для пользовательского значения */}
             </select>
-            {valueLocal === "Введите желаемый размер страницы" && ( // Показываем текстовое поле только при выборе пользовательского значения
+            {valueLocal === "custom" && ( // Показываем текстовое поле только при выборе пользовательского значения
                 <input
                     type="number"
                     value={customPageSize}

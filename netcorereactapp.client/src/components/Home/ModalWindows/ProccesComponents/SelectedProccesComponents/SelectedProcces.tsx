@@ -40,7 +40,7 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                 })
             if(response)
             {
-                //console.log(response.data)
+                console.log('Ответ запроса на получение выбранного процесса с операциями :\n',response.data)
                 setSelectedProcces(response.data);
             }
         }
@@ -106,6 +106,10 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
         setInfoVisible(!infoVisible);
     };
 
+    const update_dependencies_selected_procces=async()=>{
+        console.log('update')
+        await getCurrentProcces()
+    }
     return (
         <>
             {!selectedProcces && (
@@ -151,7 +155,11 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                         )}
 
                     </CenteredDivRow>
-                    <button className="styled-button"
+                    {
+                        operations &&
+                    <OperationTableComponent operations={operations} update={update_dependencies_selected_procces}/>
+                    }
+                   {/* <button className="styled-button"
                             title={view ? "Показать таблицу" : "Показать Список"} onClick={click_view_table}>
                         {view ? "Показать таблицу" : "Показать Список"}
                     </button>
@@ -168,15 +176,15 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                                     <OperationTableComponent operations={operations}/>
                                 </div>
                             )
-                        /* :
+                         :
                          (
                              <div>
                                  <CenteredDivRow>
                                      <CircularProgress/>
                                  </CenteredDivRow>
                              </div>
-                         )*/
-                    }
+                         )
+                    }*/}
 
                 </div>
             )}
