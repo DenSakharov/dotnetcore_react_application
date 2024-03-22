@@ -1,10 +1,8 @@
 import {useEffect} from "react";
-import ExcelService from "./ExcelService.tsx";
-import '../../../../styles/Modal.css'
-import '../../../../styles/ModalCreateOrderFromExcel.css'
-export const ModalCreateProccesFromExcel = (props) => {
-    // обработчик нажатия клавиши Esc
-    const onKeydown = ({ key }: KeyboardEvent) => {
+import {OperationEditorComponent} from "../Components/OperationEditorComponent.tsx";
+
+export default function ModelEditingCurrentOperation(props) {
+    const onKeydown = ({key}: KeyboardEvent) => {
         switch (key) {
             case 'Escape':
                 props.onClose()
@@ -28,7 +26,7 @@ export const ModalCreateProccesFromExcel = (props) => {
                     </span>
                 </div>
                 <div className='modal-content'>
-                    <ExcelService onClose={props.onClose}/>
+                    <OperationEditorComponent operation={props.operation} onChange={props.onChange} onClose={props.onClose}/>
                 </div>
                 {props.footer && <div className='modal-footer'>{props.footer}</div>}
             </div>

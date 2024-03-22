@@ -1,16 +1,16 @@
 import axios from "axios";
 import {useEffect, useState} from "react";
 import {Procces} from "../../../../Models/ProccesOperation/Procces.tsx";
-import {OperationTable} from "./OperationTable.tsx";
+import {OperationsTable} from "./OperationsTable.tsx";
 import {formatDate} from "../../Services/DateTimeConverterService.tsx";
 import {Operation} from "../../../../Models/ProccesOperation/Operation.tsx";
-import SelectingFiles from "./SelectingMultipleFilesForAttachments/SelectingFiles.tsx";
 import config from '../../../../config/config.json';
 
 import "../../../../styles/ExcelService.css"
 import {addingAttachmentsToProcces} from "../../Services/AttachmentService.tsx";
+import SelectingFilesComponents from "../../CommonComponents/SelectingFilesComponents.tsx";
 
-export default function ExcelService(props) {
+export default function ExcelImportComponent(props) {
     const [selectedFile, setSelectedFile] = useState()
     const [errorMessage, setErrorMessage] = useState("");
     const [procces,setProcces]=useState<Procces>(null)
@@ -151,10 +151,10 @@ export default function ExcelService(props) {
                                 </div>
                             </div>
                             <div className="row">
-                                <SelectingFiles onSelectedFilesChange={handleSelectedFilesChange}/>
+                                <SelectingFilesComponents onSelectedFilesChange={handleSelectedFilesChange}/>
                             </div>
                         </div>
-                        <OperationTable operations={procces.operations} onOperationUpdate={updateOperationInProcess}/>
+                        <OperationsTable operations={procces.operations} onOperationUpdate={updateOperationInProcess}/>
                     </>
                 )}
             </div>

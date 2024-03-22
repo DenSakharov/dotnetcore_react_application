@@ -1,7 +1,7 @@
 ﻿import React, {useState} from 'react';
-import {ModalCreateProccesFromExcel} from "./ModalWindows/ProccesComponents/ModalCreateProccesFromExcel.tsx";
+import {ModalCreateProccesFromExcel} from "./ModalWindows/ModalCreateProccesFromExcel.tsx";
 
-import '../../styles/HomeComponent.css'
+import '../../../styles/HomeComponent.css'
 export const HomeComponent: React.FC = () => {
     const [isModalExcelExport, setModalExcelExport] = useState(false)
     const clickExcelExport =(e)=>{

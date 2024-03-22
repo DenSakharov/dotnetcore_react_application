@@ -1,10 +1,12 @@
-import React, {useEffect, useRef, useState} from "react";
+import  {useEffect, useRef, useState} from "react";
 import {IconButton, ListItem, ListItemAvatar, ListItemText} from "@mui/material";
 import AttachFileSharpIcon from "@mui/icons-material/AttachFileSharp";
-import {CenteredDivColumn} from "../SelectedProccesComponents/OperationListComponents/CenteredDivRow.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
+import {
+    CenteredDivColumn
+} from "./CenteredDivRow.tsx";
 
-export default function SelectingFiles(props ) {
+export default function SelectingFilesComponents(props ) {
     const fileInputRef = useRef(null);
     const [selectedFiles, setSelectedFiles] = useState([]);
     useEffect(() => {

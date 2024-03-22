@@ -107,16 +107,16 @@ const PDFViewer = () => {
 
     return (
         <div>
-            <h2>Document Viewer</h2>
+            <h2>DocumentViewComponents Viewer</h2>
             {base64doc && (
                 <div>
                 <p>test</p>
-                <Document
+                <DocumentViewComponents
                     file={`data:application/pdf;base64,${base64doc}`}
                     onLoadSuccess={onDocumentLoadSuccess}
                 >
                     <Page pageNumber={pageNumber} />
-                </Document>
+                </DocumentViewComponents>
                 </div>
             )}
             {numPages && (

@@ -1,4 +1,4 @@
-﻿import {HomeComponent} from './HomeComponent.tsx'
+﻿import {HomeComponent} from './ExcelImportProccesLogic/HomeComponent.tsx'
 import Table from "./TableComponent/Table.tsx";
 
 import '../../styles/Home.css'

@@ -1,19 +1,17 @@
 import {useEffect, useRef, useState} from "react";
-import {Procces} from "../../../../../Models/ProccesOperation/Procces.tsx";
+import {Procces} from "../../../../../../Models/ProccesOperation/Procces.tsx";
+import {Operation} from "../../../../../../Models/ProccesOperation/Operation.tsx";
 import axios from "axios";
-import config from "../../../../../config/config.json";
+import config from '../../../../../../config/config.json'
+import {addingAttachmentsToProcces, renderAttachments} from "../../../../Services/AttachmentService.tsx";
+import {CenteredDivRow} from "../../../../CommonComponents/CenteredDivRow.tsx";
 import {CircularProgress, IconButton, List, ListItemAvatar, TextField, Typography} from "@mui/material";
-import {styled} from '@mui/system';
-import {Operation} from "../../../../../Models/ProccesOperation/Operation.tsx";
-import OperationListComponent from "./OperationListComponents/OperationListComponent.tsx";
-import {OperationTableComponent} from "./OperationTableComponent/OperationTableComponent.tsx";
-import {CenteredDivRow} from "./OperationListComponents/CenteredDivRow.tsx";
-import {addingAttachmentsToProcces, renderAttachments} from "../../../Services/AttachmentService.tsx";
-import AssignmentTurnedInSharpIcon from '@mui/icons-material/AssignmentTurnedInSharp';
-import SelectingFiles from "../SelectingMultipleFilesForAttachments/SelectingFiles.tsx";
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 import RemoveSharpIcon from '@mui/icons-material/RemoveSharp';
-
+import AssignmentTurnedInSharpIcon from '@mui/icons-material/AssignmentTurnedInSharp';
+import SelectingFilesComponents from "../../../../CommonComponents/SelectingFilesComponents.tsx";
+import {styled} from "@mui/system";
+import {OperationTableComponent} from "./OperationTableComponent/OperationTableComponent.tsx";
 export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void}) =>{
     const [selectedProcces,setSelectedProcces]=useState<Procces>()
     const [operations,setOperations]=useState<Operation[]>()
@@ -40,7 +38,7 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                 })
             if(response)
             {
-                console.log('Ответ запроса на получение выбранного процесса с операциями :\n',response.data)
+                //console.log('Ответ запроса на получение выбранного процесса с операциями :\n',response.data)
                 setSelectedProcces(response.data);
             }
         }
@@ -107,7 +105,7 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
     };
 
     const update_dependencies_selected_procces=async()=>{
-        console.log('update')
+        //console.log('update')
         await getCurrentProcces()
     }
     return (
@@ -150,7 +148,7 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                         </IconButton>
                         {infoVisible && (
                             <div>
-                                <SelectingFiles onSelectedFilesChange={addAttachments}/>
+                                <SelectingFilesComponents onSelectedFilesChange={addAttachments}/>
                             </div>
                         )}
 

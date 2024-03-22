@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import {Operation} from "../../../../Models/ProccesOperation/Operation.tsx";
-import DeleteOperationFromProcces from "./EditingCurrentOperation/DeleteOperationFromProcces.tsx";
 import {formatDate} from "../../Services/DateTimeConverterService.tsx";
+import EditingOperationFromProccesComponent from "./EditingOperationFromProccesComponent.tsx";
 
-export const OperationTable: React.FC<{
+export const OperationsTable: React.FC<{
     operations: Operation[],
     onOperationUpdate: (updatedOperation: Operation, operationId: number) => void
 }> = ({operations, onOperationUpdate}) => {
@@ -15,7 +15,7 @@ export const OperationTable: React.FC<{
                 <td><input type="datetime-local" name="dateOfCreation" value={formatDate(operation.dateOfCreture)} readOnly/></td>
                 <td><input type="datetime-local" name="dateOfEditing" value={formatDate(operation.dateOfEdited)} readOnly/></td>
                 <td>
-                    <DeleteOperationFromProcces operation={operation}  onChange={onOperationUpdate}/>
+                    <EditingOperationFromProccesComponent operation={operation}  onChange={onOperationUpdate}/>
                 </td>
             </tr>
         )

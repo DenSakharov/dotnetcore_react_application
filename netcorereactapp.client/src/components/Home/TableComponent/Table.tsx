@@ -1,16 +1,14 @@
-import {useEffect, useMemo, useState} from 'react';
-import {
-    MaterialReactTable,
-    useMaterialReactTable,
-    type MRT_ColumnDef,
-} from 'material-react-table';
 import {Procces} from "../../../Models/ProccesOperation/Procces.tsx";
+import {useEffect, useMemo, useState} from "react";
 import axios from "axios";
-import config from '../../../config/config.json'
+import config from '../../../config/config.json';
+import {MaterialReactTable, MRT_ColumnDef, useMaterialReactTable} from "material-react-table";
 import {MRT_Localization_RU} from "material-react-table/locales/ru";
 import ModalViewSelectedProcces
-    from "../ModalWindows/ProccesComponents/SelectedProccesComponents/ModalViewSelectedProcces.tsx";
+    from "./ModalWindows/ProccesComponents/SelectedProccesComponents/ModalViewSelectedProcces.tsx";
 import {Box} from "@mui/material";
+import {PageSizeSelector} from "../CommonComponents/PageSizeSelector.tsx";
+import {Pagination} from "../CommonComponents/Pagination.tsx";
 
 export default function Table() {
     const [data, setData] = useState<Procces[]>([])
@@ -131,69 +129,4 @@ export default function Table() {
         </div>
     );
 }
-export const PageSizeSelector = ({ value, onChange }) => {
-    const [customPageSize, setCustomPageSize] = useState("");
-    const [valueLocal,setValueLocal]=useState("")
-    const handlePageSizeChange = (event) => {
-        const selectedValue = event.target.value;
-        setValueLocal(selectedValue);
-        if (selectedValue === "custom") {
-            setValueLocal("custom")
-            setCustomPageSize(""); // Сбрасываем пользовательский размер страницы при выборе опции "Custom"
-        } else {
-            onChange(parseInt(selectedValue)); // Вызываем onChange для обновления размера страницы
-        }
-    };
-    const handleCustomPageSizeChange = (event) => {
-        const newValue = parseInt(event.target.value);
-        setCustomPageSize(newValue);
-        onChange(newValue); // Вызываем обработчик onChange для обновления размера страницы
-        setValueLocal("")
-    };
-    return (
-        <div>
-            <select value={value} onChange={handlePageSizeChange}>
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-                {/*<option value={"custom"}>Желаемый размер страницы</option>*/}
-                {/* <option value={() => {
-                    setValueLocal("custom")
-                }}>Введите желаемый размер страницы
-                </option>*/}
-                {/* Добавляем опцию для пользовательского значения */}
-            </select>
-            {valueLocal === "custom" && ( // Показываем текстовое поле только при выборе пользовательского значения
-                <input
-                    type="number"
-                    value={customPageSize}
-                    onChange={handleCustomPageSizeChange}
-                    placeholder="Enter custom page size"
-                />
-            )}
-        </div>
-    );
-};
-export const Pagination = ({totalPages, currentPage, onPageChange}) => {
-    const handleClick = (pageNumber) => {
-        onPageChange(pageNumber);
-    };
 
-    return (
-        <div>
-            <button onClick={() => handleClick(currentPage - 1)} disabled={currentPage === 1}>
-                {'<'}
-            </button>
-            {Array.from({length: totalPages}, (_, index) => (
-                <button key={index} onClick={() => handleClick(index + 1)} disabled={currentPage === index + 1}>
-                    {index + 1}
-                </button>
-            ))}
-            <button onClick={() => handleClick(currentPage + 1)} disabled={currentPage === totalPages}>
-                {'>'}
-            </button>
-        </div>
-    );
-};

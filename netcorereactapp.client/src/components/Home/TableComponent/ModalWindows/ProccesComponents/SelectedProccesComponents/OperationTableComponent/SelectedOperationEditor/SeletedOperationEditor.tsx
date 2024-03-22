@@ -1,19 +1,20 @@
-import {Operation} from "../../../../../../../Models/ProccesOperation/Operation.tsx";
-import React, {useEffect, useRef, useState} from "react";
-import {StyledTextField} from "../../SelectedProcces.tsx";
-import {CenteredDivColumn} from "../../OperationListComponents/CenteredDivRow.tsx";
+import  {useEffect, useRef, useState} from "react";
 import {
     Button,
-    Grid, IconButton,
+    Grid,
     List,
     Typography
 } from "@mui/material";
 import axios from "axios";
-import config from "../../../../../../../config/config.json";
-import {renderAttachments} from "../../../../../Services/AttachmentService.tsx";
-import SelectingFiles from "../../../SelectingMultipleFilesForAttachments/SelectingFiles.tsx";
+import {Operation} from "../../../../../../../../Models/ProccesOperation/Operation.tsx";
+import config from '../../../../../../../../config/config.json'
+import {CenteredDivColumn} from "../../../../../../CommonComponents/CenteredDivRow.tsx";
+import {StyledTextField} from "../../SelectedProcces.tsx";
+import {renderAttachments} from "../../../../../../Services/AttachmentService.tsx";
+import SelectingFilesComponents from "../../../../../../CommonComponents/SelectingFilesComponents.tsx";
+
 export const SeletedOperationEditor=({operation,onClose,notif})=>{
-    let [oper,setOper]=useState<Operation>()
+    const [oper,setOper]=useState<Operation>()
     useEffect(() => {
         //console.info(operation)
         setOper(operation)
@@ -94,7 +95,7 @@ export const SeletedOperationEditor=({operation,onClose,notif})=>{
                                 {renderAttachments (oper.attachments)}
                             </List>
                     </Grid>
-                    <SelectingFiles onSelectedFilesChange={addAttachments}/>
+                    <SelectingFilesComponents onSelectedFilesChange={addAttachments}/>
                     <Button onClick={saveEdtingOper}>Сохранить</Button>
                 </CenteredDivColumn>
             }

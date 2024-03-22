@@ -1,7 +1,6 @@
 import {MaterialReactTable, type MRT_ColumnDef, useMaterialReactTable} from "material-react-table";
 import {useEffect, useMemo, useState} from "react";
 import {MRT_Localization_RU} from "material-react-table/locales/ru";
-import {Operation} from "../../../../../../Models/ProccesOperation/Operation.tsx";
 import {
     Box,
     Button,
@@ -12,10 +11,11 @@ import {
     List, ListItemAvatar,
 } from "@mui/material";
 import {SeletedOperationEditor} from "./SelectedOperationEditor/SeletedOperationEditor.tsx";
-import {Notifications} from "../../../../../UniversalComponents/Notifications/Notifications.tsx";
-import {renderAttachments} from "../../../../Services/AttachmentService.tsx";
 import AutoAwesomeMotionRoundedIcon from '@mui/icons-material/AutoAwesomeMotionRounded';
 import {AddingChildOperation} from "../../AddingChildOperation/AddingChildOperation.tsx";
+import {Operation} from "../../../../../../../Models/ProccesOperation/Operation.tsx";
+import {renderAttachments} from "../../../../../Services/AttachmentService.tsx";
+import {Notifications} from "../../../../../../UniversalComponents/Notifications/Notifications.tsx";
 
 export const OperationTableComponent = ({operations,update}) => {
 
@@ -35,11 +35,14 @@ export const OperationTableComponent = ({operations,update}) => {
         setParenetOperation(oper)
         setOpenModalWindowWithAddingChildOperation(true)
     }
+    const [openNotificationAddingOperation, setOpenNotificationAddingOperation] = useState(false);
+    const handleClick_openNotificationAddingOperation = () => {
+        setOpenNotificationAddingOperation(true);
+    };
     const closeModalWindowWithAddingChildOperation=()=>{
         setParenetOperation()
         update()
         setOpenModalWindowWithAddingChildOperation(false)
-
     }
     const columns_Of_Operartions_From_Selected_Procces = useMemo<MRT_ColumnDef<Operation>[]>(
         () => [
@@ -134,17 +137,20 @@ export const OperationTableComponent = ({operations,update}) => {
         getSubRows: getSubRows, // Передаем функцию getSubRows
     });
 
-    const [openNotification, setOpenNotification] = useState(false);
-    const handleClick = () => {
-        setOpenNotification(true);
+    const [openNotificationUpdateOperation, setOpenNotificationUpdateOperation] = useState(false);
+    const handleClick_openNotificationUpdateOperation = () => {
+        setOpenNotificationUpdateOperation(true);
     };
     return (
         <div>
-            {openNotification &&
-                <Notifications message='Операция обновлена успешно!' open={openNotification}/>}
+            {openNotificationAddingOperation &&
+                <Notifications message='Операция добавлена успешно!' open={openNotificationAddingOperation}/>}
+            {openNotificationUpdateOperation &&
+                <Notifications message='Операция обновлена успешно!' open={openNotificationUpdateOperation}/>}
             {parentOperation &&
             <AddingChildOperation parentOperation={parentOperation}
                                   open={openModalWindowWithAddingChildOperation}
+                                  notif={handleClick_openNotificationAddingOperation}
                                   onClose={closeModalWindowWithAddingChildOperation}/>
             }
             <Dialog open={open} onClose={handleClose}
@@ -157,7 +163,9 @@ export const OperationTableComponent = ({operations,update}) => {
                 <DialogTitle>Выбранная операция</DialogTitle>
                 <DialogContent>
                     {/*<p>Содержимое модального окна...</p>*/}
-                    <SeletedOperationEditor operation={selectedOperation} onClose={handleClose} notif={handleClick}/>
+                    <SeletedOperationEditor operation={selectedOperation}
+                                            onClose={handleClose}
+                                            notif={handleClick_openNotificationUpdateOperation}/>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Закрыть</Button>

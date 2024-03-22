@@ -5,9 +5,9 @@ import { CheckAccessToData } from './App';
 import { About } from './About';
 import { Home } from './components/Home/Home';
 import Register from './components/login/register';
-import  ExcelPage  from './components/Home/Document/ExcelPage';
-import PDFViewer from './components/Home/Document/PDFViewer';
-import WordViewer from './components/Home/Document/WordViewer';
+import  ExcelPage  from './components/Home/DocumentViewComponents/ExcelPage';
+import PDFViewer from './components/Home/DocumentViewComponents/PDFViewer';
+import WordViewer from './components/Home/DocumentViewComponents/WordViewer';
 
 import './styles/MainPage.css';
 import {Notifications} from "./components/UniversalComponents/Notifications/Notifications.tsx";

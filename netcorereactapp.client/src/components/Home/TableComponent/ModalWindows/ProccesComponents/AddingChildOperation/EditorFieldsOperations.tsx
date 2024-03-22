@@ -2,9 +2,8 @@ import {Button, Card, CardContent, IconButton, TextField} from "@mui/material";
 import {useEffect, useState} from "react";
 import {styled} from "@mui/system";
 import axios from "axios";
-import config from "../../../../../config/config.json";
-
-export const EditorFieldsOperations=({operation, onClose})=>{
+import config from '../../../../../../config/config.json'
+export const EditorFieldsOperations=({operation, onClose,notif})=>{
     const [parentOperation,setParentOperation]=useState()
     useEffect(() => {
         //console.log(operation)
@@ -25,7 +24,7 @@ export const EditorFieldsOperations=({operation, onClose})=>{
     };
     const saveChangesFiledsOperation=async()=>{
         const tokenValue = localStorage.getItem("authToken");
-        console.log(" - ", parentOperation.id)
+       //console.log(" - ", parentOperation.id)
         const response =
             await axios.post(`${config.apiUrl}/operation/${parentOperation.id}/operation`,
                 captionChildOperartion,
@@ -36,8 +35,9 @@ export const EditorFieldsOperations=({operation, onClose})=>{
                     }
                 });
         if(response?.status==200){
-            console.log(typeof onClose)
+            //console.log(typeof onClose)
             onClose()
+            notif()
         }
     }
 

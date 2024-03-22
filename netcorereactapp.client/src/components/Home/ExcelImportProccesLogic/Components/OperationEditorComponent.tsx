@@ -1,12 +1,13 @@
-import {formatDate} from "../../../Services/DateTimeConverterService.tsx";
-import SelectingFiles from "../SelectingMultipleFilesForAttachments/SelectingFiles.tsx";
 import {useEffect, useState} from "react";
-import {SaveAttachmentsToOperation} from "../../../Services/AttachmentService.tsx";
-export const OperationEditor = (props) => {
+import {formatDate} from "../../Services/DateTimeConverterService.tsx";
+import SelectingFilesComponents from "../../CommonComponents/SelectingFilesComponents.tsx";
+import {SaveAttachmentsToOperation} from "../../Services/AttachmentService.tsx";
+
+export const OperationEditorComponent = (props) => {
     //console.log(props.operation.dateOfCreture+"\n"+props.operation.dateOfEdited)
     const [selectedFiles, setSelectedFiles] = useState([]);
     useEffect(() => {
-        //console.log("OperationEditor component useEffect selectedFiles :\n",selectedFiles)
+        //console.log("OperationEditorComponent component useEffect selectedFiles :\n",selectedFiles)
     }, [selectedFiles]);
     const onChangeLocal = (event) => {
         const { name, value } = event.target;
@@ -42,7 +43,7 @@ export const OperationEditor = (props) => {
                 <input type="datetime-local" name="dateOfEditing" value={formatDate(props.operation.dateOfEdited)}
                        readOnly/>
             </div>
-            <SelectingFiles onSelectedFilesChange={handleSelectedFilesChange}/>
+            <SelectingFilesComponents onSelectedFilesChange={handleSelectedFilesChange}/>
             <button onClick={
                 ()=>SaveAttachmentsToOperation(props.operation.id,selectedFiles,props.onClose)
             }

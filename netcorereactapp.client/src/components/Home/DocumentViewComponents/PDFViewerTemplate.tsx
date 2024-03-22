@@ -36,7 +36,7 @@ export const PDFViewerTemplate = ({ fileData }) => {
 
     const handleDocumentLoad = () => {
         setLoading(false);
-        //console.log('Document loaded successfully');
+        //console.log('DocumentViewComponents loaded successfully');
     };
 
     const handleError = (e) => {

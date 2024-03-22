@@ -1,4 +1,4 @@
-import OrderModel from "../HomeComponent.tsx";
+import OrderModel from "../ExcelImportProccesLogic/HomeComponent.tsx";
 import axios from "axios";
 import config from '../../../config/config.json'
 export const get_current_order=async (id: number): Promise<OrderModel>=>{

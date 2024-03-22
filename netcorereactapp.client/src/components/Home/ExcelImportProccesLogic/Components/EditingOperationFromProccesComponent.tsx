@@ -1,7 +1,7 @@
 import  {useState} from "react";
-import ModelEditingCurrentOperation from "./ModelEditingCurrentOperation.tsx";
+import ModelEditingCurrentOperation from "../ModalWindows/ModelEditingCurrentOperation.tsx";
 
-export default function DeleteOperationFromProcces(props){
+export default function EditingOperationFromProccesComponent(props){
     //console.log("oper ->"+JSON.stringify( oper) )
 
     const [isModalEditedOperation, setModalEditedOperation] = useState(false)
