@@ -64,10 +64,22 @@ namespace netcorereactapp.Server.Controllers.Operation
             return StatusCode(500, "Saving files error");
         }
         [HttpPost("{parentId}/operation")]
-        public async Task<IActionResult>AddChildOperationToParrentOperation(int parentId,[FromBody]string captionChildOperartion)
+        public async Task<IActionResult> AddChildOperationToParrentOperation(int parentId, [FromBody] string captionChildOperartion)
         {
-            var res=await _operationService.CreateNewChildOperationForParentOperation(parentId, captionChildOperartion);
-            return Ok(res); 
+            var res = await _operationService.CreateNewChildOperationForParentOperation(parentId, captionChildOperartion);
+            return Ok(res);
+        }
+        [HttpPost("{parentId}/procces")]
+        public async Task<IActionResult> AddChildOperationToProcces(int parentId, [FromBody] string captionChildOperartion)
+        {
+            var res = await _operationService.CreateNewChildOperationForProcces(parentId, captionChildOperartion);
+            return Ok(res);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var res = await _operationService.DeleteOperation(id);
+            return Ok(res);
         }
     }
 }

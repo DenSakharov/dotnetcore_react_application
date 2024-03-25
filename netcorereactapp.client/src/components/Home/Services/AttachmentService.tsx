@@ -4,6 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {handleDownload} from "./DownloadFileService.tsx";
 import axios from "axios";
 import config from "../../../config/config.json";
+import {CenteredDivColumn} from "../CommonComponents/CenteredDivRow.tsx";
 
 export const addingAttachmentsToProcces = async (id,selectedFiles,onClose)=>{
     const tokenValue = localStorage.getItem("authToken");
@@ -57,6 +58,7 @@ export const SaveAttachmentsToOperation=async(id,selectedFiles,onClose)=>{
 }
 export const renderAttachments = (attachments) => (
     attachments.map((attachment, index) => (
+
         <ListItem key={index}>
             <ListItemAvatar>
                 <IconButton onClick={() => handleDownload(attachment)}>

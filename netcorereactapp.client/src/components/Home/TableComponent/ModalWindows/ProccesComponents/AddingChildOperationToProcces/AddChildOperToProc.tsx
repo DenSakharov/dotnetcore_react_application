@@ -26,6 +26,7 @@ export const AddChildOperToProc = ({ procces, open, onClose,notif }: AddingChild
                         onClose: onClose, // Передаем функцию onClose из внешнего компонента
                         operation: proccesLocal,
                         notif: notif,
+                        procces: proccesLocal,
                     }}
                 />
             }

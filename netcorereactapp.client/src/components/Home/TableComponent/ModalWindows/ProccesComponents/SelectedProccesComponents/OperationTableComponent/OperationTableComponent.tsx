@@ -16,15 +16,19 @@ import {AddingChildOperation} from "../../AddingChildOperationToParentOperation/
 import {Operation} from "../../../../../../../Models/ProccesOperation/Operation.tsx";
 import {renderAttachments} from "../../../../../Services/AttachmentService.tsx";
 import {Notifications} from "../../../../../../UniversalComponents/Notifications/Notifications.tsx";
+import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
+import config from "../../../../../../../config/config.json";
 
-export const OperationTableComponent = ({operations,update}) => {
+export const OperationTableComponent = ({procces,operations,update}) => {
 
     const [localOperations, setLocalOperations]
         = useState<Operation[]>([]);
 
     useEffect(() => {
         setLocalOperations(operations);
-    }, [operations.operations]);
+        //console.log(localOperations)
+    }, [operations]);
 
     const[parentOperation,setParenetOperation]=useState()
     const [openModalWindowWithAddingChildOperation,
@@ -44,18 +48,60 @@ export const OperationTableComponent = ({operations,update}) => {
         update()
         setOpenModalWindowWithAddingChildOperation(false)
     }
+    const delete_operation=async (int: number)=>{
+        try{
+            const tokenValue = localStorage.getItem("authToken");
+            const response = await axios.delete(
+                `${config.apiUrl}/operation/${int}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${tokenValue}`,
+                    },
+                }
+            );
+            //console.log("Response from confirmEditedOperation:", response.data);
+            if(response.status==200)
+            {
+                update()
+            }
+        }
+        catch (e) {
+
+        }
+    }
     const columns_Of_Operartions_From_Selected_Procces = useMemo<MRT_ColumnDef<Operation>[]>(
         () => [
             {
                 accessorKey: 'id',
                 header: 'Номер',
-                size: 50,
+                size: 10,
                 hidden: true // Указываем, что колонка должна быть скрытой
             },
             {
                 accessorKey: 'caption',
                 header: 'Название',
-                size: 50,
+                size: 10,
+                Cell: ((value) => {
+                    const[id,setId]
+                        =useState()
+                    useEffect(() => {
+                        setId(value.cell.row.original.id)
+                    }, [value]);
+                    const handleDeletingOperation = async (event: React.MouseEvent<HTMLButtonElement>) => {
+                        event.stopPropagation();
+                        await delete_operation(id)
+                    };
+                    return(
+                        <div style={{ maxWidth: '20px' }}>
+                            <IconButton
+                                onClick={handleDeletingOperation}
+                                style={{ color: 'green' }}>
+                                <DeleteIcon style={{ fontSize: 20, color: 'green' }} />
+                            </IconButton>
+                            {value.cell.row._valuesCache.caption}
+                        </div>
+                    )
+                }),
             },
             /*{
                 accessorKey: 'dateOfCreture', //normal accessorKey
@@ -70,7 +116,7 @@ export const OperationTableComponent = ({operations,update}) => {
             {
                 accessorKey: 'attachments',
                 header: 'Вложения',
-                size: 50,
+                size: 10,
                 Cell: ((value) => {
                     const [attachments, setAttachments]
                         = useState<Operation[]>()
@@ -80,11 +126,11 @@ export const OperationTableComponent = ({operations,update}) => {
                     //console.log('value\n',value.cell.row._valuesCache.attachments)
                     const handleAddChildOperationClick = (event: React.MouseEvent<HTMLButtonElement>) => {
                         event.stopPropagation();
-                        handler_Add_Child_Operation_In_ParentOperation(value.cell.row._valuesCache)
+                        //console.log('value.cell.row.original :\n',value.cell.row.original)
+                        handler_Add_Child_Operation_In_ParentOperation(value.cell.row.original)
                     };
                     return (
-
-                        <div>
+                        <div style={{ maxWidth: '100px' }}>
                             <ListItemAvatar>
                             <IconButton onClick={handleAddChildOperationClick}>
                                 <AutoAwesomeMotionRoundedIcon/>
@@ -117,9 +163,10 @@ export const OperationTableComponent = ({operations,update}) => {
     }
 
     const table_Of_Operartions_From_Selected_Procces = useMaterialReactTable({
+        //добавление только раскрытых колонок (id столбец скрыт)
         columns: columns_Of_Operartions_From_Selected_Procces.filter(column => !column?.hidden),
         data: localOperations,
-        enablePagination: true,
+        enablePagination: false,
         enableBottomToolbar: false,
         enableExpanding: true,
         enableExpandAll: false,
@@ -172,7 +219,7 @@ export const OperationTableComponent = ({operations,update}) => {
                 </DialogActions>
             </Dialog>
             <Box sx={{
-                maxWidth: '700px',
+                maxWidth: '800px',
                 margin: '0 auto',
                 borderRadius: '80px', // Применяем закругление границ
                 boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', // Добавляем тень для эффекта поднятости

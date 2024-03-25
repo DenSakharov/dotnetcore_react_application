@@ -5,8 +5,9 @@ import {Operation} from "../../../Models/ProccesOperation/Operation.tsx";
 // Интерфейс для пропсов компонента-потомка
 interface ChildComponentProps {
     onClose: () => void;
-    notif:()=>void
+    notif:()=>void;
     operation;
+    procces;
 }
 
 // Интерфейс для пропсов модального окна

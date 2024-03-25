@@ -21,6 +21,7 @@ export default function Table() {
         pageSize: 2, //customize the default page size
     });*/
     useEffect(() => {
+        //console.log('currentPage\n',currentPage)
         getData();
     }, [currentPage, pageSize]);
    /* useEffect(() => {
@@ -102,6 +103,7 @@ export default function Table() {
         setModalExcelExport(true);
     }
     const clickExcelExport =(e)=>{
+        getData();
         setModalExcelExport(!isModalExcelExport);
     }
     return (

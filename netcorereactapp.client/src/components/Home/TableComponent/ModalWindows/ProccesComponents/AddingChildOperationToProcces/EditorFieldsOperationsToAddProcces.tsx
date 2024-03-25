@@ -4,7 +4,7 @@ import config from "../../../../../../config/config.json";
 import {Button, Card, CardContent, IconButton, TextField} from "@mui/material";
 import {styled} from "@mui/system";
 
-export const EditorFieldsOperationsToAddProcces=({operation, onClose,notif})=>{
+export const EditorFieldsOperationsToAddProcces=({operation, onClose,notif, procces})=>{
     const [parentOperation,setParentOperation]=useState()
     useEffect(() => {
         //console.log(operation)
@@ -25,10 +25,10 @@ export const EditorFieldsOperationsToAddProcces=({operation, onClose,notif})=>{
     };
     const saveChangesFiledsOperation=async()=>{
         const tokenValue = localStorage.getItem("authToken");
-        //console.log(" - ", parentOperation.id)
+        //console.log(" - ", procces.id)
 
-       /* const response =
-            await axios.post(`${config.apiUrl}/operation/${parentOperation.id}/operation`,
+        const response =
+            await axios.post(`${config.apiUrl}/operation/${procces.id}/procces`,
                 captionChildOperartion,
                 {
                     headers: {
@@ -40,7 +40,7 @@ export const EditorFieldsOperationsToAddProcces=({operation, onClose,notif})=>{
             //console.log(typeof onClose)
             onClose()
             notif()
-        }*/
+        }
     }
 
     return (
@@ -75,7 +75,6 @@ export const EditorFieldsOperationsToAddProcces=({operation, onClose,notif})=>{
                     </CardContent>
                 </Card>
             </CenteredDivColumnLocal>
-            <IconButton onClick={saveChangesFiledsOperation}/>
         </div>
     )
 }

@@ -24,6 +24,22 @@ namespace netcorereactapp.Server.Services.ModelServices
         {
             var operation = await _dbContext.Operations.FindAsync(id);
         }
+        public async Task<OperationDTO> CreateNewChildOperationForProcces(int parentId, string caption)
+        {
+            var existingSelectedOperation = await _dbContext.Procceses.FirstOrDefaultAsync(operation => operation.Id == parentId);
+            var mapDTOoper = new OperationDTO();
+
+            if (existingSelectedOperation != null)
+            {
+                var childOperation = new Operation();
+                childOperation.Caption = caption;
+                childOperation.DateOfCreture = DateTime.UtcNow;
+                existingSelectedOperation.Operations.Add(childOperation);
+                await _dbContext.SaveChangesAsync();
+                mapDTOoper = MapService.MapChildOperations(new List<Operation> { childOperation }).FirstOrDefault();
+            }
+            return mapDTOoper;
+        }
         public async Task<OperationDTO> CreateNewChildOperationForParentOperation(int parentId,string caption)
         {
             var existingSelectedOperation = await _dbContext.Operations.FirstOrDefaultAsync(operation => operation.Id == parentId);
@@ -42,7 +58,6 @@ namespace netcorereactapp.Server.Services.ModelServices
         }
         public async Task<OperationDTO> UpdateOperation(int operationId, IFormCollection form)
         {
-
             try
             {
                 var existingSelectedOperation = await _dbContext.Operations.FirstOrDefaultAsync(operation => operation.Id == operationId);
@@ -124,6 +139,23 @@ namespace netcorereactapp.Server.Services.ModelServices
             }
             catch (Exception ex) { return null; }
         }
-
+        public async Task<bool> DeleteOperation(int id)
+        {
+            try
+            {
+                var res = await _dbContext.Operations.FindAsync(id);
+                if (res != null)
+                {
+                    _dbContext.Operations.Remove(res);
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

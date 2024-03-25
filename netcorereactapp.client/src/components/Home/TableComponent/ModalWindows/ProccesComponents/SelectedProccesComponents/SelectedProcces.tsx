@@ -44,6 +44,8 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
             {
                 //console.log('Ответ запроса на получение выбранного процесса с операциями :\n',response.data)
                 setSelectedProcces(response.data);
+            }else {
+                console.error('requset faild')
             }
         }
         catch (e){
@@ -70,7 +72,7 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
         /*const formData = new FormData();
         formData.append('files', selectedFiles);
         formData.append('procces', selectedProcces);*/
-        console.log(selectedProcces)
+        //console.log(selectedProcces)
         //const procces: Procces=selectedProcces
         try {
             const response = await axios.put(
@@ -212,7 +214,10 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                     </ListItemAvatar>
                     {
                         operations &&
-                    <OperationTableComponent operations={operations} update={update_dependencies_selected_procces}/>
+                    <OperationTableComponent
+                        procces={selectedProcces}
+                        operations={operations}
+                        update={update_dependencies_selected_procces}/>
                     }
                    {/* <button className="styled-button"
                             title={view ? "Показать таблицу" : "Показать Список"} onClick={click_view_table}>

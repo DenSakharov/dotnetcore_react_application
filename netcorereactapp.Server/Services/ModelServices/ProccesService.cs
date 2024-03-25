@@ -172,6 +172,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                 catch (Exception ex) { return null; }
             }
         }
+
         public async Task<bool> DeleteProcces(int id)
         {
             try
