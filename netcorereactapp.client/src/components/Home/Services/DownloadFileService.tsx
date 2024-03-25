@@ -10,14 +10,17 @@ export const handleDownload = async (attachment) => {
     const fileId = attachment.id;
     const extension = attachment.attachmentData.split('.').pop().toLowerCase();
     if (extension === 'xlsx') {
-        window.location.href = `https://localhost:5173/#/excel/${fileId}`;
+        //window.location.href = `https://localhost:5173/#/excel/${fileId}`;
+        window.open(`https://localhost:5173/#/excel/${fileId}`, '_blank');
     }
     //function view pdf file
     else if (extension === 'pdf') {
-        window.location.href = `https://localhost:5173/#/pdf/${fileId}`;
+        //window.location.href = `https://localhost:5173/#/pdf/${fileId}`;
+        window.open(`https://localhost:5173/#/pdf/${fileId}`, '_blank');
     }
     else if (extension === 'doc' || extension === 'docx') {
-        window.location.href = `https://localhost:5173/#/doc/${fileId}`;
+        //window.location.href = `https://localhost:5173/#/doc/${fileId}`;
+        window.open(`https://localhost:5173/#/doc/${fileId}`, '_blank');
         //await fetchFile(fileId)
     }
     else{

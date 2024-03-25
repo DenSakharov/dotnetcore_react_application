@@ -61,7 +61,8 @@ export const SelectedOrder:
             }
             //function view pdf file
             else if (extension === 'pdf') {
-                window.location.href = `https://localhost:5173/#/pdf/${fileId}`;
+                //window.location.href = `https://localhost:5173/#/pdf/${fileId}`;
+                window.open(`https://localhost:5173/#/pdf/${fileId}`, '_blank');
             }
             else if (extension === 'doc' || extension === 'docx') {
                 window.location.href = `https://localhost:5173/#/doc/${fileId}`;

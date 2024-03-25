@@ -4,7 +4,7 @@ import {Operation} from "../../../../../../Models/ProccesOperation/Operation.tsx
 import axios from "axios";
 import config from '../../../../../../config/config.json'
 import {addingAttachmentsToProcces, renderAttachments} from "../../../../Services/AttachmentService.tsx";
-import {CenteredDivRow} from "../../../../CommonComponents/CenteredDivRow.tsx";
+import {CenteredDivColumn, CenteredDivRow} from "../../../../CommonComponents/CenteredDivRow.tsx";
 import {CircularProgress, IconButton, List, ListItemAvatar, TextField, Typography} from "@mui/material";
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 import RemoveSharpIcon from '@mui/icons-material/RemoveSharp';
@@ -12,6 +12,10 @@ import AssignmentTurnedInSharpIcon from '@mui/icons-material/AssignmentTurnedInS
 import SelectingFilesComponents from "../../../../CommonComponents/SelectingFilesComponents.tsx";
 import {styled} from "@mui/system";
 import {OperationTableComponent} from "./OperationTableComponent/OperationTableComponent.tsx";
+import AutoAwesomeMotionRoundedIcon from "@mui/icons-material/AutoAwesomeMotionRounded";
+import {AddChildOperToProc} from "../AddingChildOperationToProcces/AddChildOperToProc.tsx";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void}) =>{
     const [selectedProcces,setSelectedProcces]=useState<Procces>()
     const [operations,setOperations]=useState<Operation[]>()
@@ -108,8 +112,50 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
         //console.log('update')
         await getCurrentProcces()
     }
+
+    const [openModalWindowWithAddingChildOperation,
+        setOpenModalWindowWithAddingChildOperation]=useState(false)
+    const handleClick_addOperation_To_Procces=async ()=>{
+        setOpenModalWindowWithAddingChildOperation(true)
+    }
+    const [openNotificationAddingOperation, setOpenNotificationAddingOperation] =
+        useState(false);
+    const handleClick_openNotificationAddingOperation = () => {
+        setOpenNotificationAddingOperation(true);
+    };
+    const closeModalWindowWithAddingChildOperation=async()=>{
+        setOpenModalWindowWithAddingChildOperation(false)
+        await update_dependencies_selected_procces()
+    }
+    const delete_procces=async ()=>{
+        try{
+            const tokenValue = localStorage.getItem("authToken");
+            const response = await axios.delete(
+                `${config.apiUrl}/procces/${selectedProcces?.id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${tokenValue}`,
+                    },
+                }
+            );
+            //console.log("Response from confirmEditedOperation:", response.data);
+            if(response.status==200)
+            {
+                onClose()
+            }
+        }
+        catch (e) {
+
+        }
+    }
     return (
         <>
+            {selectedProcces &&
+                <AddChildOperToProc procces={selectedProcces}
+                                      open={openModalWindowWithAddingChildOperation}
+                                      notif={handleClick_openNotificationAddingOperation}
+                                      onClose={closeModalWindowWithAddingChildOperation}/>
+            }
             {!selectedProcces && (
                 <CenteredDivRow>
                     <CircularProgress/>
@@ -117,11 +163,16 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
             {selectedProcces && (
                 <div>
                     <CenteredDivRow>
-                        <ListItemAvatar>
-                            <IconButton onClick={confirmEditedOperation} edge="end" aria-label="delete">
+                        <CenteredDivColumn>
+                            <IconButton onClick={confirmEditedOperation}  style={{ color: 'white' }}>
+                                Сохранить
                                 <AssignmentTurnedInSharpIcon style={{ fontSize: 60, color: 'white' }} />
                             </IconButton>
-                        </ListItemAvatar>
+                            <IconButton onClick={delete_procces}  style={{ color: 'white' }}>
+                                Удалить
+                                <DeleteIcon style={{ fontSize: 60, color: 'white' }} />
+                            </IconButton>
+                        </CenteredDivColumn>
                         <Typography variant="body1">
                             ID: {selectedProcces ? selectedProcces.id : ''}
                         </Typography>
@@ -153,6 +204,12 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                         )}
 
                     </CenteredDivRow>
+                    <ListItemAvatar>
+                        <IconButton style={{ color: 'white' }} onClick={handleClick_addOperation_To_Procces}>
+                            Добавить операцию
+                            <AutoAwesomeMotionRoundedIcon style={{ fontSize: 60, color: 'white' }}/>
+                        </IconButton>
+                    </ListItemAvatar>
                     {
                         operations &&
                     <OperationTableComponent operations={operations} update={update_dependencies_selected_procces}/>

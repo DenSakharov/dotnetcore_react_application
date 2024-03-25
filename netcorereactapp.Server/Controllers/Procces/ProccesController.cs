@@ -129,5 +129,11 @@ namespace netcorereactapp.Server.Controllers.ProccesController
             }
             return StatusCode(500, "Saving files error");
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var res = await _proccesService.DeleteProcces(id);
+            return Ok(res);
+        }
     }
 }

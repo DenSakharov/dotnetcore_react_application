@@ -5,7 +5,7 @@ import config from '../../../config/config.json';
 import {MaterialReactTable, MRT_ColumnDef, useMaterialReactTable} from "material-react-table";
 import {MRT_Localization_RU} from "material-react-table/locales/ru";
 import ModalViewSelectedProcces
-    from "./ModalWindows/ProccesComponents/SelectedProccesComponents/ModalViewSelectedProcces.tsx";
+    from "./ModalWindows/ModalViewSelectedProcces.tsx";
 import {Box} from "@mui/material";
 import {PageSizeSelector} from "../CommonComponents/PageSizeSelector.tsx";
 import {Pagination} from "../CommonComponents/Pagination.tsx";

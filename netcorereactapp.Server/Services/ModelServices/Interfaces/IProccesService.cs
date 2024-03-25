@@ -11,5 +11,6 @@ namespace netcorereactapp.Server.Services.ModelServices.Interfaces
         public Task<Procces> UpdateProcces(ProccesDTO editedProcces);
         public Task<Procces> UpdateProcces(Procces editedProcces);
         public Task<Procces> AddingAttachmentsToSelectedProcces(int proccesId, IFormFileCollection files);
+        public Task<bool> DeleteProcces(int id);
     }
 }

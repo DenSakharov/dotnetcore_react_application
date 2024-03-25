@@ -21,7 +21,7 @@ export const AddingChildOperation = ({ parentOperation, open, onClose,notif }: A
         <div>
             {operation &&
             <GeneralModalWindow
-                modalCaption="Добавление дочереней операции к объекту"
+                modalCaption="Добавление дочереней операции к выбранной операции"
                 open={open} // Передаем пропс open в GeneralModalWindow
                 childComponent={EditorFieldsOperations}
                 childComponentProps={{

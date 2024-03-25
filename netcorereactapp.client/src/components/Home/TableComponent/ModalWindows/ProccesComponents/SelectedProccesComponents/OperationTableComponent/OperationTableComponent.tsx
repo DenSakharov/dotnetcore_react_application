@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import {SeletedOperationEditor} from "./SelectedOperationEditor/SeletedOperationEditor.tsx";
 import AutoAwesomeMotionRoundedIcon from '@mui/icons-material/AutoAwesomeMotionRounded';
-import {AddingChildOperation} from "../../AddingChildOperation/AddingChildOperation.tsx";
+import {AddingChildOperation} from "../../AddingChildOperationToParentOperation/AddingChildOperation.tsx";
 import {Operation} from "../../../../../../../Models/ProccesOperation/Operation.tsx";
 import {renderAttachments} from "../../../../../Services/AttachmentService.tsx";
 import {Notifications} from "../../../../../../UniversalComponents/Notifications/Notifications.tsx";
@@ -117,7 +117,7 @@ export const OperationTableComponent = ({operations,update}) => {
     }
 
     const table_Of_Operartions_From_Selected_Procces = useMaterialReactTable({
-        columns: columns_Of_Operartions_From_Selected_Procces,
+        columns: columns_Of_Operartions_From_Selected_Procces.filter(column => !column?.hidden),
         data: localOperations,
         enablePagination: true,
         enableBottomToolbar: false,

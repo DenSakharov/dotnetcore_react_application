@@ -172,5 +172,23 @@ namespace netcorereactapp.Server.Services.ModelServices
                 catch (Exception ex) { return null; }
             }
         }
+        public async Task<bool> DeleteProcces(int id)
+        {
+            try
+            {
+                var res=await _dbContext.Procceses.FindAsync(id);
+                if (res != null)
+                {
+                    _dbContext.Procceses.Remove(res);
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex) 
+            { 
+                return false; 
+            } 
+        }
     }
 }

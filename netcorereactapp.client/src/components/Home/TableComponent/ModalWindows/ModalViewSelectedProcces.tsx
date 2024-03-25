@@ -1,6 +1,6 @@
 import {useEffect} from "react";
-import {SelectedProcces} from "./SelectedProcces.tsx";
-import '../../../../../../styles/ModalViewSelectedProcces.css'
+import {SelectedProcces} from "./ProccesComponents/SelectedProccesComponents/SelectedProcces.tsx";
+import '../../../../styles/ModalViewSelectedProcces.css'
 export default function ModalViewSelectedProcces(props){
     // обработчик нажатия клавиши Esc
     const onKeydown = ({ key }: KeyboardEvent) => {
