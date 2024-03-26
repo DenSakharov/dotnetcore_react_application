@@ -3,7 +3,11 @@ import {Procces} from "../../../../../../Models/ProccesOperation/Procces.tsx";
 import {Operation} from "../../../../../../Models/ProccesOperation/Operation.tsx";
 import axios from "axios";
 import config from '../../../../../../config/config.json'
-import {addingAttachmentsToProcces, renderAttachments} from "../../../../Services/AttachmentService.tsx";
+import {
+    addingAttachmentsToProcces,
+    RenderAttachmentsComponent,
+    renderAttachments
+} from "../../../../Services/AttachmentService.tsx";
 import {CenteredDivColumn, CenteredDivRow} from "../../../../CommonComponents/CenteredDivRow.tsx";
 import {CircularProgress, IconButton, List, ListItemAvatar, TextField, Typography} from "@mui/material";
 import AddSharpIcon from '@mui/icons-material/AddSharp';
@@ -189,13 +193,17 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                             onChange={handleTextFieldChange}
                             autoFocus
                         />
-                        <div>
-                            {selectedProcces.attachments &&
+                            {/*{selectedProcces.attachments &&
                                 <List>
                                     {renderAttachments(selectedProcces.attachments)}
                                 </List>
+                            }*/}
+                           {/* {selectedProcces.attachments &&
+                                renderAttachments(selectedProcces.attachments)
+                            }*/}
+                            {selectedProcces.attachments &&
+                            <RenderAttachmentsComponent attachments={selectedProcces.attachments}/>
                             }
-                        </div>
                         <IconButton onClick={toggleInfoVisibility}>
                             {infoVisible ? <RemoveSharpIcon /> : <AddSharpIcon />}
                         </IconButton>
@@ -206,6 +214,7 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                         )}
 
                     </CenteredDivRow>
+                    <CenteredDivColumn>
                     <ListItemAvatar>
                         <IconButton style={{ color: 'white' }} onClick={handleClick_addOperation_To_Procces}>
                             Добавить операцию
@@ -219,6 +228,7 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                         operations={operations}
                         update={update_dependencies_selected_procces}/>
                     }
+                    </CenteredDivColumn>
                    {/* <button className="styled-button"
                             title={view ? "Показать таблицу" : "Показать Список"} onClick={click_view_table}>
                         {view ? "Показать таблицу" : "Показать Список"}

@@ -190,7 +190,8 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                 services.AddScoped<IExcelImportService, ExcelImportService>();
                 services.AddScoped<IProccesService, ProccesService>();
                 services.AddScoped<IOperationService, OperationService>();
-                 services.AddScoped<LoggingActionFilter>();
+                services.AddScoped<IAttachmentService, AttachController>();
+                services.AddScoped<LoggingActionFilter>();
             });
             return hostBuilder;
         }

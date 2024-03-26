@@ -30,15 +30,17 @@ namespace netcorereactapp.Server.Services.FileServices
             }
             return attachment;
         }
-        public async Task< string> SaveFile(IFormFile file) {
+        public async Task<string> SaveFile(IFormFile file)
+        {
             string temp_file_name = "";
             if (file != null && file.Length > 0)
             {
                 // Генерируем уникальное имя файла
-                var fileName = Path.GetFileNameWithoutExtension(file.FileName)
-                    //+ DateTime.Now.ToString("yyyyMMddHHmmss")
-                + Path.GetExtension(file.FileName);
-                temp_file_name = Path.Combine(path_to_files, fileName);
+                var fileName = Path.GetFileNameWithoutExtension(file.FileName);
+                var fileExtension = Path.GetExtension(file.FileName);
+                //предполагает дублирование имен файла в общей
+                var uniqueFileName = GetUniqueFileName(fileName, fileExtension);
+                temp_file_name = Path.Combine(path_to_files, uniqueFileName);
 
                 // Сохраняем файл на диск
                 using (var stream = new FileStream(temp_file_name, FileMode.Create))
@@ -48,6 +50,22 @@ namespace netcorereactapp.Server.Services.FileServices
             }
             return temp_file_name;
         }
+
+        private string GetUniqueFileName(string fileName, string fileExtension)
+        {
+            var uniqueFileName = fileName;
+            int count = 1;
+
+            // Проверяем, существует ли файл с таким именем
+            while (File.Exists(Path.Combine(path_to_files, uniqueFileName + fileExtension)))
+            {
+                uniqueFileName = $"{fileName} ({count})";
+                count++;
+            }
+
+            return uniqueFileName + fileExtension;
+        }
+
         public async Task<bool> DeleteFile(string filePath)
         {
             try

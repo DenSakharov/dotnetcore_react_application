@@ -17,7 +17,7 @@ export default function ExcelImportComponent(props) {
 
     const [selectedFiles, setSelectedFiles] = useState([]);
     useEffect(() => {
-        console.log("ExcelService useEffect selectedFiles :\n",selectedFiles)
+        //console.log("ExcelService useEffect selectedFiles :\n",selectedFiles)
     }, [selectedFiles]);
     function handleFileChange(event) {
         const file = event.target.files[0];

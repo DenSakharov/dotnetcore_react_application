@@ -14,7 +14,7 @@ import {SeletedOperationEditor} from "./SelectedOperationEditor/SeletedOperation
 import AutoAwesomeMotionRoundedIcon from '@mui/icons-material/AutoAwesomeMotionRounded';
 import {AddingChildOperation} from "../../AddingChildOperationToParentOperation/AddingChildOperation.tsx";
 import {Operation} from "../../../../../../../Models/ProccesOperation/Operation.tsx";
-import {renderAttachments} from "../../../../../Services/AttachmentService.tsx";
+import {RenderAttachmentsComponent, renderAttachments} from "../../../../../Services/AttachmentService.tsx";
 import {Notifications} from "../../../../../../UniversalComponents/Notifications/Notifications.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
@@ -136,10 +136,15 @@ export const OperationTableComponent = ({procces,operations,update}) => {
                                 <AutoAwesomeMotionRoundedIcon/>
                             </IconButton>
                             </ListItemAvatar>
-                            {attachments &&
-                                <List>
+
+                               {/* <List>
                                     {renderAttachments(attachments)}
-                                </List>
+                                </List>*/}
+                           {/* {attachments &&
+                                renderAttachments(attachments)
+                            }*/}
+                            {attachments &&
+                                <RenderAttachmentsComponent attachments={attachments}/>
                             }
                         </div>
 

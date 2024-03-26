@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.EntityFrameworkCore;
-using netcorereactapp.Server.Controllers.Orders;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
 
@@ -26,7 +24,7 @@ namespace netcorereactapp.Server.Controllers.File
         [HttpGet("{fileId}")]
         public async Task<IActionResult> DownloadAttachment(int fileId)
         {
-            var attachment = await _fileService.GetCurrentAttachment(fileId) as Attachment;
+            var attachment = await _fileService.GetCurrentAttachment(fileId) as ClassesLibrary.Models.Attachment;
             if (attachment == null)
             {
                 return NotFound();

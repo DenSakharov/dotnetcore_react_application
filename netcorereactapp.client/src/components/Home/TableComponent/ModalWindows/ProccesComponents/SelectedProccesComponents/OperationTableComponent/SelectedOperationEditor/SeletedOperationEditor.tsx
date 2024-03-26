@@ -10,7 +10,7 @@ import {Operation} from "../../../../../../../../Models/ProccesOperation/Operati
 import config from '../../../../../../../../config/config.json'
 import {CenteredDivColumn} from "../../../../../../CommonComponents/CenteredDivRow.tsx";
 import {StyledTextField} from "../../SelectedProcces.tsx";
-import {renderAttachments} from "../../../../../../Services/AttachmentService.tsx";
+import {RenderAttachmentsComponent, renderAttachments} from "../../../../../../Services/AttachmentService.tsx";
 import SelectingFilesComponents from "../../../../../../CommonComponents/SelectingFilesComponents.tsx";
 
 export const SeletedOperationEditor=({operation,onClose,notif})=>{
@@ -91,9 +91,16 @@ export const SeletedOperationEditor=({operation,onClose,notif})=>{
                         <Typography sx={{ mt: 1, mb: 1 }} variant="h6" component="div">
                            Вложения операции :
                         </Typography>
-                            <List>
+                           {/* <List>
                                 {renderAttachments (oper.attachments)}
-                            </List>
+                            </List>*/}
+                      {/*  {oper.attachments
+                        &&
+                            renderAttachments (oper.attachments)
+                        }*/}
+                        {oper.attachments &&
+                            <RenderAttachmentsComponent attachments={oper.attachments}/>
+                        }
                     </Grid>
                     <SelectingFilesComponents onSelectedFilesChange={addAttachments}/>
                     <Button onClick={saveEdtingOper}>Сохранить</Button>

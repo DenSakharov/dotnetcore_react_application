@@ -29,13 +29,14 @@ export default function SelectingFilesComponents(props ) {
     };
     const onChangeLocal = (event) => {
         const files = event.target.files;
-        console.log("files into SelectingFiles component :\n",files)
+        //console.log("files into SelectingFiles component :\n",files)
         setSelectedFiles(prevSelectedFiles => [...prevSelectedFiles, ...files]);
 
     };
     const removeFile = (indexToRemove) => {
-        setSelectedFiles(prevSelectedFiles => prevSelectedFiles.filter((file, index) => index !== indexToRemove));
-
+        setSelectedFiles(prevSelectedFiles =>
+            prevSelectedFiles.filter((file, index) => index !== indexToRemove)
+        );
     };
     return (
         <div>

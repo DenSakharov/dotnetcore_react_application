@@ -6,7 +6,7 @@ import config from '../../../../../../config/config.json'
 export const EditorFieldsOperations=({operation, onClose,notif})=>{
     const [parentOperation,setParentOperation]=useState()
     useEffect(() => {
-        console.log(operation)
+        //console.log(operation)
         setParentOperation(operation)
     }, [operation]);
     useEffect(() => {
