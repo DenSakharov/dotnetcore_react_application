@@ -7,6 +7,7 @@ import config from "../../../config/config.json";
 import {CenteredDivColumn} from "../CommonComponents/CenteredDivRow.tsx";
 import {useEffect, useState} from "react";
 import {Attachment} from "../../../Models/ProccesOperation/Attachment.tsx";
+import {styled} from "@mui/system";
 
 export const addingAttachmentsToProcces = async (id,selectedFiles,onClose)=>{
     const tokenValue = localStorage.getItem("authToken");
@@ -58,7 +59,7 @@ export const SaveAttachmentsToOperation=async(id,selectedFiles,onClose)=>{
         onClose()
     }
 }
-export const RenderAttachmentsComponent = ({ attachments }: { attachments: Attachment[] }) => {
+export const RenderAttachmentsComponent = ({ attachments ,send_request}: { attachments: Attachment[],send_request: void }) => {
     const [attachmentsLocal, setAttachmentsLocal] = useState([]);
 
     useEffect(() => {
@@ -68,7 +69,7 @@ export const RenderAttachmentsComponent = ({ attachments }: { attachments: Attac
 
     const deleteAttachment =async (attachment: Attachment) => {
         try {
-            console.log(attachment.id)
+            //console.log(attachment.id)
             const tokenValue = localStorage.getItem("authToken");
             const response = await axios.delete(
                 `${config.apiUrl}/attachment/${attachment.id}`,
@@ -79,10 +80,11 @@ export const RenderAttachmentsComponent = ({ attachments }: { attachments: Attac
                 }
             );
             if (response.status === 200) {
-                console.log('ok')
+                //console.log('ok')
+                send_request()
             }
         }catch (e) {
-            console.error(e)
+            //console.error(e)
         }
     };
 
@@ -90,25 +92,45 @@ export const RenderAttachmentsComponent = ({ attachments }: { attachments: Attac
         <div>
             {attachmentsLocal && (
                 attachmentsLocal.map((attachment, index) => (
-                    <ListItem key={index}>
+                    <StyledListItem key={index}>
                         <ListItemAvatar>
                             <IconButton onClick={() => handleDownload(attachment)}>
                                 <FolderIcon/>
                             </IconButton>
                         </ListItemAvatar>
                         {/* Добавьте здесь код для отображения вложений */}
-                        <ListItemText primary={attachment.attachmentData}/>
+                        <StyledListItemText primary={attachment.attachmentData}/>
                         <ListItemAvatar>
-                            <IconButton edge="end" aria-label="delete"
+                            <StyledIconButton edge="end" aria-label="delete"
                                         onClick={()=>{
                                             deleteAttachment(attachment)}
                             }>
-                                <DeleteIcon/>
-                            </IconButton>
+                                <StyledDeleteButton/>
+                            </StyledIconButton>
                         </ListItemAvatar>
-                    </ListItem>
+                    </StyledListItem>
                 ))
             )}
         </div>
     );
 };
+const StyledListItem = styled(ListItem)`
+    border: 2px solid green;
+    border-radius: 50px;
+    margin-bottom: 5px;
+    padding: 1px;
+`;
+
+const StyledListItemText = styled(ListItemText)`
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+`;
+
+const StyledIconButton = styled(IconButton)`
+    color: #555;
+`;
+
+const StyledDeleteButton = styled(DeleteIcon)`
+    color: red;
+`;

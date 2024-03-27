@@ -1,10 +1,12 @@
 ﻿using ClassesLibrary.DataTransferObjects;
 using ClassesLibrary.Models;
+using MyHistory = ClassesLibrary.Models.History;
 using ClassesLibrary.Services;
 using Microsoft.EntityFrameworkCore;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
+using netcorereactapp.Server.Services.History.Interfaces;
 
 namespace netcorereactapp.Server.Services.ModelServices
 {
@@ -13,11 +15,16 @@ namespace netcorereactapp.Server.Services.ModelServices
         private readonly ApplicationContext _dbContext;
         private readonly ILogger<ProccesService> _logger;
         private readonly IFileService _fileService;
-        public ProccesService(ApplicationContext dbContext, ILogger<ProccesService> logger, IFileService fileService)
+        private readonly IHistoryService _historyService;
+        public ProccesService(ApplicationContext dbContext, 
+            ILogger<ProccesService> logger, IFileService fileService,
+            IHistoryService historyService
+            )
         {
             _dbContext = dbContext;
             _logger = logger;
             _fileService = fileService;
+            _historyService = historyService;
         }
         private void LoadChildOperationsRecursive(Operation operation)
         {
@@ -120,13 +127,17 @@ namespace netcorereactapp.Server.Services.ModelServices
         {
             try
             {
+               
                 // Проверяем, существует ли операция с указанным ID в базе данных
                 var existingProcces = await _dbContext.Procceses.FindAsync(editedProcces.Id);
                 if (existingProcces == null)
                 {
                     return null; // Возвращаем 404 Not Found, если операция не найдена
                 }
-
+                /*var history = new MyHistory();
+                history.Message = $"Изменение названия проццеса с {existingProcces.Caption} на {editedProcces.Caption}";
+                history.DateOfCreture= DateTime.UtcNow;*/
+                var tempOldProcces = existingProcces;
                 // Обновляем существующую операцию данными из отредактированной операции
                 existingProcces.Caption = editedProcces.Caption;
                 existingProcces.DateOfCreture = editedProcces.DateOfCreture;
@@ -135,6 +146,9 @@ namespace netcorereactapp.Server.Services.ModelServices
                 // Сохраняем изменения в базе данных
                 await _dbContext.SaveChangesAsync();
 
+                await _historyService.CreateNewHistory(existingProcces,
+                    $"Изменение объекта {existingProcces.Caption} "
+                    ); ;
                 return existingProcces; // Возвращаем 200 OK в случае успешного обновления операции
             }
             catch (Exception ex)

@@ -1,18 +1,18 @@
-﻿using netcorereactapp.Server.Controllers.Operation;
-using netcorereactapp.Server.Services.ExcelImportService.Interfaces;
-using netcorereactapp.Server.Services.FileServices.Interfaces;
+﻿using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
 
 namespace netcorereactapp.Server.Services.FileServices
 {
-    public class AttachController: IAttachmentService
+    public class AttachmentService: IAttachmentService
     {
         private readonly ApplicationContext _dbContext;
-        private readonly ILogger<AttachController> _logger;
-        public AttachController(ApplicationContext dbContext, ILogger<AttachController> logger)
+        private readonly ILogger<AttachmentService> _logger;
+        private readonly IFileService _fileService;
+        public AttachmentService(ApplicationContext dbContext, ILogger<AttachmentService> logger, IFileService fileService)
         {
             _dbContext = dbContext;
             _logger = logger;
+            _fileService = fileService;
         }
         public async Task<bool> DeleteAttachment(int id)
         {
@@ -21,6 +21,7 @@ namespace netcorereactapp.Server.Services.FileServices
                 var res=await _dbContext.Attachemnts.FindAsync(id);
                 _dbContext.Attachemnts.Remove(res);
                 await _dbContext.SaveChangesAsync();
+                await _fileService.DeleteFile(res.AttachmentData);
                 return true;
             }catch (Exception ex)
             {

@@ -99,7 +99,10 @@ export const SeletedOperationEditor=({operation,onClose,notif})=>{
                             renderAttachments (oper.attachments)
                         }*/}
                         {oper.attachments &&
-                            <RenderAttachmentsComponent attachments={oper.attachments}/>
+                            <RenderAttachmentsComponent
+                                attachments={oper.attachments}
+                                send_request={ onClose}
+                            />
                         }
                     </Grid>
                     <SelectingFilesComponents onSelectedFilesChange={addAttachments}/>

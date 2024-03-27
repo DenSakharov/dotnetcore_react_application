@@ -1,9 +1,6 @@
 ﻿using ClassesLibrary.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using netcorereactapp.Server.Controllers.Orders;
 using netcorereactapp.Server.Models;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace netcorereactapp.Server.Services.PostgreService
 {
@@ -18,7 +15,7 @@ namespace netcorereactapp.Server.Services.PostgreService
         public DbSet<Procces>Procceses { get; set; } = null!;
         public DbSet<Operation> Operations { get; set; } = null!;
         public DbSet<Attachment> Attachemnts { get; set; } = null!;
-        public DbSet<History> Histories { get; set; } = null!;
+        public DbSet<ClassesLibrary.Models.History> Histories { get; set; } = null!;
         private readonly ILogger<ApplicationContext> _logger;
         public ApplicationContext(DbContextOptions<ApplicationContext> options, ILogger<ApplicationContext> logger)
             : base(options)
@@ -81,7 +78,7 @@ namespace netcorereactapp.Server.Services.PostgreService
                 .HasForeignKey(childOperation => childOperation.ParentOperationId) 
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<History>()
+            modelBuilder.Entity<ClassesLibrary.Models.History>()
                .HasOne(history => history.Procces)
                .WithMany(procces => procces.Histories)
                .HasForeignKey(history => history.ProccesId)

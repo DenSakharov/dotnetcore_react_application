@@ -20,7 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import config from "../../../../../../../config/config.json";
 
-export const OperationTableComponent = ({procces,operations,update}) => {
+export const OperationTableComponent = ({procces,operations,send_request}) => {
 
     const [localOperations, setLocalOperations]
         = useState<Operation[]>([]);
@@ -45,7 +45,7 @@ export const OperationTableComponent = ({procces,operations,update}) => {
     };
     const closeModalWindowWithAddingChildOperation=()=>{
         setParenetOperation()
-        update()
+        send_request()
         setOpenModalWindowWithAddingChildOperation(false)
     }
     const delete_operation=async (int: number)=>{
@@ -62,7 +62,7 @@ export const OperationTableComponent = ({procces,operations,update}) => {
             //console.log("Response from confirmEditedOperation:", response.data);
             if(response.status==200)
             {
-                update()
+                send_request()
             }
         }
         catch (e) {
@@ -74,13 +74,13 @@ export const OperationTableComponent = ({procces,operations,update}) => {
             {
                 accessorKey: 'id',
                 header: 'Номер',
-                size: 10,
+                size: 'auto',
                 hidden: true // Указываем, что колонка должна быть скрытой
             },
             {
                 accessorKey: 'caption',
                 header: 'Название',
-                size: 10,
+                size: 'auto',
                 Cell: ((value) => {
                     const[id,setId]
                         =useState()
@@ -92,7 +92,7 @@ export const OperationTableComponent = ({procces,operations,update}) => {
                         await delete_operation(id)
                     };
                     return(
-                        <div style={{ maxWidth: '20px' }}>
+                        <div >
                             <IconButton
                                 onClick={handleDeletingOperation}
                                 style={{ color: 'green' }}>
@@ -116,7 +116,7 @@ export const OperationTableComponent = ({procces,operations,update}) => {
             {
                 accessorKey: 'attachments',
                 header: 'Вложения',
-                size: 10,
+                size: 'auto',
                 Cell: ((value) => {
                     const [attachments, setAttachments]
                         = useState<Operation[]>()
@@ -130,7 +130,7 @@ export const OperationTableComponent = ({procces,operations,update}) => {
                         handler_Add_Child_Operation_In_ParentOperation(value.cell.row.original)
                     };
                     return (
-                        <div style={{ maxWidth: '100px' }}>
+                        <div >
                             <ListItemAvatar>
                             <IconButton onClick={handleAddChildOperationClick}>
                                 <AutoAwesomeMotionRoundedIcon/>
@@ -144,7 +144,10 @@ export const OperationTableComponent = ({procces,operations,update}) => {
                                 renderAttachments(attachments)
                             }*/}
                             {attachments &&
-                                <RenderAttachmentsComponent attachments={attachments}/>
+                                <RenderAttachmentsComponent
+                                    attachments={attachments}
+                                    send_request={send_request}
+                                />
                             }
                         </div>
 
@@ -158,7 +161,7 @@ export const OperationTableComponent = ({procces,operations,update}) => {
     const [open, setOpen] = useState(false);
     const handleClose = () => {
         setOpen(false);
-        update()
+        send_request()
     };
     const [selectedOperation, setSelectedOperation] = useState<Operation>()
     const editingSelectedOperation = (operation: Operation) => {
@@ -195,6 +198,7 @@ export const OperationTableComponent = ({procces,operations,update}) => {
     };
     return (
         <div>
+            <MaterialReactTable table={table_Of_Operartions_From_Selected_Procces}/>
             {openNotificationAddingOperation &&
                 <Notifications message='Операция добавлена успешно!' open={openNotificationAddingOperation}/>}
             {openNotificationUpdateOperation &&
@@ -223,15 +227,6 @@ export const OperationTableComponent = ({procces,operations,update}) => {
                     <Button onClick={handleClose}>Закрыть</Button>
                 </DialogActions>
             </Dialog>
-            <Box sx={{
-                maxWidth: '800px',
-                margin: '0 auto',
-                borderRadius: '80px', // Применяем закругление границ
-                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', // Добавляем тень для эффекта поднятости
-                p: '50px', // Добавляем внутренние отступы для контента
-            }}>
-                <MaterialReactTable table={table_Of_Operartions_From_Selected_Procces}/>
-            </Box>
         </div>
     )
 }

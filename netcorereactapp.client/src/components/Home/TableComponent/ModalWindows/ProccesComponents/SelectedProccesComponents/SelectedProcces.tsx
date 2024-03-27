@@ -5,11 +5,10 @@ import axios from "axios";
 import config from '../../../../../../config/config.json'
 import {
     addingAttachmentsToProcces,
-    RenderAttachmentsComponent,
-    renderAttachments
+    RenderAttachmentsComponent
 } from "../../../../Services/AttachmentService.tsx";
 import {CenteredDivColumn, CenteredDivRow} from "../../../../CommonComponents/CenteredDivRow.tsx";
-import {CircularProgress, IconButton, List, ListItemAvatar, TextField, Typography} from "@mui/material";
+import {CircularProgress, IconButton, ListItemAvatar, TextField, Typography} from "@mui/material";
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 import RemoveSharpIcon from '@mui/icons-material/RemoveSharp';
 import AssignmentTurnedInSharpIcon from '@mui/icons-material/AssignmentTurnedInSharp';
@@ -19,13 +18,15 @@ import {OperationTableComponent} from "./OperationTableComponent/OperationTableC
 import AutoAwesomeMotionRoundedIcon from "@mui/icons-material/AutoAwesomeMotionRounded";
 import {AddChildOperToProc} from "../AddingChildOperationToProcces/AddChildOperToProc.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
+import {HistoryComponent} from "../../../../History/HistoryComponent.tsx";
 
-export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void}) =>{
-    const [selectedProcces,setSelectedProcces]=useState<Procces>()
-    const [operations,setOperations]=useState<Operation[]>()
-    useEffect(()=>{
+export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) => {
+    const [selectedProcces, setSelectedProcces] = useState<Procces>()
+    const [operations, setOperations] = useState<Operation[]>()
+
+    useEffect(() => {
         getCurrentProcces()
-    },[])
+    }, [])
     useEffect(() => {
         //console.log("selectedProcces changed:", selectedProcces);
         setOperations(selectedProcces?.operations)
@@ -33,9 +34,10 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
     useEffect(() => {
         //console.log('operations\n',operations);
     }, [operations]);
-    const getCurrentProcces=async()=>{
+    const getCurrentProcces = async () => {
         try {
             const tokenValue = localStorage.getItem("authToken");
+            //console.log('Request sending in procces')
             const response = await axios.get(//`${config.apiUrl}/procces/all`
                 `${config.apiUrl}/procces/${int}`
                 ,
@@ -44,21 +46,19 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                         Authorization: `Bearer ${tokenValue}`,
                     }
                 })
-            if(response)
-            {
+            if (response) {
                 //console.log('Ответ запроса на получение выбранного процесса с операциями :\n',response.data)
                 setSelectedProcces(response.data);
-            }else {
+            } else {
                 console.error('requset faild')
             }
-        }
-        catch (e){
-            console.error("Before request \n",e)
+        } catch (e) {
+            console.error("Before request \n", e)
         }
     }
     const inputRef = useRef(null);
     const handleTextFieldChange = (event) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         const valu = inputRef.current.value;
         //console.log('Value changed:', valu);
         setSelectedProcces(prevProcces => ({
@@ -67,7 +67,7 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
         }));
     };
     const [selectedFiles, setSelectedFiles] = useState([]);
-    const addAttachments=async (files)=>{
+    const addAttachments = async (files) => {
         //console.log("Files after added :\n",files)
         setSelectedFiles(files);
     }
@@ -79,6 +79,7 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
         //console.log(selectedProcces)
         //const procces: Procces=selectedProcces
         try {
+            //console.log(selectedProcces?.id)
             const response = await axios.put(
                 `${config.apiUrl}/procces/updatemodel`, // URL для обновления операции по ее идентификатору
                 selectedProcces, // Передаем отредактированный объект
@@ -90,10 +91,8 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                 }
             );
             //console.log("Response from confirmEditedOperation:", response.data);
-            if(response.status==200)
-            {
-                const res= await addingAttachmentsToProcces(selectedProcces?.id,selectedFiles,onClose)
-                //props.onClose()
+            if (response.status == 200) {
+                const res = await addingAttachmentsToProcces(selectedProcces?.id, selectedFiles, onClose)
             }
             // Возможно, здесь вы захотите обновить состояние приложения или выполнить другие действия
         } catch (error) {
@@ -103,7 +102,7 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
     };
     const [view, setView] = useState(false);
     const click_view_table = (e: any) => {
-        if(view)
+        if (view)
             setView(false)
         else
             setView(true)
@@ -114,14 +113,14 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
         setInfoVisible(!infoVisible);
     };
 
-    const update_dependencies_selected_procces=async()=>{
+    const update_dependencies_selected_procces = () => {
         //console.log('update')
-        await getCurrentProcces()
+        getCurrentProcces()
     }
 
     const [openModalWindowWithAddingChildOperation,
-        setOpenModalWindowWithAddingChildOperation]=useState(false)
-    const handleClick_addOperation_To_Procces=async ()=>{
+        setOpenModalWindowWithAddingChildOperation] = useState(false)
+    const handleClick_addOperation_To_Procces = async () => {
         setOpenModalWindowWithAddingChildOperation(true)
     }
     const [openNotificationAddingOperation, setOpenNotificationAddingOperation] =
@@ -129,12 +128,12 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
     const handleClick_openNotificationAddingOperation = () => {
         setOpenNotificationAddingOperation(true);
     };
-    const closeModalWindowWithAddingChildOperation=async()=>{
+    const closeModalWindowWithAddingChildOperation = async () => {
         setOpenModalWindowWithAddingChildOperation(false)
-        await update_dependencies_selected_procces()
+        update_dependencies_selected_procces()
     }
-    const delete_procces=async ()=>{
-        try{
+    const delete_procces = async () => {
+        try {
             const tokenValue = localStorage.getItem("authToken");
             const response = await axios.delete(
                 `${config.apiUrl}/procces/${selectedProcces?.id}`,
@@ -145,12 +144,10 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                 }
             );
             //console.log("Response from confirmEditedOperation:", response.data);
-            if(response.status==200)
-            {
+            if (response.status == 200) {
                 onClose()
             }
-        }
-        catch (e) {
+        } catch (e) {
 
         }
     }
@@ -158,9 +155,9 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
         <>
             {selectedProcces &&
                 <AddChildOperToProc procces={selectedProcces}
-                                      open={openModalWindowWithAddingChildOperation}
-                                      notif={handleClick_openNotificationAddingOperation}
-                                      onClose={closeModalWindowWithAddingChildOperation}/>
+                                    open={openModalWindowWithAddingChildOperation}
+                                    notif={handleClick_openNotificationAddingOperation}
+                                    onClose={closeModalWindowWithAddingChildOperation}/>
             }
             {!selectedProcces && (
                 <CenteredDivRow>
@@ -170,13 +167,13 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                 <div>
                     <CenteredDivRow>
                         <CenteredDivColumn>
-                            <IconButton onClick={confirmEditedOperation}  style={{ color: 'white' }}>
+                            <IconButton onClick={confirmEditedOperation} style={{color: 'white'}}>
                                 Сохранить
-                                <AssignmentTurnedInSharpIcon style={{ fontSize: 60, color: 'white' }} />
+                                <AssignmentTurnedInSharpIcon style={{fontSize: 60, color: 'white'}}/>
                             </IconButton>
-                            <IconButton onClick={delete_procces}  style={{ color: 'white' }}>
+                            <IconButton onClick={delete_procces} style={{color: 'white'}}>
                                 Удалить
-                                <DeleteIcon style={{ fontSize: 60, color: 'white' }} />
+                                <DeleteIcon style={{fontSize: 60, color: 'white'}}/>
                             </IconButton>
                         </CenteredDivColumn>
                         <Typography variant="body1">
@@ -193,19 +190,22 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                             onChange={handleTextFieldChange}
                             autoFocus
                         />
-                            {/*{selectedProcces.attachments &&
+                        {/*{selectedProcces.attachments &&
                                 <List>
                                     {renderAttachments(selectedProcces.attachments)}
                                 </List>
                             }*/}
-                           {/* {selectedProcces.attachments &&
+                        {/* {selectedProcces.attachments &&
                                 renderAttachments(selectedProcces.attachments)
                             }*/}
-                            {selectedProcces.attachments &&
-                            <RenderAttachmentsComponent attachments={selectedProcces.attachments}/>
-                            }
+                        {selectedProcces.attachments &&
+                            <RenderAttachmentsComponent
+                                attachments={selectedProcces.attachments}
+                                send_request={update_dependencies_selected_procces}
+                            />
+                        }
                         <IconButton onClick={toggleInfoVisibility}>
-                            {infoVisible ? <RemoveSharpIcon /> : <AddSharpIcon />}
+                            {infoVisible ? <RemoveSharpIcon/> : <AddSharpIcon/>}
                         </IconButton>
                         {infoVisible && (
                             <div>
@@ -214,22 +214,32 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
                         )}
 
                     </CenteredDivRow>
-                    <CenteredDivColumn>
-                    <ListItemAvatar>
-                        <IconButton style={{ color: 'white' }} onClick={handleClick_addOperation_To_Procces}>
-                            Добавить операцию
-                            <AutoAwesomeMotionRoundedIcon style={{ fontSize: 60, color: 'white' }}/>
-                        </IconButton>
-                    </ListItemAvatar>
-                    {
-                        operations &&
-                    <OperationTableComponent
-                        procces={selectedProcces}
-                        operations={operations}
-                        update={update_dependencies_selected_procces}/>
-                    }
-                    </CenteredDivColumn>
-                   {/* <button className="styled-button"
+
+                        <CenteredDivRowLocal>
+
+                            <CenteredDivColumnLocal>
+                                <ListItemAvatar>
+                                    <IconButton style={{color: 'white'}} onClick={handleClick_addOperation_To_Procces}>
+                                        Добавить операцию
+                                        <AutoAwesomeMotionRoundedIcon style={{fontSize: 30, color: 'white'}}/>
+                                    </IconButton>
+                                </ListItemAvatar>
+                            {
+                                operations &&
+                                <OperationTableComponent
+                                    procces={selectedProcces}
+                                    operations={operations}
+                                    send_request={update_dependencies_selected_procces}/>
+                            }
+                            </CenteredDivColumnLocal>
+                            <CenteredDivColumnLocal>
+                                <Typography variant="body1">
+                                    История процесса :
+                                </Typography>
+                            <HistoryComponent int={selectedProcces?.id}/>
+                            </CenteredDivColumnLocal>
+                        </CenteredDivRowLocal>
+                    {/* <button className="styled-button"
                             title={view ? "Показать таблицу" : "Показать Список"} onClick={click_view_table}>
                         {view ? "Показать таблицу" : "Показать Список"}
                     </button>
@@ -261,6 +271,24 @@ export const SelectedProcces = ({ int , onClose}: { int: string ,onClose: void})
         </>
     )
 }
+const CenteredDivRowLocal = styled(CenteredDivRow)`
+    display: flex;
+    flex-grow: 1;
+    align-items: flex-start;
+    width: auto;
+    max-width: auto;
+`;
+
+const CenteredDivColumnLocal = styled(CenteredDivColumn)`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 1px;
+    gap: 30px;
+    width: 100%;
+    max-width: 100%;
+`;
+
 export const StyledTextField = styled(TextField)({
     margin: '5px',
     width: '50ch',

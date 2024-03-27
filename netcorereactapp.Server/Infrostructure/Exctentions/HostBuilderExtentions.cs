@@ -10,6 +10,8 @@ using netcorereactapp.Server.Services.ExcelImportService;
 using netcorereactapp.Server.Services.ExcelImportService.Interfaces;
 using netcorereactapp.Server.Services.FileServices;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
+using netcorereactapp.Server.Services.History;
+using netcorereactapp.Server.Services.History.Interfaces;
 using netcorereactapp.Server.Services.ModelServices;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
@@ -40,7 +42,7 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                     {
                         Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
                       Enter 'Bearer' [space] and then your token in the text input below.
-                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+                      \r\n\r\nExample: Bearer 12345abcdef",
                         Name = "Authorization",
                         In = ParameterLocation.Header,
                         Type = SecuritySchemeType.ApiKey,
@@ -120,25 +122,25 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                             // Получение самого валидированного токена
                             var validatedToken = context.SecurityToken;
 
-                            Console.WriteLine("" + DateTime.Now);
+                           /* Console.WriteLine("" + DateTime.Now);
 
                             Console.WriteLine($"Token validated for user: {user.Identity?.Name}");
                             Console.WriteLine($"Token issuer: {validatedToken.Issuer}");
 
                             Console.WriteLine($"Token valid from: {validatedToken.ValidFrom}");
                             Console.WriteLine($"Token valid to: {validatedToken.ValidTo}");
-                            Console.WriteLine($"Token claims: {string.Join(", ", user.Claims.Select(c => $"{c.Type}={c.Value}"))}");
+                            Console.WriteLine($"Token claims: {string.Join(", ", user.Claims.Select(c => $"{c.Type}={c.Value}"))}");*/
 
                             return Task.CompletedTask;
                         },
                         OnMessageReceived = context =>
                         {
-                            Console.WriteLine("" + DateTime.Now);
+                            /*Console.WriteLine("" + DateTime.Now);
                             Console.WriteLine($"Received token from path : {context.Request.Path}");
                             Console.WriteLine($"Received token from pat Body : {context.Request.Body}");
                             Console.WriteLine($"Received token from pat Headers.Authorization : {context.Request.Headers.Authorization}");
                             Console.WriteLine($"Received token from pat Headers : {context.Request.Headers}");
-                            Console.WriteLine($"Token: {context.Token}");
+                            Console.WriteLine($"Token: {context.Token}");*/
 
                             return Task.CompletedTask;
                         },
@@ -190,7 +192,8 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                 services.AddScoped<IExcelImportService, ExcelImportService>();
                 services.AddScoped<IProccesService, ProccesService>();
                 services.AddScoped<IOperationService, OperationService>();
-                services.AddScoped<IAttachmentService, AttachController>();
+                services.AddScoped<IAttachmentService, AttachmentService>();
+                services.AddScoped<IHistoryService, HistoryService>();
                 services.AddScoped<LoggingActionFilter>();
             });
             return hostBuilder;
