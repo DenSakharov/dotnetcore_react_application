@@ -58,7 +58,7 @@ namespace netcore.console
                             {
                                 StringBuilder sb = new StringBuilder();
                                 int count = 0;
-                                bool child_oper=false;
+                                bool child_oper = false;
                                 for (int col = 1; col <= colCount; col++)
                                 {
                                     if (
@@ -69,7 +69,7 @@ namespace netcore.console
                                         {
                                             child_oper = char.IsLetter(worksheet.Cells[row, col].Text[0])
                                                 &&
-                                                worksheet.Cells[row, col].Text[1]==')';
+                                                worksheet.Cells[row, col].Text[1] == ')';
                                         }
                                         sb.Append(worksheet.Cells[row, col].Text + "_");
                                         count++;
@@ -81,7 +81,7 @@ namespace netcore.console
                                     {
                                         StepMessageInformation = sb.ToString(),
                                     });
-                                } 
+                                }
                                 else
                                 {
                                     list_of_finded_str.Last().Hierarchy.Last().Hierarchy.Add(new StringHierarchyOperations
@@ -93,10 +93,36 @@ namespace netcore.console
                             }
                         }
                     }
+                    if (string.Equals(worksheet.Name, "ТО", StringComparison.CurrentCultureIgnoreCase))
+                    {
+
+                        int rowCount = worksheet.Dimension.Rows;
+                        int colCount = worksheet.Dimension.Columns;
+                        for (int row = 1; row <= rowCount; row++)
+                        {
+                           /* for (int col = 1; col <= colCount; col++)
+                            {
+                                var s = worksheet.Cells[row, col].Text;
+                                Console.WriteLine($"{row} : {col} - {s}\n");
+                            }*/
+                        }
+
+                    }
                 }
             }
             //show_objects_in_Console(list_of_finded_str,"");
             return await generate_procces_with_orders(list_of_finded_str, name);
+        }
+        public static async Task<(Procces, List<Operation>)> generate_procces_with_orders(List<StringHierarchyOperations> list_of_finded_str_value, string name)
+        {
+            var procces = new Procces();
+            procces.Caption = name;
+            procces.DateOfCreture = DateTime.UtcNow;
+            var operations = new List<Operation>();
+            var collection = generate_proccesOperations_test(list_of_finded_str_value, procces);
+            operations.AddRange(collection);
+            //procces.Operations = operations;
+            return (procces, operations);
         }
         static void show_objects_in_Console(List<StringHierarchyOperations> list, string tab)
         {
@@ -133,21 +159,11 @@ namespace netcore.console
             }
             return _list;
         }
-        public static async Task<(Procces, List<Operation>)> generate_procces_with_orders(List<StringHierarchyOperations> list_of_finded_str_value, string name)
-        {
-            var procces = new Procces();
-            procces.Caption = name;
-            procces.DateOfCreture = DateTime.UtcNow;
-            var operations = new List<Operation>();
-            var collection = generate_proccesOperations_test(list_of_finded_str_value, procces);
-            operations.AddRange(collection);
-            //procces.Operations = operations;
-            return (procces,operations);
-        }
+
         public static async Task<ProccesDTO> generate_procces_with_ordersDTO(Procces procces)
         {
             var proccesDTO = new ProccesDTO();
-            proccesDTO.Id=procces.Id;
+            proccesDTO.Id = procces.Id;
             proccesDTO.DateOfCreture = procces.DateOfCreture;
             proccesDTO.Caption = procces.Caption;
             proccesDTO.Operations = MapService.MapChildOperations(procces.Operations);

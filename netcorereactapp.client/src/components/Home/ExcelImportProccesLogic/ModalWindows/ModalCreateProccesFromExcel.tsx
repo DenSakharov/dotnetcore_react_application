@@ -1,7 +1,7 @@
 import {useEffect} from "react";
-import ExcelService from "../Components/ExcelImportComponent.tsx";
 import '../../../../styles/Modal.css'
 import '../../../../styles/ModalCreateOrderFromExcel.css'
+import ExcelImportComponent from "../Components/ExcelImportComponent.tsx";
 export const ModalCreateProccesFromExcel = (props) => {
     // обработчик нажатия клавиши Esc
     const onKeydown = ({ key }: KeyboardEvent) => {
@@ -28,7 +28,7 @@ export const ModalCreateProccesFromExcel = (props) => {
                     </span>
                 </div>
                 <div className='modal-content'>
-                    <ExcelService onClose={props.onClose}/>
+                    <ExcelImportComponent onClose={props.onClose}/>
                 </div>
                 {props.footer && <div className='modal-footer'>{props.footer}</div>}
             </div>

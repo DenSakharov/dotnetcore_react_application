@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {SyntheticEvent, useEffect, useRef, useState} from "react";
 import {Procces} from "../../../../../../Models/ProccesOperation/Procces.tsx";
 import {Operation} from "../../../../../../Models/ProccesOperation/Operation.tsx";
 import axios from "axios";
@@ -8,7 +8,7 @@ import {
     RenderAttachmentsComponent
 } from "../../../../Services/AttachmentService.tsx";
 import {CenteredDivColumn, CenteredDivRow} from "../../../../CommonComponents/CenteredDivRow.tsx";
-import {CircularProgress, IconButton, ListItemAvatar, TextField, Typography} from "@mui/material";
+import {Box, CircularProgress, IconButton, ListItemAvatar, Tab, Tabs, TextField, Typography} from "@mui/material";
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 import RemoveSharpIcon from '@mui/icons-material/RemoveSharp';
 import AssignmentTurnedInSharpIcon from '@mui/icons-material/AssignmentTurnedInSharp';
@@ -19,7 +19,7 @@ import AutoAwesomeMotionRoundedIcon from "@mui/icons-material/AutoAwesomeMotionR
 import {AddChildOperToProc} from "../AddingChildOperationToProcces/AddChildOperToProc.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {HistoryComponent} from "../../../../History/HistoryComponent.tsx";
-
+import '../../../../../../styles/CustomTabs.scss'
 export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) => {
     const [selectedProcces, setSelectedProcces] = useState<Procces>()
     const [operations, setOperations] = useState<Operation[]>()
@@ -151,8 +151,13 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
 
         }
     }
+    const [value, setValue] = useState(0);
+
+    const handleChange = (event: SyntheticEvent, newValue: number) => {
+        setValue(newValue);
+    };
     return (
-        <>
+        <div>
             {selectedProcces &&
                 <AddChildOperToProc procces={selectedProcces}
                                     open={openModalWindowWithAddingChildOperation}
@@ -212,33 +217,37 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                                 <SelectingFilesComponents onSelectedFilesChange={addAttachments}/>
                             </div>
                         )}
-
                     </CenteredDivRow>
 
-                        <CenteredDivRowLocal>
-
-                            <CenteredDivColumnLocal>
+                    <Tabs
+                        className="custom-tabs"
+                        value={value}
+                        onChange={handleChange}
+                        aria-label="simple tabs example"
+                        variant="scrollable"
+                        scrollButtons
+                        allowScrollButtonsMobile
+                    >
+                        <Tab label="Операции выбранного процесса" />
+                        <Tab label="История изменений" />
+                        {/* Добавьте другие вкладки по аналогии */}
+                    </Tabs>
+                    <TabPanel value={value} index={0}>
                                 <ListItemAvatar>
-                                    <IconButton style={{color: 'white'}} onClick={handleClick_addOperation_To_Procces}>
+                                    <IconButton style={{ color: 'white' }} onClick={handleClick_addOperation_To_Procces}>
                                         Добавить операцию
-                                        <AutoAwesomeMotionRoundedIcon style={{fontSize: 30, color: 'white'}}/>
+                                        <AutoAwesomeMotionRoundedIcon style={{ fontSize: 30, color: 'white' }} />
                                     </IconButton>
                                 </ListItemAvatar>
-                            {
-                                operations &&
-                                <OperationTableComponent
-                                    procces={selectedProcces}
-                                    operations={operations}
-                                    send_request={update_dependencies_selected_procces}/>
-                            }
-                            </CenteredDivColumnLocal>
-                            <CenteredDivColumnLocal>
-                                <Typography variant="body1">
-                                    История процесса :
-                                </Typography>
-                            <HistoryComponent int={selectedProcces?.id}/>
-                            </CenteredDivColumnLocal>
-                        </CenteredDivRowLocal>
+                                {operations && <OperationTableComponent procces={selectedProcces} operations={operations} send_request={update_dependencies_selected_procces} />}
+
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+                            <Typography variant="body1">
+                                История процесса :
+                            </Typography>
+                            <HistoryComponent int={selectedProcces?.id} />
+                    </TabPanel>
                     {/* <button className="styled-button"
                             title={view ? "Показать таблицу" : "Показать Список"} onClick={click_view_table}>
                         {view ? "Показать таблицу" : "Показать Список"}
@@ -268,8 +277,27 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
 
                 </div>
             )}
-        </>
+        </div>
     )
+}
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`tabpanel-${index}`}
+            aria-labelledby={`tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 3 }}>
+                    <div>{children}</div>
+                </Box>
+            )}
+        </div>
+    );
 }
 const CenteredDivRowLocal = styled(CenteredDivRow)`
     display: flex;

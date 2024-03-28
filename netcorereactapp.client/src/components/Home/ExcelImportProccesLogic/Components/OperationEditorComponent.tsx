@@ -1,7 +1,10 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {formatDate} from "../../Services/DateTimeConverterService.tsx";
 import SelectingFilesComponents from "../../CommonComponents/SelectingFilesComponents.tsx";
 import {SaveAttachmentsToOperation} from "../../Services/AttachmentService.tsx";
+import {
+    StyledTextField
+} from "../../TableComponent/ModalWindows/ProccesComponents/SelectedProccesComponents/SelectedProcces.tsx";
 
 export const OperationEditorComponent = (props) => {
     //console.log(props.operation.dateOfCreture+"\n"+props.operation.dateOfEdited)
@@ -9,14 +12,15 @@ export const OperationEditorComponent = (props) => {
     useEffect(() => {
         //console.log("OperationEditorComponent component useEffect selectedFiles :\n",selectedFiles)
     }, [selectedFiles]);
+    const inputRef = useRef(null);
     const onChangeLocal = (event) => {
         const { name, value } = event.target;
-        // Ñîçäàåì îáíîâëåííóþ îïåðàöèþ ñ èçìåíåííûì çíà÷åíèåì
+        // Ð¡Ð¾Ð·Ð´Ð°ÐµÐ¼ Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð½ÑƒÑŽ Ð¾Ð¿ÐµÑ€Ð°Ñ†Ð¸ÑŽ Ñ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð½Ñ‹Ð¼ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸ÐµÐ¼
         const updatedOperation = {
             ...props.operation,
             [name]: value
         };
-        // Âûçûâàåì ôóíêöèþ äëÿ îáíîâëåíèÿ îïåðàöèè â ïðîöåññå
+        // Ð’Ñ‹Ð·Ñ‹Ð²Ð°ÐµÐ¼ Ñ„ÑƒÐ½ÐºÑ†Ð¸ÑŽ Ð´Ð»Ñ Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ñ Ð¾Ð¿ÐµÑ€Ð°Ñ†Ð¸Ð¸ Ð² Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐµ
         props.onChange(updatedOperation, props.operation.id);
     };
     const handleSelectedFilesChange = (files) => {
@@ -30,18 +34,29 @@ export const OperationEditorComponent = (props) => {
                 <label>ID:</label>
                 <input type="text" name="id" value={props.operation.id} readOnly/>
             </div>
-            <div>
+         {/*   <div>
                 <label>Caption:</label>
                 <input type="text" name="caption" value={props.operation.caption} onChange={onChangeLocal}/>
-            </div>
+            </div>*/}
+            <StyledTextField
+                ref={inputRef}
+                id="outlined-helperText"
+                label="ÐÐ°Ð·Ð²Ð°Ð½Ð¸Ðµ Ð¾Ð¿ÐµÑ€Ð°Ñ†Ð¸Ð¸"
+                defaultValue={props.operation.caption}
+                helperText="ÐžÑ‚Ñ€ÐµÐ´Ð°ÐºÑ‚Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ Ð¾Ð¿ÐµÑ€Ð°Ñ†Ð¸Ð¸"
+                variant="outlined"
+                name="caption"
+                onChange={onChangeLocal}
+                autoFocus
+            />
             <div>
                 <label>Date of Creation:</label>
                 <input type="datetime-local" name="dateOfCreation" value={formatDate(props.operation.dateOfCreture)}
                        readOnly/>
 
-                <label>Date of Editing:</label>
+             {/*   <label>Date of Editing:</label>
                 <input type="datetime-local" name="dateOfEditing" value={formatDate(props.operation.dateOfEdited)}
-                       readOnly/>
+                       readOnly/>*/}
             </div>
             <SelectingFilesComponents onSelectedFilesChange={handleSelectedFilesChange}/>
             <button onClick={

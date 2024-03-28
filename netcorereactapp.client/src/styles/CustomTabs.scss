@@ -1,0 +1,21 @@
+.custom-tabs {
+  & .MuiTabs-flexContainer {
+    & .MuiTab-root {
+      padding: 10px; // отступ внутри вкладки
+      font-size: 16px; // размер шрифта вкладки
+      font-weight: bold; // насыщенность шрифта
+      text-transform: uppercase; // преобразование текста в верхний регистр
+      transition: all 0.3s ease; // плавное изменение стилей при наведении
+      cursor: pointer; // курсор при наведении
+
+      &:hover {
+        background-color: #f0f0f0; // цвет фона при наведении
+      }
+
+      &.Mui-selected {
+        color: #007bff; // цвет текста активной вкладки
+        background-color: #f8f9fa; // цвет фона активной вкладки
+      }
+    }
+  }
+}

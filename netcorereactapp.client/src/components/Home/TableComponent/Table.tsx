@@ -118,7 +118,7 @@ export default function Table() {
             />
             )}
             <Box sx={{
-                maxWidth: '400px',
+                maxWidth: '50%',
                 margin: '0 auto',
                 borderRadius: '80px', // Применяем закругление границ
                 boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', // Добавляем тень для эффекта поднятости

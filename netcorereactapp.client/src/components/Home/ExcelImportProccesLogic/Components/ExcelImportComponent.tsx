@@ -1,5 +1,5 @@
 import axios from "axios";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Procces} from "../../../../Models/ProccesOperation/Procces.tsx";
 import {OperationsTable} from "./OperationsTable.tsx";
 import {formatDate} from "../../Services/DateTimeConverterService.tsx";
@@ -9,6 +9,9 @@ import config from '../../../../config/config.json';
 import "../../../../styles/ExcelService.css"
 import {addingAttachmentsToProcces} from "../../Services/AttachmentService.tsx";
 import SelectingFilesComponents from "../../CommonComponents/SelectingFilesComponents.tsx";
+import {
+    StyledTextField
+} from "../../TableComponent/ModalWindows/ProccesComponents/SelectedProccesComponents/SelectedProcces.tsx";
 
 export default function ExcelImportComponent(props) {
     const [selectedFile, setSelectedFile] = useState()
@@ -95,6 +98,7 @@ export default function ExcelImportComponent(props) {
             // Обработка ошибки
         }
     };
+    const inputRef = useRef(null);
     const onChangeLocal = (event) => {
         const { name, value } = event.target;
         // Создаем обновленный объект процесса с измененным значением
@@ -132,10 +136,21 @@ export default function ExcelImportComponent(props) {
                                     <div className="col">
                                         <h3>Номер : {procces.id}</h3>
                                     </div>
-                                    <div className="col">
+                                   {/* <div className="col">
                                         <h3>Название : <input type="text" name="caption" value={procces.caption}
                                                            onChange={onChangeLocal}/></h3>
-                                    </div>
+                                    </div>*/}
+                                    <StyledTextField
+                                        ref={inputRef}
+                                        id="outlined-helperText"
+                                        label="Название процесса"
+                                        defaultValue={procces.caption}
+                                        helperText="Отредактировать название процесса"
+                                        variant="outlined"
+                                        name="caption"
+                                        onChange={onChangeLocal}
+                                        autoFocus
+                                    />
                                 </div>
                                 <div className="row">
                                     <div className="col">
@@ -143,11 +158,11 @@ export default function ExcelImportComponent(props) {
                                                                     value={formatDate(procces.dateOfCreture)}
                                                                     readOnly/></h3>
                                     </div>
-                                    <div className="col">
+                                  {/*  <div className="col">
                                         <h3>Дата редактирования : <input type="datetime-local" name="dateOfEditing"
                                                                    value={formatDate(procces.dateOfEdited)}
                                                                    readOnly/></h3>
-                                    </div>
+                                    </div>*/}
                                 </div>
                             </div>
                             <div className="row">

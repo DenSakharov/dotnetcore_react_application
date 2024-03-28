@@ -13,7 +13,7 @@ export const OperationsTable: React.FC<{
                 <td>{operation.id}</td>
                 <td>{operation.caption}</td>
                 <td><input type="datetime-local" name="dateOfCreation" value={formatDate(operation.dateOfCreture)} readOnly/></td>
-                <td><input type="datetime-local" name="dateOfEditing" value={formatDate(operation.dateOfEdited)} readOnly/></td>
+                {/*<td><input type="datetime-local" name="dateOfEditing" value={formatDate(operation.dateOfEdited)} readOnly/></td>*/}
                 <td>
                     <EditingOperationFromProccesComponent operation={operation}  onChange={onOperationUpdate}/>
                 </td>
@@ -47,14 +47,14 @@ export const OperationsTable: React.FC<{
         }));
     };
     return (
-        <div style={{ overflowX: 'auto', maxHeight:"400px"}}>
+        <div style={{ overflowX: 'auto', maxHeight:"50%" , maxWidth:"80%"}}>
             <table>
                 <thead>
                 <tr>
                     <th>ID</th>
                     <th>Caption</th>
                     <th>Date of Creation</th>
-                    <th>Date of Editing</th>
+                   {/* <th>Date of Editing</th>*/}
                 </tr>
                 </thead>
                 <tbody>
