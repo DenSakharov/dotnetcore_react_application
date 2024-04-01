@@ -8,7 +8,11 @@ import AddSharpIcon from "@mui/icons-material/AddSharp";
 import {Operation} from "../../Models/ProccesOperation/Operation.tsx";
 
 export const NewOperation=({hidden,addChildOperartion})=>{
-    const [operation,setOperation]=useState<Operation>()
+    //const [operation,setOperation]=useState<Operation>()
+    const [operation, setOperation] = useState<Operation >({
+        operation: '',
+        // Другие свойства
+    });
     useEffect(()=>{
         //console.log('NewOperation operation\n',operation)
     }),[operation]
@@ -55,6 +59,7 @@ export const NewOperation=({hidden,addChildOperartion})=>{
         const capt= event.target.value.caption
         const equip= event.target.value.equipments
         //console.log('equip',equip)
+        console.log('test\n',operation)
         setOperation(prevProcess => {
 
             // Создаем новый объект operation с обновленными полями
@@ -86,7 +91,7 @@ export const NewOperation=({hidden,addChildOperartion})=>{
     const addBtn=()=>{
         //console.log('addBtn\n',operation)
         addChildOperartion({operation})
-        //hidden();
+        hidden();
     }
     return(
         <CenteredDivRow>
@@ -103,7 +108,15 @@ export const NewOperation=({hidden,addChildOperartion})=>{
                 autoFocus
                 sx={{width: '10ch',}}
             />
-            <FormControl>
+            <FormControl sx={
+                {width: '50ch',
+                    '& .MuiInputBase-input, & .MuiInputBase-multiline, & .MuiInputLabel-root, & .MuiFormHelperText-root': {
+                        color: 'white',
+                        '& .MuiInputBase-input:focus, & .MuiInputBase-multiline:focus': {
+                            color: 'black', // Измените цвет текста при выделении
+                        },
+                    },
+            }}>
                 <InputLabel id="select-label">Выберите что-нибудь</InputLabel>
                 <Select
                     labelId="select-label"

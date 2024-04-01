@@ -1,14 +1,18 @@
 import {CenteredDivColumn, CenteredDivRow} from "../Home/CommonComponents/CenteredDivRow.tsx";
-import {IconButton, List, ListItem, ListItemText, TextField} from "@mui/material";
+import {IconButton, TextField} from "@mui/material";
+
 import {useEffect, useRef, useState} from "react";
 import {styled} from "@mui/system";
 import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
 import AddSharpIcon from "@mui/icons-material/AddSharp";
 import {NewOperation} from "./NewOperation.tsx";
 import {Procces} from "../../Models/ProccesOperation/Procces.tsx";
+import {OperationList} from "./OperationList.tsx";
 
 export const FiledsCompoment=()=>{
-    const [procces,setProcces]=useState<Procces>()
+    const [procces,setProcces]=useState<Procces>({
+        caption:'',
+    })
     useEffect(()=>{
             console.log('FiledsCompoment useEffect\n',procces)
     }),[procces]
@@ -121,17 +125,26 @@ export const FiledsCompoment=()=>{
                     addChildOperartion={addOperation}
                 />
             }
-            {procces && procces.operations && procces.operations.map((oper, index) => (
-                <div key={index}>
-                    <p>Number: {oper.number}</p>
-                    <p>Labor Cost: {oper.laborCost}</p>
-                    <p>Responsible Group: {oper.responsibleGroup}</p>
-                    <p>caption: {oper.caption}</p>
-                </div>
-            ))}
+            {procces && procces.operations &&
+                <OperationList procces={procces}/>
+            }
+           {/* {procces && procces.operations && procces.operations.map((oper, index) => (
+                <Grid key={index}>
+                    <Card elevation={3}>
+                        <CardHeader title={`Операция ${index + 1}`} />
+                        <CardContent>
+                            <Typography variant="body1">Номер операции: {oper.number}</Typography>
+                            <Typography variant="body1">Трудозатраты: {oper.laborCost}</Typography>
+                            <Typography variant="body1">Группа ответственности: {oper.responsibleGroup}</Typography>
+                            <Typography variant="body1">Название: {oper.caption}</Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            ))}*/}
         </CenteredDivColumn>
     )
 }
+
 export const StyledTextField = styled(TextField)({
     margin: '5px',
     width: '50ch',
