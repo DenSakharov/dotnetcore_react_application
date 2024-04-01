@@ -1,5 +1,5 @@
 ﻿export function About() {
     return (
-        <h1>About</h1>
+        <h1>О программе</h1>
     );
 }

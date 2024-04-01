@@ -3,6 +3,10 @@ using System.Text;
 using ClassesLibrary.Models;
 using ClassesLibrary.DataTransferObjects;
 using ClassesLibrary.Services;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.Text.Json.Nodes;
+using Newtonsoft.Json;
 namespace netcore.console
 {
     public static class ImportExcel
@@ -15,6 +19,8 @@ namespace netcore.console
         public static async Task<(Procces, List<Operation>)> get_values_from_excel_file(string path)
         {
             string name = Path.GetFileNameWithoutExtension(path);
+
+            //var jsonDictionary = new Dictionary<string, string>();
 
             List<string> list_of_finded_str_value = new List<string>();
             List<StringHierarchyOperations> list_of_finded_str = new List<StringHierarchyOperations>();
@@ -93,26 +99,102 @@ namespace netcore.console
                             }
                         }
                     }
-                    if (string.Equals(worksheet.Name, "ТО", StringComparison.CurrentCultureIgnoreCase))
+                   /* if (string.Equals(worksheet.Name, "ТО", StringComparison.CurrentCultureIgnoreCase))
                     {
 
                         int rowCount = worksheet.Dimension.Rows;
                         int colCount = worksheet.Dimension.Columns;
                         for (int row = 1; row <= rowCount; row++)
                         {
-                           /* for (int col = 1; col <= colCount; col++)
+                            string jsonKey = worksheet.Cells[row, 1].Text;
+                            if (string.IsNullOrEmpty(jsonKey))
                             {
-                                var s = worksheet.Cells[row, col].Text;
-                                Console.WriteLine($"{row} : {col} - {s}\n");
-                            }*/
+                                continue; // Пропуск пустых строк
+                            }
+                            //var jsonValues = new List<string>();
+                            StringBuilder jsonValues = new StringBuilder();
+                            for (int col = 2; col <= colCount; col++)
+                            {
+                                *//* var s = worksheet.Cells[row, col].Text;
+                                 Console.WriteLine($"{row} : {col} - {s}\n");*//*
+                                string cellValue = worksheet.Cells[row, col].Text; // Значение ячейки как значение JSON-узла
+                                jsonValues.Append(cellValue);
+                            }
+                            try
+                            {
+                                //jsonDictionary.Add(jsonKey, JsonConvert.SerializeObject(jsonValues));
+                                jsonDictionary.Add(jsonKey, jsonValues.ToString());
+                            }
+                            catch (Exception ex){ Console.WriteLine(ex); }
                         }
 
-                    }
+                    }*/
                 }
             }
+            // Преобразование объекта JSON в строку
+            //string jsonString = JsonConvert.SerializeObject(jsonDictionary, Formatting.Indented);
+            //Console.WriteLine(jsonString);
+            //ReadExcel(path,"ТО");
             //show_objects_in_Console(list_of_finded_str,"");
             return await generate_procces_with_orders(list_of_finded_str, name);
         }
+        #region аналог EPPlus для работы с Excel
+        public static void ReadExcel(string filePath, string sheetName)
+        {
+            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(filePath, false))
+            {
+                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+                WorksheetPart worksheetPart = GetWorksheetPartByName(workbookPart, sheetName);
+                if (worksheetPart != null)
+                {
+                    SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
+
+                    foreach (Row row in sheetData.Elements<Row>())
+                    {
+                        foreach (Cell cell in row.Elements<Cell>())
+                        {
+                            string text = GetCellValue(cell, workbookPart);
+                            Console.WriteLine(text);
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Sheet not found");
+                }
+            }
+        }
+        private static WorksheetPart GetWorksheetPartByName(WorkbookPart workbookPart, string sheetName)
+        {
+            Sheet sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault(s => s.Name == sheetName);
+            if (sheet != null)
+            {
+                return workbookPart.GetPartById(sheet.Id) as WorksheetPart;
+            }
+            return null;
+        }
+        private static string GetCellValue(Cell cell, WorkbookPart workbookPart)
+        {
+            string value = cell.InnerText;
+
+            if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+            {
+                SharedStringTablePart stringTablePart = workbookPart.SharedStringTablePart;
+                if (stringTablePart != null)
+                {
+                    value = stringTablePart.SharedStringTable.ElementAt(int.Parse(value)).InnerText;
+
+                }
+            }
+            else if (cell.CellFormula != null)
+            {
+                // Если в ячейке есть формула, то вычисляем ее значение
+                value = cell.CellValue.InnerText;
+            }
+
+            return value;
+        }
+        #endregion
         public static async Task<(Procces, List<Operation>)> generate_procces_with_orders(List<StringHierarchyOperations> list_of_finded_str_value, string name)
         {
             var procces = new Procces();

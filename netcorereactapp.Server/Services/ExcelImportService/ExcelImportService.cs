@@ -2,7 +2,6 @@
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices;
 using netcorereactapp.Server.Services.PostgreService;
-using OfficeOpenXml;
 
 namespace netcorereactapp.Server.Services.ExcelImportService
 {
@@ -17,9 +16,9 @@ namespace netcorereactapp.Server.Services.ExcelImportService
             _logger = logger;
             _fileService = fileService;
         }
-        public void inport_excel()
+       /* public void inport_excel()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        }
+        }*/
     }
 }

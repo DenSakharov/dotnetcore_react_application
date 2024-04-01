@@ -11,7 +11,8 @@ export const HomeComponent: React.FC = () => {
         <div className="container">
             <div>
                 <button className="styled-button"
-                        onClick={clickExcelExport}>Добавить новый заказ по Excel шаблону
+                        onClick={clickExcelExport}>
+                    Добавить новый заказ по Excel шаблону
                 </button>
                 {isModalExcelExport && (
                     <ModalCreateProccesFromExcel

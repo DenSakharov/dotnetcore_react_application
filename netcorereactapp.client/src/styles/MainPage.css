@@ -9,12 +9,12 @@
 }
 .nav-elements ul {
     list-style-type: none;
-    padding: 0;
+    padding: 10px;
     display: flex;
 }
 
 .nav-elements li {
-    margin-right: 20px;
+    margin-right: 0px;
 }
 
 .nav-elements a {
@@ -28,9 +28,8 @@
     .nav-elements a:hover {
         color: #2ecc71; /* Светло-зеленый цвет при наведении */
     }
-
-.content {
-    margin-top: 20px;
+.content-container {
+    padding: 40px; /* Дополнительный отступ для содержимого страницы */
 }
 
 /* Дополнительные стили по вашему усмотрению */

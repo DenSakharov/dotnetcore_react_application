@@ -8,10 +8,9 @@ import Register from './components/login/register';
 import  ExcelPage  from './components/Home/DocumentViewComponents/ExcelPage';
 import PDFViewer from './components/Home/DocumentViewComponents/PDFViewer';
 import WordViewer from './components/Home/DocumentViewComponents/WordViewer';
-
-import './styles/MainPage.css';
 import {Notifications} from "./components/UniversalComponents/Notifications/Notifications.tsx";
 
+import './styles/MainPage.css';
 
 export function Router() {
     return (
@@ -19,7 +18,7 @@ export function Router() {
          
             <HashRouter>
                 <Navbar />
-                <div className="content">
+                <div className="content-container">
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />

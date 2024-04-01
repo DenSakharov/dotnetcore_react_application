@@ -38,10 +38,13 @@ namespace netcorereactapp.Server.Controllers.ExcelImport
             IFormFile file = form.Files["file"];
             var path= await _fileService.SaveFile(file);
             var (procces, operations) = await ImportExcel.get_values_from_excel_file(path);
-            var res=await _operationService.SaveProccesWithOperations(procces, operations);
+            await _fileService.DeleteFile(path);
+            var res =await _operationService.SaveProccesWithOperations(procces, operations);
             int proccesId = procces.Id;
             //procces.Operations=operations;
-            return await ImportExcel.generate_procces_with_ordersDTO(procces);
+            var res1 =await ImportExcel.generate_procces_with_ordersDTO(procces);
+
+            return res1;
         }
     }
 }

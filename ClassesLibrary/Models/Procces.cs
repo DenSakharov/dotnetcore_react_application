@@ -10,7 +10,7 @@ namespace ClassesLibrary.Models
         public List<History> Histories { get; set; } = new List<History>();
         [JsonIgnore]
         public List<Attachment> Attachments { get; set; } = new List<Attachment>();
-        /// <summary>
+        /*/// <summary>
         /// Номер заказа
         /// </summary>
         public string OrderNumber { get; set; }
@@ -36,6 +36,6 @@ namespace ClassesLibrary.Models
         public double ManufacturingComplexityHours { get; set; }
         public string AdditionalInformation { get; set; }
         public string DevelopedBy { get; set; }
-        public string VerifiedBy { get; set; }
+        public string VerifiedBy { get; set; }*/
     }
 }
