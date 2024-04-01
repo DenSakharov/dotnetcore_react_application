@@ -1,21 +1,27 @@
 import {CenteredDivColumn, CenteredDivRow} from "../Home/CommonComponents/CenteredDivRow.tsx";
 import {IconButton, TextField} from "@mui/material";
 
-import {useEffect, useRef, useState} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import {styled} from "@mui/system";
 import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
 import AddSharpIcon from "@mui/icons-material/AddSharp";
 import {NewOperation} from "./NewOperation.tsx";
 import {Procces} from "../../Models/ProccesOperation/Procces.tsx";
 import {OperationList} from "./OperationList.tsx";
-
-export const FiledsCompoment=()=>{
+export const FiledsCompoment = forwardRef((props, ref) => {
     const [procces,setProcces]=useState<Procces>({
         caption:'',
     })
     useEffect(()=>{
-            console.log('FiledsCompoment useEffect\n',procces)
+            //console.log('FiledsCompoment useEffect\n',procces)
     }),[procces]
+    const saveProcces=()=>{
+    }
+    useImperativeHandle(ref, () => ({
+        saveProcces: () => {
+            saveProcces();
+        },
+    }));
     const inputRef = useRef(null);
     const handleTextFieldChange = (event) => {
         const {name, value} = event.target;
@@ -143,7 +149,7 @@ export const FiledsCompoment=()=>{
             ))}*/}
         </CenteredDivColumn>
     )
-}
+})
 
 export const StyledTextField = styled(TextField)({
     margin: '5px',

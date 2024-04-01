@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import {useRef, useState} from 'react';
 import { Button, Modal, Box, Typography } from '@mui/material';
 import {FiledsCompoment} from "./FiledsCompoment.tsx";
 const modalBoxSx = {
@@ -16,7 +16,15 @@ const btnSX = {
     color:'green',
     bgcolor: 'black',
 };
+
 export default function MainTemplateModal({ open, handleClose }) {
+    const childRef = useRef(null);
+    const save = () => {
+        //console.log('test')
+        if (childRef.current) {
+            childRef.current.saveProcces();
+        }
+    };
     return (
         <Modal
             open={open}
@@ -28,8 +36,9 @@ export default function MainTemplateModal({ open, handleClose }) {
                 <Typography id="modal-title" variant="h6" component="h2">
                     Создание процесса
                 </Typography>
-                <FiledsCompoment/>
+                <FiledsCompoment ref={childRef}/>
                 <Button sx={btnSX} className="styled-button" onClick={handleClose}>Закрыть</Button>
+                <Button sx={btnSX} className="styled-button" onClick={save}>Сохранить</Button>
             </Box>
         </Modal>
     );
