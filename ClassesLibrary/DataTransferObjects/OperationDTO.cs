@@ -1,10 +1,15 @@
-﻿using System.Text.Json.Serialization;
+﻿
 
 namespace ClassesLibrary.DataTransferObjects
 {
     public class OperationDTO : EntityDTO
     {
-        public int ProccesId { get; set; }
+        public string? number { get; set; }
+        public string? laborCost { get; set; }
+        public string? responsibleGroup { get; set; }
+        public List<EquipmentDTO>? Equipments { get; set; }
+            = new List<EquipmentDTO>();
+        public int? ProccesId { get; set; }
         public ProccesDTO? Procces { get; set; }
         public int? ParentOperationId { get; set; }
         public OperationDTO? ParentOperation { get; set; }  

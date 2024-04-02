@@ -1,0 +1,17 @@
+.oper_list {
+  /* Установите желаемую высоту контейнера */
+  height: 300px; /* Например */
+  overflow-y: auto; /* Включить вертикальную прокрутку */
+
+  /* Скрыть скроллбар */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.oper_list::-webkit-scrollbar {
+  display: none;
+}
+
+.oper_list.touch-scroll {
+  overflow-y: scroll; /* Включить вертикальную прокрутку на сенсорных устройствах */
+}

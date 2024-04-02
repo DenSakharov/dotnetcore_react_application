@@ -44,7 +44,7 @@ export const NewOperation=({hidden,addChildOperartion})=>{
                     }
                 })
             if (response) {
-                //console.log(response.data)
+                //console.log('fetchOptionsFromBackend\n',response.data)
                 return response.data
             } else {
                 console.error('requset failed')
@@ -58,8 +58,9 @@ export const NewOperation=({hidden,addChildOperartion})=>{
         //console.log('event.target.value\n',event.target.value)
         const capt= event.target.value.caption
         const equip= event.target.value.equipments
+        const childsOperations= event.target.value.childsOperations
         //console.log('equip',equip)
-        console.log('test\n',operation)
+        //console.log('test\n',operation)
         setOperation(prevProcess => {
 
             // Создаем новый объект operation с обновленными полями
@@ -67,7 +68,8 @@ export const NewOperation=({hidden,addChildOperartion})=>{
                 ...prevProcess.operation,
                 // Устанавливаем новые значения для полей caption и equipments
                 caption: capt,
-                equipments: equip
+                equipments: equip,
+                childsOperations: childsOperations
             };
             // Возвращаем обновленный объект prevProcess с обновленным operation
             return {

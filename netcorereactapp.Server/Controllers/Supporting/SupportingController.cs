@@ -11,6 +11,8 @@ using System.Drawing;
 using System.Linq;
 using System.Collections.Generic;
 using Color = System.Drawing.Color;
+using ClassesLibrary.Services;
+using ClassesLibrary.DataTransferObjects;
 namespace netcorereactapp.Server.Controllers.Supporting
 {
     [Authorize]
@@ -24,13 +26,13 @@ namespace netcorereactapp.Server.Controllers.Supporting
         }
         private readonly string path_excel_template = "C:\\Uploads\\templates.xlsx";
         [HttpGet("template_operations")]
-        public async Task<List<Oper>> GetTemplateOpertionsList()
+        public async Task<List<OperationDTO>> GetTemplateOpertionsList()
         {
             var lst=ReadExcel(path_excel_template, "операции");
             //ReadExcel(path_excel_template, "оборудование");
             return lst;
         }
-        public static List<Oper> ReadExcel(string filePath, string sheetName)
+        public static List<OperationDTO> ReadExcel(string filePath, string sheetName)
         {
             using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(filePath, false))
             {
@@ -55,13 +57,25 @@ namespace netcorereactapp.Server.Controllers.Supporting
                             {
                                 if (cell.CellReference.ToString().StartsWith('B'))
                                 {
-                                    if (operation.Caption != "" && operation.Caption != null)
+                                   /* if (operation.Caption != "" && operation.Caption != null)
                                     {
                                         if (!string.IsNullOrEmpty(operation.Caption) && !operations.Any(op => op.Caption == operation.Caption))
                                         {
-                                            operations.Add(operation);
+                                            
                                         }
-
+                                    }*/
+                                    operation = new Oper();
+                                    operation.Caption = GetCellValue(cell, workbookPart);
+                                    operations.Add(operation);
+                                }
+                                if (cell.CellReference.ToString().StartsWith('C'))
+                                {
+                                    if (text.Contains("Примечание"))
+                                    {
+                                        childOperation = new Oper();
+                                        childOperation.Caption = text;
+                                        operation.ChildsOperations.Add(childOperation);
+                                        continue;
                                     }
                                     // Регулярное выражение для извлечения цифрового идентификатора
                                     Regex regex = new Regex(@"^\d+");
@@ -77,28 +91,15 @@ namespace netcorereactapp.Server.Controllers.Supporting
                                         operation.ChildsOperations.Add(childOperation);
                                         continue;
                                     }
-                                    string pattern = @"\b[А-ЯЁ][а-яё]*\b";
-
-                                    regex = new Regex(pattern);
-
-                                    match = regex.Match(text);
-                                    if (match.Success)
-                                    {
-                                       
-                                        operation = new Oper();
-                                        operation.Caption = GetCellValue(cell, workbookPart);
-                                    }
-                                    else
-                                    {
-                                        childOperation.Caption += " " + text;
-                                    }
+                                        
+                                    childOperation.Caption += " " + text;
                                 }
-                                if (cell.CellReference.ToString().StartsWith('C'))
+                                if (cell.CellReference.ToString().StartsWith('D'))
                                 {
                                     equipments = new List<Equipment>();
                                     
                                 }
-                                if (cell.CellReference.ToString().StartsWith('D'))
+                                if (cell.CellReference.ToString().StartsWith('E'))
                                 {
                                    /* if (equipment.Caption != "" && equipment.Caption != null) 
                                     { 
@@ -117,7 +118,8 @@ namespace netcorereactapp.Server.Controllers.Supporting
                         }
                     }
                     //Console.WriteLine(operations.Count);
-                    return operations;
+                    var opertaionsDTO=MapService.MapChildOperations(operations);
+                    return opertaionsDTO;
                 }
                 else
                 {

@@ -9,6 +9,7 @@ namespace netcorereactapp.Server.Controllers.ProccesController
         {
             if (!context.ModelState.IsValid)
             {
+                Console.WriteLine($"ValidateModelAttribute OnActionExecuting :\n{context.ModelState}");
                 context.Result = new BadRequestObjectResult(context.ModelState);
             }
         }

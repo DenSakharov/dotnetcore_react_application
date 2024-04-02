@@ -4,12 +4,19 @@ namespace ClassesLibrary.Models
 {
     public class Procces : Entity
     {
+        public string? number { get; set; }
+        public string? material { get; set; }
+        public string? m3 { get; set; }
+        public string? kd { get; set; }
+        public string? profile_size { get; set; }
         [JsonIgnore]
         public List<Operation> Operations { get; set; } = new List<Operation>();
         [JsonIgnore]
         public List<History> Histories { get; set; } = new List<History>();
         [JsonIgnore]
         public List<Attachment> Attachments { get; set; } = new List<Attachment>();
+
+       
         /*/// <summary>
         /// Номер заказа
         /// </summary>

@@ -97,6 +97,21 @@ namespace netcorereactapp.Server.Services.ModelServices
             return (processes, totalCount);
         }
 
+        public async Task<Procces>Create(ProccesDTO procces)
+        {
+            var newProcces=new Procces();
+            newProcces.Caption=procces.Caption;
+            newProcces.m3 = procces.m3;
+            newProcces.kd=procces.kd;
+            newProcces.material=procces.material;
+            newProcces.number = procces.number;
+            newProcces.profile_size = procces.profile_size;
+            newProcces.Operations = MapService.MapChildOperations(procces.Operations);
+            _dbContext.Procceses.Add(newProcces);
+            await _dbContext.SaveChangesAsync();
+            return new Procces() { };
+        }
+
         public async Task<Procces> UpdateProcces(ProccesDTO editedProcces)
         {
             try

@@ -186,7 +186,7 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
             {
                 services.AddScoped<IAuthService, AuthService>();
                 services.AddScoped<IPostgreService, PostgreService>();
-                services.AddScoped<IOrderService,OrderSevice>();
+                services.AddScoped<IOrderService, OrderSevice>();
                 services.AddScoped<IFileService, FileService>();
                 services.AddScoped<IStatusService, StatusService>();
                 services.AddScoped<IExcelImportService, ExcelImportService>();
@@ -195,6 +195,8 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                 services.AddScoped<IAttachmentService, AttachmentService>();
                 services.AddScoped<IHistoryService, HistoryService>();
                 services.AddScoped<LoggingActionFilter>();
+
+                services.AddScoped<CustomActionFilter>();
             });
             return hostBuilder;
         }

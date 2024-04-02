@@ -8,6 +8,10 @@ import AddSharpIcon from "@mui/icons-material/AddSharp";
 import {NewOperation} from "./NewOperation.tsx";
 import {Procces} from "../../Models/ProccesOperation/Procces.tsx";
 import {OperationList} from "./OperationList.tsx";
+import '../../styles/FiledsCompoment.scss'
+import axios from "axios";
+import config from "../../config/config.json";
+import {addingAttachmentsToProcces} from "../Home/Services/AttachmentService.tsx";
 export const FiledsCompoment = forwardRef((props, ref) => {
     const [procces,setProcces]=useState<Procces>({
         caption:'',
@@ -15,7 +19,30 @@ export const FiledsCompoment = forwardRef((props, ref) => {
     useEffect(()=>{
             //console.log('FiledsCompoment useEffect\n',procces)
     }),[procces]
-    const saveProcces=()=>{
+    const saveProcces=async()=>{
+        const tokenValue = localStorage.getItem("authToken");
+        console.log(procces)
+        try {
+            const response = await axios.post(
+                `${config.apiUrl}/procces/create`,
+                procces, // Передаем отредактированный объект
+                {
+                    headers: {
+                        //'Content-Type': 'application/json', // Устанавливаем заголовок для JSON
+                        Authorization: `Bearer ${tokenValue}`,
+                    },
+                }
+            );
+            if(response.status==200)
+            {
+                console.log(response.data)
+                //props.onClose()
+            }
+        } catch (error) {
+            console.error("Error while confirming edited operation:", error);
+            // Обработка ошибки
+        }
+
     }
     useImperativeHandle(ref, () => ({
         saveProcces: () => {
@@ -132,7 +159,9 @@ export const FiledsCompoment = forwardRef((props, ref) => {
                 />
             }
             {procces && procces.operations &&
+                <div className="oper_list">
                 <OperationList procces={procces}/>
+                </div>
             }
            {/* {procces && procces.operations && procces.operations.map((oper, index) => (
                 <Grid key={index}>

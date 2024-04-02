@@ -20,7 +20,13 @@ namespace ClassesLibrary.Services
                     ParentOperationId = operation.ParentOperationId,
                     Attachments = MapAttachments(operation.Attachments),
                     ChildsOperations = operation.ChildsOperations.Count == 0 ? null :
-                    MapChildStatusesRecursive(operation.ChildsOperations,operation.Id) // Рекурсивный вызов для вложенных статусов
+                    MapChildStatusesRecursive(operation.ChildsOperations,operation.Id), // Рекурсивный вызов для вложенных статусов
+                    Equipments = operation.Equipments.Select(equipment => new EquipmentDTO
+                    {
+                        Id = equipment.Id,
+                        Caption = equipment.Caption,
+                    }).ToList(),
+
                 };
                 childOperationsDTOs.Add(childStatusDTO);
             }
@@ -76,7 +82,12 @@ namespace ClassesLibrary.Services
                     Attachments = MapAttachments(operationDTO.Attachments),
                     ChildsOperations = operationDTO.ChildsOperations == null ?
                         new List<Operation>() :
-                        MapChildStatusesRecursive(operationDTO.ChildsOperations, operationDTO.Id)
+                        MapChildStatusesRecursive(operationDTO.ChildsOperations, operationDTO.Id),
+                    Equipments = operationDTO.Equipments.Select(equipment => new Equipment
+                    {
+                        Id = equipment.Id,
+                        Caption = equipment.Caption,
+                    }).ToList(),
                 };
                 operations.Add(operation);
             }

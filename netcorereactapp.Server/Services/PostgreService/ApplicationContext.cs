@@ -7,6 +7,7 @@ namespace netcorereactapp.Server.Services.PostgreService
     public class ApplicationContext : DbContext
     {
         public DbSet<LoginModel> Users { get; set; } = null!;
+
         public DbSet<OrderModels> Orders { get; set; } = null!;
         public DbSet<StatusModels> StatusesOfOrders { get; set; } = null!;
         public DbSet<AttachmentModels> AttachmentsOfStatuses { get; set; } = null!;
@@ -16,6 +17,7 @@ namespace netcorereactapp.Server.Services.PostgreService
         public DbSet<Operation> Operations { get; set; } = null!;
         public DbSet<Attachment> Attachemnts { get; set; } = null!;
         public DbSet<ClassesLibrary.Models.History> Histories { get; set; } = null!;
+        public DbSet<Equipment>Equipments { get; set; } = null!;
         private readonly ILogger<ApplicationContext> _logger;
         public ApplicationContext(DbContextOptions<ApplicationContext> options, ILogger<ApplicationContext> logger)
             : base(options)
@@ -88,6 +90,12 @@ namespace netcorereactapp.Server.Services.PostgreService
                 .HasOne(attachment => attachment.Procces)
                 .WithMany(procces=> procces.Attachments)
                 .HasForeignKey(fk=>fk.ProccedId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Equipment>()
+                .HasOne(equipment=>equipment.Operation)
+                .WithMany(operation=>operation.Equipments)
+                .HasForeignKey(fk=>fk.OperationId)
                 .OnDelete(DeleteBehavior.Cascade);
             #endregion
         }
