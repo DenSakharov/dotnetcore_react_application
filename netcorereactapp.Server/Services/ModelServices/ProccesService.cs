@@ -26,7 +26,7 @@ namespace netcorereactapp.Server.Services.ModelServices
             _fileService = fileService;
             _historyService = historyService;
         }
-        private void LoadChildOperationsRecursive(Operation operation)
+        void LoadChildOperationsRecursive(Operation operation)
         {
             _dbContext.Entry(operation)
                 .Collection(o => o.ChildsOperations)
@@ -48,6 +48,8 @@ namespace netcorereactapp.Server.Services.ModelServices
                 //var existingProcces =  _dbContext.Procceses.Where(p => p.Id == id).FirstOrDefault();
 
                 var existingProcces = _dbContext.Procceses
+                    .Include(o => o.Operations)
+                        .ThenInclude(o => o.Equipments)
                     .Include(p => p.Operations)
                         .ThenInclude(o => o.Attachments)
                     .Include(p => p.Attachments)

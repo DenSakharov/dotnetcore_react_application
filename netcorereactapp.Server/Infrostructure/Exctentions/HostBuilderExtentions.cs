@@ -15,6 +15,8 @@ using netcorereactapp.Server.Services.History.Interfaces;
 using netcorereactapp.Server.Services.ModelServices;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
+using netcorereactapp.Server.Services.Supporting;
+using netcorereactapp.Server.Services.Supporting.Interfaces;
 using System.Reflection;
 
 namespace netcorereactapp.Server.Infrostructure.Exctentions
@@ -194,9 +196,9 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                 services.AddScoped<IOperationService, OperationService>();
                 services.AddScoped<IAttachmentService, AttachmentService>();
                 services.AddScoped<IHistoryService, HistoryService>();
-                services.AddScoped<LoggingActionFilter>();
 
-                services.AddScoped<CustomActionFilter>();
+                services.AddScoped<ISupportingService,SupportingService>();
+                services.AddScoped<LoggingActionFilter>();
             });
             return hostBuilder;
         }

@@ -35,8 +35,8 @@ export const FiledsCompoment = forwardRef((props, ref) => {
             );
             if(response.status==200)
             {
-                console.log(response.data)
-                //props.onClose()
+                //console.log(response.data)
+                props.onClose()
             }
         } catch (error) {
             console.error("Error while confirming edited operation:", error);

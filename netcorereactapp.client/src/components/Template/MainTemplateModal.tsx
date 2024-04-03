@@ -36,7 +36,7 @@ export default function MainTemplateModal({ open, handleClose }) {
                 <Typography id="modal-title" variant="h6" component="h2">
                     Создание процесса
                 </Typography>
-                <FiledsCompoment ref={childRef}/>
+                <FiledsCompoment ref={childRef} onClose={handleClose}/>
                 <Button sx={btnSX} className="styled-button" onClick={handleClose}>Закрыть</Button>
                 <Button sx={btnSX} className="styled-button" onClick={save}>Сохранить</Button>
             </Box>

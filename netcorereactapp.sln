@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "netcorereactapp.Server", "n
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "netcorereactapp.client", "netcorereactapp.client\netcorereactapp.client.esproj", "{53FB60C0-FC2C-4276-89E9-F4724505A256}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "netcore.console", "test\netcore.console.csproj", "{6BD5A56E-6362-46C2-B7C8-DC0E505E36DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "netcore.console", "test\netcore.console.csproj", "{6BD5A56E-6362-46C2-B7C8-DC0E505E36DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassesLibrary", "ClassesLibrary\ClassesLibrary.csproj", "{7675FAA8-54AE-4CB4-A9DC-C6BF42E95148}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassesLibrary", "ClassesLibrary\ClassesLibrary.csproj", "{7675FAA8-54AE-4CB4-A9DC-C6BF42E95148}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelConstructorLibrary", "ExcelConstructorLibrary\ExcelConstructorLibrary.csproj", "{098E30C7-3C69-4F50-AAB1-78BDAEE7FE4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{7675FAA8-54AE-4CB4-A9DC-C6BF42E95148}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7675FAA8-54AE-4CB4-A9DC-C6BF42E95148}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7675FAA8-54AE-4CB4-A9DC-C6BF42E95148}.Release|Any CPU.Build.0 = Release|Any CPU
+		{098E30C7-3C69-4F50-AAB1-78BDAEE7FE4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{098E30C7-3C69-4F50-AAB1-78BDAEE7FE4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{098E30C7-3C69-4F50-AAB1-78BDAEE7FE4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{098E30C7-3C69-4F50-AAB1-78BDAEE7FE4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

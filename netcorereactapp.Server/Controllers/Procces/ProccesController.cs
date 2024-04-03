@@ -10,27 +10,7 @@ using netcorereactapp.Server.Services.PostgreService;
 
 namespace netcorereactapp.Server.Controllers.ProccesController
 {
-    public class CustomActionFilter : IAsyncActionFilter
-    {
-        private readonly ILogger<CustomActionFilter> _logger;
-
-        public CustomActionFilter(ILogger<CustomActionFilter> logger)
-        {
-            _logger = logger;
-        }
-
-        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-        {
-            // Код, выполняемый перед выполнением основного метода контроллера
-            _logger.LogInformation("Before executing action...");
-
-            // Продолжаем выполнение действия в контроллере
-            var resultContext = await next();
-
-            // Код, выполняемый после выполнения основного метода контроллера
-            _logger.LogInformation("After executing action...");
-        }
-    }
+  
     [Authorize]
     [ApiController]
     [Route("procces")]
@@ -76,7 +56,6 @@ namespace netcorereactapp.Server.Controllers.ProccesController
             return Ok(new { procceses, totalCount });
         }
         [HttpPost("create")]
-        [ServiceFilter(typeof(CustomActionFilter))]
         public async Task<int> CreateNewProcces(ProccesDTO procces)
         {
             var v = procces;

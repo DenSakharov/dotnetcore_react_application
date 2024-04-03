@@ -19,6 +19,8 @@ import {Notifications} from "../../../../../../UniversalComponents/Notifications
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import config from "../../../../../../../config/config.json";
+import {ZIndexUtils} from "primereact/utils";
+import set = ZIndexUtils.set;
 
 export const OperationTableComponent = ({procces,operations,send_request}) => {
 
@@ -99,6 +101,27 @@ export const OperationTableComponent = ({procces,operations,send_request}) => {
                                 <DeleteIcon style={{ fontSize: 20, color: 'green' }} />
                             </IconButton>
                             {value.cell.row._valuesCache.caption}
+                        </div>
+                    )
+                }),
+            },
+            {
+                accessorKey: 'equipments',
+                header: 'Оборудование',
+                size: 'auto',
+                Cell: ((value) => {
+                    const [ar,setAr]=useState()
+                    useEffect(() => {
+                        //console.log(value.cell.row.original.equipments)
+                        setAr(value.cell.row.original.equipments)
+                    }, [value]);
+                    return(
+                        <div>
+                            {ar && (
+                                ar.map((equipment, index) => (
+                                    <li key={index}>{equipment.caption}</li>
+                                ))
+                            )}
                         </div>
                     )
                 }),
