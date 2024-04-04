@@ -5,6 +5,7 @@ import '../../styles/Home.css'
 import OldOrdersWithStatuses from "./ModalWindows/OldComponents/OldOrdersWithStatuses.tsx";
 import {Template} from "../Template/Template.tsx";
 import {CenteredDivRow} from "./CommonComponents/CenteredDivRow.tsx";
+import {Test} from "./Test/Test.tsx";
 
 export function Home() {
 
@@ -12,6 +13,7 @@ export function Home() {
         <div>
             <CenteredDivRow>
             <HomeComponent/>
+             {/*   <Test/>*/}
             <Template/>
             </CenteredDivRow>
             <Table/>
