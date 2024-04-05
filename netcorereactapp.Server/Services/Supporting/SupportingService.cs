@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace netcorereactapp.Server.Services.Supporting
 {
-    public class SupportingService:ISupportingService
+    public class SupportingService : ISupportingService
     {
         private readonly ApplicationContext _dbContext;
         private readonly ILogger<SupportingService> _logger;
@@ -73,104 +73,101 @@ namespace netcorereactapp.Server.Services.Supporting
         }
         public List<OperationDTO> ReadExcel(string filePath, string sheetName)
         {
-            using (FileStream fileStream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(filePath, true))
             {
-                using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(filePath, false))
+                List<Oper> operations = new List<Oper>();
+
+                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+                WorksheetPart worksheetPart = GetWorksheetPartByName(workbookPart, sheetName);
+                if (worksheetPart != null)
                 {
-                    List<Oper> operations = new List<Oper>();
-
-                    WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-                    WorksheetPart worksheetPart = GetWorksheetPartByName(workbookPart, sheetName);
-                    if (worksheetPart != null)
+                    SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
+                    Oper operation = new Oper();
+                    var childOperation = new Oper();
+                    List<Equipment> equipments = new List<Equipment>();
+                    Equipment equipment = new Equipment();
+                    foreach (Row row in sheetData.Elements<Row>())
                     {
-                        SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
-                        Oper operation = new Oper();
-                        var childOperation = new Oper();
-                        List<Equipment> equipments = new List<Equipment>();
-                        Equipment equipment = new Equipment();
-                        foreach (Row row in sheetData.Elements<Row>())
+
+                        foreach (Cell cell in row.Elements<Cell>())
                         {
-
-                            foreach (Cell cell in row.Elements<Cell>())
+                            string text = GetCellValue(cell, workbookPart);
+                            if (text != null && text != "")
                             {
-                                string text = GetCellValue(cell, workbookPart);
-                                if (text != null && text != "")
+                                if (cell.CellReference.ToString().StartsWith('B'))
                                 {
-                                    if (cell.CellReference.ToString().StartsWith('B'))
-                                    {
-                                        /* if (operation.Caption != "" && operation.Caption != null)
+                                    /* if (operation.Caption != "" && operation.Caption != null)
+                                     {
+                                         if (!string.IsNullOrEmpty(operation.Caption) && !operations.Any(op => op.Caption == operation.Caption))
                                          {
-                                             if (!string.IsNullOrEmpty(operation.Caption) && !operations.Any(op => op.Caption == operation.Caption))
-                                             {
 
-                                             }
-                                         }*/
-                                        operation = new Oper();
-                                        operation.Caption = GetCellValue(cell, workbookPart);
-                                        operations.Add(operation);
-                                    }
-                                    if (cell.CellReference.ToString().StartsWith('C'))
-                                    {
-                                        if (text.Contains("Примечание"))
-                                        {
-                                            childOperation = new Oper();
-                                            childOperation.Caption = text;
-                                            operation.ChildsOperations.Add(childOperation);
-                                            continue;
-                                        }
-                                        // Регулярное выражение для извлечения цифрового идентификатора
-                                        Regex regex = new Regex(@"^\d+");
-
-                                        // Ищем соответствия в строке
-                                        Match match = regex.Match(text);
-
-                                        // Если найдено соответствие, извлекаем идентификатор
-                                        if (match.Success)
-                                        {
-                                            childOperation = new Oper();
-                                            childOperation.Caption = text;
-                                            operation.ChildsOperations.Add(childOperation);
-                                            continue;
-                                        }
-
-                                        childOperation.Caption += " " + text;
-                                    }
-                                    if (cell.CellReference.ToString().StartsWith('D'))
-                                    {
-                                        equipments = new List<Equipment>();
-
-                                    }
-                                    if (cell.CellReference.ToString().StartsWith('E'))
-                                    {
-                                        /* if (equipment.Caption != "" && equipment.Caption != null) 
-                                         { 
-                                             equipments.Add(equipment); 
-                                         }*/
-                                        equipment = new Equipment();
-                                        equipment.Caption = GetCellValue(cell, workbookPart);
-                                        if (!string.IsNullOrEmpty(operation.Caption) && !operation.Equipments.Any(op => op.Caption == equipment.Caption))
-                                        {
-                                            operation.Equipments.Add(equipment);
-                                        }
-
-                                    }
+                                         }
+                                     }*/
+                                    operation = new Oper();
+                                    operation.Caption = GetCellValue(cell, workbookPart);
+                                    operations.Add(operation);
                                 }
+                                if (cell.CellReference.ToString().StartsWith('C'))
+                                {
+                                    if (text.Contains("Примечание"))
+                                    {
+                                        childOperation = new Oper();
+                                        childOperation.Caption = text;
+                                        operation.ChildsOperations.Add(childOperation);
+                                        continue;
+                                    }
+                                    // Регулярное выражение для извлечения цифрового идентификатора
+                                    Regex regex = new Regex(@"^\d+");
 
+                                    // Ищем соответствия в строке
+                                    Match match = regex.Match(text);
+
+                                    // Если найдено соответствие, извлекаем идентификатор
+                                    if (match.Success)
+                                    {
+                                        childOperation = new Oper();
+                                        childOperation.Caption = text;
+                                        operation.ChildsOperations.Add(childOperation);
+                                        continue;
+                                    }
+
+                                    childOperation.Caption += " " + text;
+                                }
+                                if (cell.CellReference.ToString().StartsWith('D'))
+                                {
+                                    equipments = new List<Equipment>();
+
+                                }
+                                if (cell.CellReference.ToString().StartsWith('E'))
+                                {
+                                    /* if (equipment.Caption != "" && equipment.Caption != null) 
+                                     { 
+                                         equipments.Add(equipment); 
+                                     }*/
+                                    equipment = new Equipment();
+                                    equipment.Caption = GetCellValue(cell, workbookPart);
+                                    if (!string.IsNullOrEmpty(operation.Caption) && !operation.Equipments.Any(op => op.Caption == equipment.Caption))
+                                    {
+                                        operation.Equipments.Add(equipment);
+                                    }
+
+                                }
                             }
+
                         }
-                        //Console.WriteLine(operations.Count);
-                        var opertaionsDTO = MapService.MapChildOperations(operations);
-                        return opertaionsDTO;
                     }
-                    else
-                    {
-                        Console.WriteLine("Sheet not found");
-                        return null;
-                    }
+                    //Console.WriteLine(operations.Count);
+                    var opertaionsDTO = MapService.MapChildOperations(operations);
+                    return opertaionsDTO;
+                }
+                else
+                {
+                    Console.WriteLine("Sheet not found");
+                    return null;
                 }
             }
         }
-       
+
         private static WorksheetPart GetWorksheetPartByName(WorkbookPart workbookPart, string sheetName)
         {
             Sheet sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault(s => s.Name == sheetName);

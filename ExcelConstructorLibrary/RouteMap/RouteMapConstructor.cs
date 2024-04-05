@@ -8,39 +8,35 @@ using Oper = ClassesLibrary.Models.Operation;
 using Excel = Microsoft.Office.Interop.Excel;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using DocumentFormat.OpenXml.Wordprocessing;
+using System.IO.Packaging;
 
 namespace ExcelConstructorLibrary.RouteMap
 {
     public static class RouteMapConstructor
     {
         private static readonly string pathMainTemplate = "C:\\Uploads\\mainTemplateExcel.xlsx";
-        public static void CreateCopyFileRouteMap(string destinationFilePath, Procces procces)
+        static string destinationFilePath;
+        public static void CreateCopyFileRouteMap(string destinationFilePath_, Procces procces)
         {
-            /*List<Oper> operations = new List<Oper>() 
-            { 
-                new Oper() {Caption="operation 1"},
-                new Oper() {Caption="operation 2"},
-                new Oper() {Caption="operation 3"},
-                new Oper() {Caption="operation 4"},
-                new Oper() {Caption="operation 5"},
-            };*/
-
+            destinationFilePath = destinationFilePath_;
             //создание копии пустого шаблона
             File.Copy(pathMainTemplate, destinationFilePath, true);
 
+            get_template_table();
             //добавление таблицы, для дальнейшего копирования 
-            string rangeStart = "A34";
-            string rangeEnd = "DF64";
-
-            string destinationStart = "A65";
+            int rangeStart = 34;
+            int rangeEnd = 64;
+            /*
+                        int destinationStart = 65;
+                        int destinationEnd = 95;
+                        func(destinationStart, destinationEnd);
+                        destinationStart = 96;
+                        destinationEnd = 126;
+                        func(destinationStart, destinationEnd);*/
             try
             {
-                func(destinationFilePath);
-            }
-            catch (Exception ex) { }
-            try
-            {
-                //exportExcel(destinationFilePath, procces);
+                export_excel(destinationFilePath, procces);
             }
             catch (Exception ex)
             {
@@ -50,38 +46,174 @@ namespace ExcelConstructorLibrary.RouteMap
             }
 
         }
-
-        static void func(string filePath)
+        static ExcelRange sourceRange;
+        static void get_template_table()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var package = new ExcelPackage(new FileInfo(destinationFilePath)))
+            {
+                var worksheet = package.Workbook.Worksheets["МК"];
+                sourceRange = worksheet.Cells[$"A34:DF64"];
+            }
+        }
+        static void insertTemplateTable(int destinationStart, int destinationEnd, ExcelPackage package)
         {
             try
             {
-                using (var package = new ExcelPackage(new FileInfo(filePath)))
-                {
-                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                    var worksheet = package.Workbook.Worksheets["МК"];
+                var worksheet = package.Workbook.Worksheets["МК"];
 
-                    // Указываем исходный и целевой диапазоны
-                    var sourceRange = worksheet.Cells["A34:DF64"];
-                    var destinationRange = worksheet.Cells["A65:DF94"];
+                // Указываем исходный и целевой диапазоны
+                //var sourceRange = worksheet.Cells[$"A{rangeStart}:DF{rangeEnd}"];
+                var sourceRange = worksheet.Cells[$"A34:DF64"];
+                
 
-                    // Копируем содержимое исходного диапазона в целевой диапазон
-                   /* sourceRange.Copy(destinationRange, ExcelRangeCopyOptionFlags.ExcludeFormulas |
-                                                        ExcelRangeCopyOptionFlags.ExcludeMergedCells |
-                                                        ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
-                                                    );*/
-                    sourceRange.Copy(destinationRange,
-                 ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
-                    );
+                var destinationRange = worksheet.Cells[$"A{destinationStart}:DF{destinationEnd}"];
 
-                    // Сохраняем изменения
-                    package.Save();
-                }
+                sourceRange.Copy(destinationRange,
+             //ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
+             ExcelRangeCopyOptionFlags.ExcludeValues
+                );
+
+                // Сохраняем изменения
+                package.Save();
             }
             catch (Exception ex)
             {
             }
         }
+        static void export_excel(string destinationFilePath, Procces procces)
+        {
+            //get_template_table();
+            using (var package = new ExcelPackage(new FileInfo(destinationFilePath)))
+            {
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
+                var worksheet = package.Workbook.Worksheets["МК"];
+                var operations = procces.Operations;
+
+                int row = 19;
+
+                int index = 0;
+                int countPageOperation = 0;
+
+                int contRows = procces.Operations.Count
+                    + procces.Operations.Sum(oper => oper.ChildsOperations.Count)
+                    + procces.Operations.Sum(oper => oper.Equipments.Count);
+
+                foreach (var operation in operations)
+                {
+                    var cell = worksheet.Cells[row, 23];
+                    cell.Value = operation.Caption;
+                    var neighborCell = worksheet.Cells[row, 1];
+                    neighborCell.Value = "A";
+                    row++;
+                    countPageOperation++;
+                    (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+
+                    foreach (var equipment in operation.Equipments)
+                    {
+                        worksheet.Cells[row, 23].Value = equipment.Caption;
+                        worksheet.Cells[row, 1].Value = "Б";
+                        row++;
+                        countPageOperation++;
+                        (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                    }
+
+                    foreach (var childOperation in operation.ChildsOperations)
+                    {
+                        worksheet.Cells[row, 23].Value = childOperation.Caption;
+                        worksheet.Cells[row, 1].Value = "О";
+                        row++;
+                        countPageOperation++;
+                        (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                    }
+                }
+
+                /*  for (int row = startRow; 
+                      ; row++)
+                  {
+                      try
+                      {
+
+                          //var excelRow = worksheet.Cells[row, 1, row, worksheet.Dimension.End.Column];
+
+                          foreach (var cell in worksheet.Cells)
+                          {
+                              if (cell.Start.Column == 23 && cell.Start.Row == row)
+                              {
+                                  Oper operation;
+                                  try
+                                  {
+                                      operation = operations[index];
+                                  }catch (Exception ex)
+                                  {
+                                      break;
+                                  }
+                                  cell.Value = operation.Caption;
+                                  var neighborCell = worksheet.Cells[row, 1];
+                                  neighborCell.Value = "A";
+                                  row++;
+                                  countPageOperation++;
+                                  (row, countPageOperation) = IncrementRow(row, countPageOperation);
+
+                                  foreach (var equipment in operation.Equipments)
+                                  {
+                                      worksheet.Cells[row, 23].Value = equipment.Caption;
+                                      worksheet.Cells[row, 1].Value = "Б";
+                                      row++;
+                                      countPageOperation++;
+                                      (row, countPageOperation) = IncrementRow(row, countPageOperation);
+                                  }
+
+                                  foreach (var childOperation in operation.ChildsOperations)
+                                  {
+                                      worksheet.Cells[row, 23].Value = childOperation.Caption;
+                                      worksheet.Cells[row, 1].Value = "О";
+                                      row++;
+                                      countPageOperation++;
+                                      (row, countPageOperation) = IncrementRow(row, countPageOperation);
+                                  }
+                                  index++;
+                                  row--;
+                              }
+                          }
+
+
+                      }
+                      catch (Exception ex)
+                      {
+                          break;
+                          // Handle exceptions if needed
+                      }
+                  }*/
+
+                package.Save();
+            }
+
+        }
+        private static (int, int) IncrementRow(int currentRow, int count, ExcelPackage package)
+        {
+            if (currentRow == 33)
+            {
+                return (currentRow + 14, 0);
+            }
+            else
+            {
+                if (count == 17)
+                {
+                    int destinationStart = currentRow + 1;
+                    int destinationEnd = destinationStart + 30;
+                    insertTemplateTable(destinationStart, destinationEnd, package);
+
+                    return (currentRow + 14, 0);
+                }
+                else
+                {
+                    return (currentRow, count);
+                }
+            }
+        }
+        #region Open XML SDK Libary Logics
         static void exportExcel(string destinationFilePath, Procces procces)
         {
 
@@ -336,5 +468,6 @@ namespace ExcelConstructorLibrary.RouteMap
             }
             return null;
         }
+        #endregion
     }
 }
