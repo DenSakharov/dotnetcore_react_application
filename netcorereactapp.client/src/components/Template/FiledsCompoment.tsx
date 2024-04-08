@@ -19,9 +19,24 @@ export const FiledsCompoment = forwardRef((props, ref) => {
     useEffect(()=>{
             //console.log('FiledsCompoment useEffect\n',procces)
     }),[procces]
+    const [base64String,setFileData]=useState()
+    useEffect(() => {
+        if (base64String) {
+            downloadFile(base64String, procces.caption+'.xlsx');
+        }
+    }, [base64String]);
+    const downloadFile = (base64String: string, fileName: string) => {
+        const link = document.createElement('a');
+        link.href = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${base64String}`;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        props.onClose()
+    };
     const saveProcces=async()=>{
         const tokenValue = localStorage.getItem("authToken");
-        console.log(procces)
+        //console.log('Complete procces data before send request :\n',procces)
         try {
             const response = await axios.post(
                 `${config.apiUrl}/procces/create`,
@@ -35,8 +50,7 @@ export const FiledsCompoment = forwardRef((props, ref) => {
             );
             if(response.status==200)
             {
-                //console.log(response.data)
-                props.onClose()
+                setFileData(response.data)
             }
         } catch (error) {
             console.error("Error while confirming edited operation:", error);

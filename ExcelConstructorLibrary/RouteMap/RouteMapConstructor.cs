@@ -15,9 +15,9 @@ namespace ExcelConstructorLibrary.RouteMap
 {
     public static class RouteMapConstructor
     {
-        private static readonly string pathMainTemplate = "C:\\Uploads\\mainTemplateExcel.xlsx";
+        //private static readonly string pathMainTemplate = "C:\\Uploads\\mainTemplateExcel.xlsx";
         static string destinationFilePath;
-        public static void CreateCopyFileRouteMap(string destinationFilePath_, Procces procces)
+        public static byte[] CreateCopyFileRouteMap(string destinationFilePath_, Procces procces,string pathMainTemplate)
         {
             destinationFilePath = destinationFilePath_;
             //создание копии пустого шаблона
@@ -36,13 +36,14 @@ namespace ExcelConstructorLibrary.RouteMap
                         func(destinationStart, destinationEnd);*/
             try
             {
-                export_excel(destinationFilePath, procces);
+                return export_excel(destinationFilePath, procces);
             }
             catch (Exception ex)
             {
                 // Выводим подробности об ошибке
                 Console.WriteLine("Произошла ошибка:");
                 Console.WriteLine(ex.ToString());
+                return null;
             }
 
         }
@@ -64,15 +65,24 @@ namespace ExcelConstructorLibrary.RouteMap
 
                 // Указываем исходный и целевой диапазоны
                 //var sourceRange = worksheet.Cells[$"A{rangeStart}:DF{rangeEnd}"];
-                var sourceRange = worksheet.Cells[$"A34:DF64"];
-                
 
-                var destinationRange = worksheet.Cells[$"A{destinationStart}:DF{destinationEnd}"];
+                var head_table_sourceRange = worksheet.Cells[$"A34:DF46"];
+                var body_table_sourceRange = worksheet.Cells[$"A47:DF64"];
 
-                sourceRange.Copy(destinationRange,
+                var head_table_destinationRange = worksheet.Cells[$"A{destinationStart}:DF{destinationStart + 12}"];
+                var body_table_destinationRange = worksheet.Cells[$"A{destinationStart + 13}:DF{destinationEnd}"];
+
+               /* sourceRange.Copy(destinationRange,
              //ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
              ExcelRangeCopyOptionFlags.ExcludeValues
-                );
+                );*/
+
+                head_table_sourceRange.Copy(head_table_destinationRange,
+                    ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
+                    );
+                body_table_sourceRange.Copy(body_table_destinationRange,
+                    ExcelRangeCopyOptionFlags.ExcludeValues
+                    );
 
                 // Сохраняем изменения
                 package.Save();
@@ -81,7 +91,7 @@ namespace ExcelConstructorLibrary.RouteMap
             {
             }
         }
-        static void export_excel(string destinationFilePath, Procces procces)
+        static byte[] export_excel(string destinationFilePath, Procces procces)
         {
             //get_template_table();
             using (var package = new ExcelPackage(new FileInfo(destinationFilePath)))
@@ -102,10 +112,17 @@ namespace ExcelConstructorLibrary.RouteMap
 
                 foreach (var operation in operations)
                 {
-                    var cell = worksheet.Cells[row, 23];
-                    cell.Value = operation.Caption;
-                    var neighborCell = worksheet.Cells[row, 1];
-                    neighborCell.Value = "A";
+                    /* var cell = worksheet.Cells[row, 23];
+                     cell.Value = operation.Caption;
+                     var neighborCell = worksheet.Cells[row, 1];
+                     neighborCell.Value = "A";*/
+                    worksheet.Cells[$"W{row}"].Value = operation.Caption;
+                    worksheet.Cells[$"A{row}"].Value = "A";
+
+                    worksheet.Cells[$"R{row}"].Value = operation.number;
+                    worksheet.Cells[$"F{row}"].Value = operation.responsibleGroup;
+                    worksheet.Cells[$"CY{row}"].Value = operation.laborCost;
+
                     row++;
                     countPageOperation++;
                     (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
@@ -114,6 +131,7 @@ namespace ExcelConstructorLibrary.RouteMap
                     {
                         worksheet.Cells[row, 23].Value = equipment.Caption;
                         worksheet.Cells[row, 1].Value = "Б";
+
                         row++;
                         countPageOperation++;
                         (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
@@ -188,6 +206,8 @@ namespace ExcelConstructorLibrary.RouteMap
                   }*/
 
                 package.Save();
+
+                return package.GetAsByteArray();
             }
 
         }

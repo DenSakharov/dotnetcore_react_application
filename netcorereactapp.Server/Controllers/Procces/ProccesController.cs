@@ -1,5 +1,6 @@
 ﻿using ClassesLibrary.DataTransferObjects;
 using ClassesLibrary.Models;
+using ClassesLibrary.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -7,6 +8,7 @@ using netcorereactapp.Server.Services.ExcelImportService.Interfaces;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
+using netcorereactapp.Server.Services.Supporting.Interfaces;
 
 namespace netcorereactapp.Server.Controllers.ProccesController
 {
@@ -18,20 +20,17 @@ namespace netcorereactapp.Server.Controllers.ProccesController
     {
         private readonly ApplicationContext _dbContext;
         private readonly ILogger<ProccesController> _logger;
-        private readonly IExcelImportService _excelImportService;
-        private readonly IFileService _fileService;
         private readonly IProccesService _proccesService;
-        private readonly IOperationService _operationService;
+        private readonly ISupportingService _supportingService;
         public ProccesController(ApplicationContext dbContext, ILogger<ProccesController> logger,
-            IExcelImportService excelImportService, IFileService fileService,
-            IProccesService proccesService, IOperationService operationService)
+            IProccesService proccesService,
+            ISupportingService supportingService
+            )
         {
             _dbContext = dbContext;
             _logger = logger;
-            _excelImportService = excelImportService;
-            _fileService = fileService;
             _proccesService = proccesService;
-            _operationService = operationService;
+            _supportingService = supportingService;
             _logger.LogInformation("ProccesController is called.");
         }
         [HttpGet]
@@ -56,11 +55,16 @@ namespace netcorereactapp.Server.Controllers.ProccesController
             return Ok(new { procceses, totalCount });
         }
         [HttpPost("create")]
-        public async Task<int> CreateNewProcces(ProccesDTO procces)
+        public async Task<string> CreateNewProcces(ProccesDTO procces)
         {
             var v = procces;
             var res = await _proccesService.Create(v);
-            return 0;
+
+            var fileBytes=await _supportingService.CreateRouteMapTemplate(res);
+            // Устанавливаем тип содержимого и имя файла
+            string base64String = Convert.ToBase64String(fileBytes);
+
+            return base64String;
         }
         /* [HttpPut]
          [Route("updatemodel")]

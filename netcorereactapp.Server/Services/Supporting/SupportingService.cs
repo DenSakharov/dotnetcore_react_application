@@ -3,16 +3,14 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using ClassesLibrary.Models;
 using System.Text.RegularExpressions;
-using System.Drawing;
-using Color = System.Drawing.Color;
 using ClassesLibrary.Services;
 using ClassesLibrary.DataTransferObjects;
 using netcorereactapp.Server.Services.Supporting.Interfaces;
-using netcorereactapp.Server.Services.ModelServices;
 using netcorereactapp.Server.Services.PostgreService;
 using ExcelConstructorLibrary.RouteMap;
-using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using netcorereactapp.Server.Services.FileServices.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace netcorereactapp.Server.Services.Supporting
 {
@@ -20,42 +18,59 @@ namespace netcorereactapp.Server.Services.Supporting
     {
         private readonly ApplicationContext _dbContext;
         private readonly ILogger<SupportingService> _logger;
+        private readonly IFileService _fileService;
+        private readonly IConfiguration _configuration;
         public SupportingService(ApplicationContext dbContext,
-            ILogger<SupportingService> logger)
+            ILogger<SupportingService> logger,
+            IFileService fileService,
+            IConfiguration configuration)
         {
+            _configuration = configuration;
+            path_to_files = _configuration["Configuration:fileDirectoryPath"];
             _dbContext = dbContext;
             _logger = logger;
+            _fileService = fileService;
         }
-        public async Task CreateRouteMapTemplate(string path)
+        private readonly string path_to_files;
+        public async Task<byte[]> CreateRouteMapTemplate(Procces procces=null)
         {
             try
             {
                 // Получение последнего объекта из коллекции _dbContext.Procceses
-                var lastProcces = _dbContext.Procceses
+                if (procces != null)
+                {
+                    procces = _dbContext.Procceses
                      .Include(o => o.Operations)
                         .ThenInclude(o => o.Equipments)
                     .Include(p => p.Operations)
                         .ThenInclude(o => o.Attachments)
                     .Include(p => p.Attachments)
                     .OrderBy(p => p.Id).LastOrDefault();
-                if (lastProcces != null)
+                }
+                if (procces != null)
                 {
-                    foreach (var operation in lastProcces.Operations)
+                    foreach (var operation in procces.Operations)
                     {
                         LoadChildOperationsRecursive(operation);
                     }
                 }
-                if (lastProcces != null)
+                if (procces != null)
                 {
-                    RouteMapConstructor.CreateCopyFileRouteMap(path, lastProcces);
+                    var path=_fileService.GetUniqueFileName(procces.Caption, ".xlsx");
+                    return RouteMapConstructor.CreateCopyFileRouteMap(
+                        path_to_files+path, 
+                        procces,
+                        path_to_files+ "mainTemplateExcel.xlsx"
+                        );
                 }
                 else
                 {
-                    // Коллекция пуста, обработайте это соответствующим образом
+                    return null;
                 }
             }
             catch (Exception ex)
             {
+                return null;
             }
         }
         void LoadChildOperationsRecursive(Operation operation)

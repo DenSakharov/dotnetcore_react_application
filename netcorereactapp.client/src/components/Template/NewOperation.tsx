@@ -53,6 +53,7 @@ export const NewOperation=({hidden,addChildOperartion})=>{
             console.error("Before request \n", e)
         }
     };
+    
     const handleChangeSelect = (event) => {
         setValue(event.target.value);
         //console.log('event.target.value\n',event.target.value)

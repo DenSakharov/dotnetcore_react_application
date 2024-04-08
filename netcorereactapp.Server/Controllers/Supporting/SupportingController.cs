@@ -40,7 +40,7 @@ namespace netcorereactapp.Server.Controllers.Supporting
         [HttpPost("createroutemap")]
         public async Task CreateRoutMApTemplate()
         {
-            var v = _supportingService.CreateRouteMapTemplate("C:\\Uploads\\123.xlsx");
+            var v = _supportingService.CreateRouteMapTemplate();
         }
     }
 }

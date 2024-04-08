@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices;
 using netcorereactapp.Server.Services.PostgreService;
@@ -10,12 +11,17 @@ namespace netcorereactapp.Server.Services.FileServices
     {
         private readonly ApplicationContext _dbContext;
         private readonly ILogger<FileService> _logger;
-        public FileService(ApplicationContext dbContext, ILogger<FileService> logger)
+        private readonly IConfiguration _configuration;
+        public FileService(ApplicationContext dbContext, ILogger<FileService> logger,
+            IConfiguration configuration)
         {
+            _configuration = configuration;
+            path_to_files = _configuration["Configuration:fileDirectoryPath"];
             _dbContext = dbContext;
             _logger = logger;
         }
-        private readonly string path_to_files = "C:\\Uploads";
+        private readonly string path_to_files ;
+        //"C:\\Uploads";
         public async Task<object> GetCurrentAttachment(int fileId)
         {
             var attachment = await _dbContext.Attachemnts.FirstOrDefaultAsync(a => a.Id == fileId);
@@ -51,7 +57,7 @@ namespace netcorereactapp.Server.Services.FileServices
             return temp_file_name;
         }
 
-        private string GetUniqueFileName(string fileName, string fileExtension)
+        public string GetUniqueFileName(string fileName, string fileExtension)
         {
             var uniqueFileName = fileName;
             int count = 1;

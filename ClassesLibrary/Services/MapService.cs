@@ -1,10 +1,28 @@
 ﻿using ClassesLibrary.DataTransferObjects;
 using ClassesLibrary.Models;
+using System.Diagnostics;
 
 namespace ClassesLibrary.Services
 {
     public static class MapService
     {
+        public static Procces GetProcces(ProccesDTO proccesDTO)
+        {
+            return new Procces()
+            {
+                Id = proccesDTO.Id,
+                Caption = proccesDTO.Caption,
+                DateOfCreture = proccesDTO.DateOfCreture,
+                DateOfEdited = proccesDTO.DateOfEdited,
+                number = proccesDTO.number,
+                material = proccesDTO.material,
+                m3 = proccesDTO.m3,
+                kd = proccesDTO.kd,
+                profile_size = proccesDTO.profile_size,
+                Operations = MapChildOperations(proccesDTO.Operations),
+                Attachments = MapAttachments(proccesDTO.Attachments),
+            };
+        }
         public static List<OperationDTO> MapChildOperations(List<Operation> operations)
         {
             var childOperationsDTOs = new List<OperationDTO>();
@@ -16,6 +34,9 @@ namespace ClassesLibrary.Services
                 {
                     Id = operation.Id,
                     Caption = operation.Caption,
+                    number = operation.number,
+                    laborCost = operation.laborCost,
+                    responsibleGroup = operation.responsibleGroup,
                     DateOfCreture = operation.DateOfCreture,
                     ParentOperationId = operation.ParentOperationId,
                     Attachments = MapAttachments(operation.Attachments),
@@ -43,6 +64,9 @@ namespace ClassesLibrary.Services
                 {
                     Id = operation.Id,
                     Caption = operation.Caption,
+                    number = operation.number,
+                    laborCost = operation.laborCost,
+                    responsibleGroup = operation.responsibleGroup,
                     DateOfCreture = operation.DateOfCreture,
                     ParentOperationId = operation.ParentOperationId,
                     Attachments = MapAttachments(operation.Attachments),
@@ -77,6 +101,9 @@ namespace ClassesLibrary.Services
                 {
                     Id = operationDTO.Id,
                     Caption = operationDTO.Caption,
+                    number=operationDTO.number,
+                    laborCost = operationDTO.laborCost, 
+                    responsibleGroup = operationDTO.responsibleGroup,
                     DateOfCreture = operationDTO.DateOfCreture,
                     ParentOperationId = operationDTO.ParentOperationId,
                     Attachments = MapAttachments(operationDTO.Attachments),
@@ -103,6 +130,9 @@ namespace ClassesLibrary.Services
                 {
                     Id = operationDTO.Id,
                     Caption = operationDTO.Caption,
+                    number = operationDTO.number,
+                    laborCost = operationDTO.laborCost,
+                    responsibleGroup = operationDTO.responsibleGroup,
                     DateOfCreture = operationDTO.DateOfCreture,
                     ParentOperationId = operationDTO.ParentOperationId,
                     Attachments = MapAttachments(operationDTO.Attachments),
