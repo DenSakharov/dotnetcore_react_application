@@ -1,18 +1,14 @@
 ﻿using ClassesLibrary.DataTransferObjects;
 using ClassesLibrary.Models;
-using ClassesLibrary.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using netcorereactapp.Server.Services.ExcelImportService.Interfaces;
-using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
 using netcorereactapp.Server.Services.Supporting.Interfaces;
 
 namespace netcorereactapp.Server.Controllers.ProccesController
 {
-  
+
     [Authorize]
     [ApiController]
     [Route("procces")]
@@ -55,16 +51,19 @@ namespace netcorereactapp.Server.Controllers.ProccesController
             return Ok(new { procceses, totalCount });
         }
         [HttpPost("create")]
-        public async Task<string> CreateNewProcces(ProccesDTO procces)
+        public async Task<string> CreateNewProcces([FromBody] ProccesDTO procces)
         {
             var v = procces;
             var res = await _proccesService.Create(v);
+            if (res != null)
+            {
+                var fileBytes = await _supportingService.CreateRouteMapTemplate(res);
+                // Устанавливаем тип содержимого и имя файла
+                string base64String = Convert.ToBase64String(fileBytes);
 
-            var fileBytes=await _supportingService.CreateRouteMapTemplate(res);
-            // Устанавливаем тип содержимого и имя файла
-            string base64String = Convert.ToBase64String(fileBytes);
-
-            return base64String;
+                return base64String;
+            }
+            return null;
         }
         /* [HttpPut]
          [Route("updatemodel")]

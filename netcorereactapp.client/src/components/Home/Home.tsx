@@ -2,7 +2,6 @@
 import Table from "./TableComponent/Table.tsx";
 
 import '../../styles/Home.css'
-import OldOrdersWithStatuses from "./ModalWindows/OldComponents/OldOrdersWithStatuses.tsx";
 import {Template} from "../Template/Template.tsx";
 import {CenteredDivRow} from "./CommonComponents/CenteredDivRow.tsx";
 import {Test} from "./Test/Test.tsx";

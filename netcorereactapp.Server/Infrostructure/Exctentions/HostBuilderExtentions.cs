@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using netcorereactapp.Server.Controllers.Authentication;
@@ -76,11 +77,23 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
         {
             builder.ConfigureServices(services =>
             {
-                services.AddControllers(options =>
+                services.AddControllers()
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                // Включение или отключение автоматической проверки валидации модели
+                options.SuppressModelStateInvalidFilter = true;
+
+                // Пользовательское поведение при невалидной модели
+                options.InvalidModelStateResponseFactory = context =>
                 {
-                    options.Filters.Add(typeof(ValidateModelAttribute));
-                    options.Filters.Add(typeof(LoggingActionFilter));
-                });
+                    var errors = context.ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+
+                    return new BadRequestObjectResult(errors);
+                };
+            });
             });
             return builder;
         }
@@ -198,6 +211,7 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                 services.AddScoped<IHistoryService, HistoryService>();
 
                 services.AddScoped<ISupportingService,SupportingService>();
+
                 services.AddScoped<LoggingActionFilter>();
             });
             return hostBuilder;

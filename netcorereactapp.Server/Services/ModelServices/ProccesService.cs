@@ -71,6 +71,13 @@ namespace netcorereactapp.Server.Services.ModelServices
                 // Обновляем существующую операцию данными из отредактированной операции
                 procces.Id = id;
                 procces.Caption = existingProcces.Caption;
+
+                procces.m3 = existingProcces.m3;
+                procces.kd = existingProcces.kd;
+                procces.material = existingProcces.material;
+                procces.number = existingProcces.number;
+                procces.profile_size = existingProcces.profile_size;
+
                 procces.DateOfEdited = existingProcces.DateOfCreture ;
                 procces.DateOfEdited = existingProcces.DateOfEdited ;
                 //var operations = _dbContext.Operations.Where(o => o.ProccesId == existingProcces.Id).ToList();
@@ -101,17 +108,31 @@ namespace netcorereactapp.Server.Services.ModelServices
 
         public async Task<Procces>Create(ProccesDTO procces)
         {
-            var newProcces=new Procces();
-            newProcces.Caption=procces.Caption;
-            newProcces.m3 = procces.m3;
-            newProcces.kd=procces.kd;
-            newProcces.material=procces.material;
-            newProcces.number = procces.number;
-            newProcces.profile_size = procces.profile_size;
-            newProcces.Operations = MapService.MapChildOperations(procces.Operations);
-            _dbContext.Procceses.Add(newProcces);
-            await _dbContext.SaveChangesAsync();
-            return new Procces() { };
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var newProcces = new Procces();
+                    newProcces.DateOfCreture = DateTime.UtcNow;
+                    newProcces.Caption = procces.Caption;
+
+                    newProcces.m3 = procces.m3;
+                    newProcces.kd = procces.kd;
+                    newProcces.material = procces.material;
+                    newProcces.number = procces.number;
+                    newProcces.profile_size = procces.profile_size;
+
+                    newProcces.Operations = MapService.MapChildOperations(procces.Operations);
+                    _dbContext.Procceses.Add(newProcces);
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return newProcces;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
         }
 
         public async Task<Procces> UpdateProcces(ProccesDTO editedProcces)
@@ -142,35 +163,47 @@ namespace netcorereactapp.Server.Services.ModelServices
         }
         public async Task<Procces> UpdateProcces(Procces editedProcces)
         {
-            try
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
-               
-                // Проверяем, существует ли операция с указанным ID в базе данных
-                var existingProcces = await _dbContext.Procceses.FindAsync(editedProcces.Id);
-                if (existingProcces == null)
+                try
                 {
-                    return null; // Возвращаем 404 Not Found, если операция не найдена
-                }
-                /*var history = new MyHistory();
-                history.Message = $"Изменение названия проццеса с {existingProcces.Caption} на {editedProcces.Caption}";
-                history.DateOfCreture= DateTime.UtcNow;*/
-                var tempOldProcces = existingProcces;
-                // Обновляем существующую операцию данными из отредактированной операции
-                existingProcces.Caption = editedProcces.Caption;
-                existingProcces.DateOfCreture = editedProcces.DateOfCreture;
-                existingProcces.DateOfEdited = DateTime.UtcNow;
-                //existingProcces.Operations =editedProcces.Operations;
-                // Сохраняем изменения в базе данных
-                await _dbContext.SaveChangesAsync();
 
-                await _historyService.CreateNewHistory(existingProcces,
-                    $"Изменение объекта {existingProcces.Caption} "
-                    ); ;
-                return existingProcces; // Возвращаем 200 OK в случае успешного обновления операции
-            }
-            catch (Exception ex)
-            {
-                return null; // Возвращаем 500 Internal Server Error в случае ошибки
+                    // Проверяем, существует ли операция с указанным ID в базе данных
+                    var existingProcces = await _dbContext.Procceses.FindAsync(editedProcces.Id);
+                    if (existingProcces == null)
+                    {
+                        return null; // Возвращаем 404 Not Found, если операция не найдена
+                    }
+                    /*var history = new MyHistory();
+                    history.Message = $"Изменение названия проццеса с {existingProcces.Caption} на {editedProcces.Caption}";
+                    history.DateOfCreture= DateTime.UtcNow;*/
+                    var tempOldProcces = existingProcces;
+                    // Обновляем существующую операцию данными из отредактированной операции
+                    existingProcces.Caption = editedProcces.Caption;
+
+                    existingProcces.kd = editedProcces.kd;
+                    existingProcces.m3 = editedProcces.m3;
+                    existingProcces.number = editedProcces.number;
+                    existingProcces.material = editedProcces.material;
+                    existingProcces.profile_size = editedProcces.profile_size;
+
+                    existingProcces.DateOfCreture = editedProcces.DateOfCreture;
+                    existingProcces.DateOfEdited = DateTime.UtcNow;
+                    //existingProcces.Operations =editedProcces.Operations;
+                    // Сохраняем изменения в базе данных
+                    await _dbContext.SaveChangesAsync();
+
+                    await _historyService.CreateNewHistory(existingProcces,
+                        $"Изменение объекта {existingProcces.Caption} "
+                        ); ;
+
+                    await transaction.CommitAsync();
+                    return existingProcces; // Возвращаем 200 OK в случае успешного обновления операции
+                }
+                catch (Exception ex)
+                {
+                    return null; // Возвращаем 500 Internal Server Error в случае ошибки
+                }
             }
         }
         public async Task<Procces> AddingAttachmentsToSelectedProcces(int proccesId, IFormFileCollection files)

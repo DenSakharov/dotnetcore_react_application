@@ -4,7 +4,7 @@ import {StyledTextField} from "./FiledsCompoment.tsx";
 import {FormControl, IconButton, InputLabel, MenuItem, Select} from "@mui/material";
 import axios from "axios";
 import config from "../../config/config.json";
-import AddSharpIcon from "@mui/icons-material/AddSharp";
+import PlaylistAddCheckTwoToneIcon from '@mui/icons-material/PlaylistAddCheckTwoTone';
 import {Operation} from "../../Models/ProccesOperation/Operation.tsx";
 
 export const NewOperation=({hidden,addChildOperartion})=>{
@@ -99,7 +99,7 @@ export const NewOperation=({hidden,addChildOperartion})=>{
     return(
         <CenteredDivRow>
             <IconButton onClick={addBtn} sx={{color: 'white'}}>
-                 <AddSharpIcon/>
+                 <PlaylistAddCheckTwoToneIcon style={{ fontSize: 50 }}/>
             </IconButton>
             <StyledTextField
                 ref={inputRef}

@@ -20,6 +20,7 @@ import {AddChildOperToProc} from "../AddingChildOperationToProcces/AddChildOperT
 import DeleteIcon from "@mui/icons-material/Delete";
 import {HistoryComponent} from "../../../../History/HistoryComponent.tsx";
 import '../../../../../../styles/CustomTabs.scss'
+
 export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) => {
     const [selectedProcces, setSelectedProcces] = useState<Procces>()
     const [operations, setOperations] = useState<Operation[]>()
@@ -28,7 +29,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
         getCurrentProcces()
     }, [])
     useEffect(() => {
-        //console.log("selectedProcces changed:", selectedProcces);
+        console.log("selectedProcces changed:", selectedProcces);
         setOperations(selectedProcces?.operations)
     }, [selectedProcces]);
     useEffect(() => {
@@ -73,11 +74,6 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
     }
     const confirmEditedOperation = async () => {
         const tokenValue = localStorage.getItem("authToken");
-        /*const formData = new FormData();
-        formData.append('files', selectedFiles);
-        formData.append('procces', selectedProcces);*/
-        //console.log(selectedProcces)
-        //const procces: Procces=selectedProcces
         try {
             //console.log(selectedProcces?.id)
             const response = await axios.put(
@@ -173,28 +169,85 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                     <CenteredDivRow>
                         <CenteredDivColumn>
                             <IconButton onClick={confirmEditedOperation} style={{color: 'white'}}>
-                                Сохранить
-                                <AssignmentTurnedInSharpIcon style={{fontSize: 60, color: 'white'}}/>
+                                <CenteredDivColumn>
+                                    <AssignmentTurnedInSharpIcon style={{fontSize: 50, color: 'white'}}/>
+                                    <Typography>Сохранить</Typography>
+                                </CenteredDivColumn>
                             </IconButton>
                             <IconButton onClick={delete_procces} style={{color: 'white'}}>
-                                Удалить
-                                <DeleteIcon style={{fontSize: 60, color: 'white'}}/>
+                                <CenteredDivColumn>
+                                    <DeleteIcon style={{fontSize: 60, color: 'white'}}/>
+                                    <Typography>Удалить</Typography>
+                                </CenteredDivColumn>
                             </IconButton>
                         </CenteredDivColumn>
-                        <Typography variant="body1">
-                            ID: {selectedProcces ? selectedProcces.id : ''}
-                        </Typography>
-                        <StyledTextField
-                            ref={inputRef}
-                            id="outlined-helperText"
-                            label="Название процесса"
-                            defaultValue={selectedProcces.caption}
-                            helperText="Отредактировать название процесса"
-                            variant="outlined"
-                            name="caption"
-                            onChange={handleTextFieldChange}
-                            autoFocus
-                        />
+
+                        <CenteredDivColumn>
+                            <StyledTextField
+                                ref={inputRef}
+                                id="outlined-helperText"
+                                label="Название процесса"
+                                defaultValue={selectedProcces.caption}
+                                variant="outlined"
+                                name="caption"
+                                onChange={handleTextFieldChange}
+                                autoFocus
+                            />
+                            <StyledTextField
+                                ref={inputRef}
+                                id="outlined-helperText"
+                                label="Номер"
+                                defaultValue={selectedProcces.number}
+                                variant="outlined"
+                                name="number"
+                                onChange={handleTextFieldChange}
+                                autoFocus
+                            />
+                            <StyledTextField
+                                ref={inputRef}
+                                id="outlined-helperText"
+                                label="Материал"
+                                defaultValue={selectedProcces.material}
+                                variant="outlined"
+                                name="material"
+                                onChange={handleTextFieldChange}
+                                autoFocus
+                            />
+                        </CenteredDivColumn>
+
+                        <CenteredDivColumn>
+                            <StyledTextField
+                                ref={inputRef}
+                                id="outlined-helperText"
+                                label="М3"
+                                defaultValue={selectedProcces.m3}
+                                variant="outlined"
+                                name="m3"
+                                onChange={handleTextFieldChange}
+                                autoFocus
+                            />
+                            <StyledTextField
+                                ref={inputRef}
+                                id="outlined-helperText"
+                                label="КД"
+                                defaultValue={selectedProcces.kd}
+                                variant="outlined"
+                                name="kd"
+                                onChange={handleTextFieldChange}
+                                autoFocus
+                            />
+                            <StyledTextField
+                                ref={inputRef}
+                                id="outlined-helperText"
+                                label="Профиль и размеры"
+                                defaultValue={selectedProcces.profile_size}
+                                variant="outlined"
+                                name="profile_size"
+                                onChange={handleTextFieldChange}
+                                autoFocus
+                            />
+                        </CenteredDivColumn>
+
                         {/*{selectedProcces.attachments &&
                                 <List>
                                     {renderAttachments(selectedProcces.attachments)}
@@ -203,6 +256,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                         {/* {selectedProcces.attachments &&
                                 renderAttachments(selectedProcces.attachments)
                             }*/}
+                        
                         {selectedProcces.attachments &&
                             <RenderAttachmentsComponent
                                 attachments={selectedProcces.attachments}
@@ -228,25 +282,26 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                         scrollButtons
                         allowScrollButtonsMobile
                     >
-                        <Tab label="Операции выбранного процесса" />
-                        <Tab label="История изменений" />
+                        <Tab label="Операции выбранного процесса"/>
+                        <Tab label="История изменений"/>
                         {/* Добавьте другие вкладки по аналогии */}
                     </Tabs>
                     <TabPanel value={value} index={0}>
-                                <ListItemAvatar>
-                                    <IconButton style={{ color: 'white' }} onClick={handleClick_addOperation_To_Procces}>
-                                        Добавить операцию
-                                        <AutoAwesomeMotionRoundedIcon style={{ fontSize: 30, color: 'white' }} />
-                                    </IconButton>
-                                </ListItemAvatar>
-                                {operations && <OperationTableComponent procces={selectedProcces} operations={operations} send_request={update_dependencies_selected_procces} />}
+                        <ListItemAvatar>
+                            <IconButton style={{color: 'white'}} onClick={handleClick_addOperation_To_Procces}>
+                                Добавить операцию
+                                <AutoAwesomeMotionRoundedIcon style={{fontSize: 30, color: 'white'}}/>
+                            </IconButton>
+                        </ListItemAvatar>
+                        {operations && <OperationTableComponent procces={selectedProcces} operations={operations}
+                                                                send_request={update_dependencies_selected_procces}/>}
 
                     </TabPanel>
                     <TabPanel value={value} index={1}>
-                            <Typography variant="body1">
-                                История процесса :
-                            </Typography>
-                            <HistoryComponent int={selectedProcces?.id} />
+                        <Typography variant="body1">
+                            История процесса :
+                        </Typography>
+                        <HistoryComponent int={selectedProcces?.id}/>
                     </TabPanel>
                     {/* <button className="styled-button"
                             title={view ? "Показать таблицу" : "Показать Список"} onClick={click_view_table}>
@@ -280,8 +335,9 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
         </div>
     )
 }
+
 function TabPanel(props) {
-    const { children, value, index, ...other } = props;
+    const {children, value, index, ...other} = props;
 
     return (
         <div
@@ -292,34 +348,18 @@ function TabPanel(props) {
             {...other}
         >
             {value === index && (
-                <Box sx={{ p: 3 }}>
+                <Box sx={{p: 3}}>
                     <div>{children}</div>
                 </Box>
             )}
         </div>
     );
 }
-const CenteredDivRowLocal = styled(CenteredDivRow)`
-    display: flex;
-    flex-grow: 1;
-    align-items: flex-start;
-    width: auto;
-    max-width: auto;
-`;
 
-const CenteredDivColumnLocal = styled(CenteredDivColumn)`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin: 1px;
-    gap: 30px;
-    width: 100%;
-    max-width: 100%;
-`;
 
 export const StyledTextField = styled(TextField)({
     margin: '5px',
-    width: '50ch',
+    width: '40ch',
     '& .MuiInputBase-input, & .MuiInputBase-multiline, & .MuiInputLabel-root, & .MuiFormHelperText-root': {
         color: 'white',
     },

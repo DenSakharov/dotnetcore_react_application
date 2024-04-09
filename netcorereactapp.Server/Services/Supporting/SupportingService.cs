@@ -57,6 +57,23 @@ namespace netcorereactapp.Server.Services.Supporting
                 if (procces != null)
                 {
                     var path=_fileService.GetUniqueFileName(procces.Caption, ".xlsx");
+
+                    using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+                    {
+                        try {
+                            var res=await _dbContext.Procceses.Where(proc => proc.Id == procces.Id).FirstOrDefaultAsync();
+                            var attach=new Attachment() { 
+                                Caption=procces.Caption+"MK",
+                                DateOfCreture=procces.DateOfCreture,
+                                AttachmentData= path_to_files + path
+                            };
+                            res.Attachments.Add(attach);
+                            await  _dbContext.SaveChangesAsync();
+                            await transaction.CommitAsync();
+                        }
+                        catch (Exception ex) { return null; }
+                    }
+
                     return RouteMapConstructor.CreateCopyFileRouteMap(
                         path_to_files+path, 
                         procces,

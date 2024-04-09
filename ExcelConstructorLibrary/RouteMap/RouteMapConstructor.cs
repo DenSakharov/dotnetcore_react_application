@@ -2,14 +2,9 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Oper = ClassesLibrary.Models.Operation;
-using Excel = Microsoft.Office.Interop.Excel;
 using OfficeOpenXml;
-using OfficeOpenXml.Style;
-using DocumentFormat.OpenXml.Wordprocessing;
-using System.IO.Packaging;
 
 namespace ExcelConstructorLibrary.RouteMap
 {

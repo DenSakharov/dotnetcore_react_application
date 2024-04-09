@@ -3,16 +3,17 @@ import {IconButton, TextField} from "@mui/material";
 
 import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import {styled} from "@mui/system";
-import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
-import AddSharpIcon from "@mui/icons-material/AddSharp";
+import RemoveCircleTwoToneIcon from '@mui/icons-material/RemoveCircleTwoTone';
+import AddBoxSharpIcon from '@mui/icons-material/AddBoxSharp';
 import {NewOperation} from "./NewOperation.tsx";
 import {Procces} from "../../Models/ProccesOperation/Procces.tsx";
 import {OperationList} from "./OperationList.tsx";
 import '../../styles/FiledsCompoment.scss'
 import axios from "axios";
 import config from "../../config/config.json";
-import {addingAttachmentsToProcces} from "../Home/Services/AttachmentService.tsx";
-export const FiledsCompoment = forwardRef((props, ref) => {
+
+export const FiledsCompoment
+    = forwardRef((props, ref) => {
     const [procces,setProcces]=useState<Procces>({
         caption:'',
     })
@@ -36,7 +37,7 @@ export const FiledsCompoment = forwardRef((props, ref) => {
     };
     const saveProcces=async()=>{
         const tokenValue = localStorage.getItem("authToken");
-        //console.log('Complete procces data before send request :\n',procces)
+        console.log('Complete procces data before send request :\n',procces)
         try {
             const response = await axios.post(
                 `${config.apiUrl}/procces/create`,
@@ -122,7 +123,8 @@ export const FiledsCompoment = forwardRef((props, ref) => {
                         />
                     </CenteredDivRow>
                     <IconButton onClick={toggleInfoVisibility} sx={{color: 'white'}}>
-                        {hidden ? <RemoveSharpIcon/> : <AddSharpIcon/>}
+                        {hidden ? <RemoveCircleTwoToneIcon style={{ fontSize: 50 }}/> :
+                            <AddBoxSharpIcon style={{ fontSize: 50 }}/>}
                     </IconButton>
                 </CenteredDivColumn>
                 <CenteredDivColumn>
@@ -174,7 +176,7 @@ export const FiledsCompoment = forwardRef((props, ref) => {
             }
             {procces && procces.operations &&
                 <div className="oper_list">
-                <OperationList procces={procces}/>
+                <OperationList procces={procces} setProcces={setProcces}/>
                 </div>
             }
            {/* {procces && procces.operations && procces.operations.map((oper, index) => (
@@ -194,13 +196,31 @@ export const FiledsCompoment = forwardRef((props, ref) => {
     )
 })
 
-export const StyledTextField = styled(TextField)({
+export const StyledTextField = styled(TextField)(({ theme }) => ({
     margin: '5px',
     width: '50ch',
     '& .MuiInputBase-input, & .MuiInputBase-multiline, & .MuiInputLabel-root, & .MuiFormHelperText-root': {
         color: 'white',
-        '& .MuiInputBase-input:focus, & .MuiInputBase-multiline:focus': {
-            color: 'black', // Измените цвет текста при выделении
+        '&:focus': {
+            color: 'white', // Изменяем цвет текста при фокусе
+            borderRadius: '40px',
         },
     },
-});
+    '& .disabled': {
+        '& .MuiOutlinedInput-root': {
+            color: 'white',
+            borderColor: 'white',
+            backgroundColor: 'white', // устанавливаем белый фон
+            '& fieldset': {
+                color: 'white',
+                borderColor: 'white', // устанавливаем белый цвет границы
+                backgroundColor: 'white',
+            },
+        },
+        '& .MuiInputBase-input, & .MuiInputBase-multiline, & .MuiInputLabel-root, & .MuiFormHelperText-root': {
+            color: 'white', // устанавливаем белый цвет текста
+            borderColor: 'white',
+            backgroundColor: 'white',
+        },
+    },
+}));
