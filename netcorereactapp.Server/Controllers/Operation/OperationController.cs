@@ -14,19 +14,12 @@ namespace netcorereactapp.Server.Controllers.Operation
     {
         private readonly ApplicationContext _dbContext;
         private readonly ILogger<OperationController> _logger;
-        private readonly IExcelImportService _excelImportService;
-        private readonly IFileService _fileService;
-        private readonly IProccesService _proccesService;
         private readonly IOperationService _operationService;
         public OperationController(ApplicationContext dbContext, ILogger<OperationController> logger,
-            IExcelImportService excelImportService, IFileService fileService,
-            IProccesService proccesService, IOperationService operationService)
+            IOperationService operationService)
         {
             _dbContext = dbContext;
             _logger = logger;
-            _excelImportService = excelImportService;
-            _fileService = fileService;
-            _proccesService = proccesService;
             _operationService = operationService;
             //_logger.LogInformation("OperationController is called.");
         }

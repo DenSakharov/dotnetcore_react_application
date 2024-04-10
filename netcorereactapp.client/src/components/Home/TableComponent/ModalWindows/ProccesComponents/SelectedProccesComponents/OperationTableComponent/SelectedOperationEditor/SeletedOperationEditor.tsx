@@ -10,13 +10,13 @@ import {Operation} from "../../../../../../../../Models/ProccesOperation/Operati
 import config from '../../../../../../../../config/config.json'
 import {CenteredDivColumn} from "../../../../../../CommonComponents/CenteredDivRow.tsx";
 import {StyledTextField} from "../../SelectedProcces.tsx";
-import {RenderAttachmentsComponent, renderAttachments} from "../../../../../../Services/AttachmentService.tsx";
+import {RenderAttachmentsComponent} from "../../../../../../Services/AttachmentService.tsx";
 import SelectingFilesComponents from "../../../../../../CommonComponents/SelectingFilesComponents.tsx";
 
 export const SeletedOperationEditor=({operation,onClose,notif})=>{
     const [oper,setOper]=useState<Operation>()
     useEffect(() => {
-        //console.info(operation)
+        console.info('SeletedOperationEditor operation data :\n',operation)
         setOper(operation)
     }, [operation]);
     const inputRef = useRef(null);
@@ -79,11 +79,40 @@ export const SeletedOperationEditor=({operation,onClose,notif})=>{
                     <StyledTextField
                         ref={inputRef}
                         id="outlined-helperText"
-                        label="Название процесса"
+                        label="Название операции"
                         defaultValue={oper.caption}
-                        helperText="Отредактировать название процесса"
                         variant="outlined"
                         name="caption"
+                        onChange={handleTextFieldChange}
+                        autoFocus
+                    />
+                    <StyledTextField
+                        ref={inputRef}
+                        id="outlined-helperText"
+                        label="Номер операции"
+                        defaultValue={oper.number}
+                        variant="outlined"
+                        name="number"
+                        onChange={handleTextFieldChange}
+                        autoFocus
+                    />
+                    <StyledTextField
+                        ref={inputRef}
+                        id="outlined-helperText"
+                        label="Группа ответственных"
+                        defaultValue={oper.responsibleGroup}
+                        variant="outlined"
+                        name="responsibleGroup"
+                        onChange={handleTextFieldChange}
+                        autoFocus
+                    />
+                    <StyledTextField
+                        ref={inputRef}
+                        id="outlined-helperText"
+                        label="Трудоемкость"
+                        defaultValue={oper.laborCost}
+                        variant="outlined"
+                        name="laborCost"
                         onChange={handleTextFieldChange}
                         autoFocus
                     />

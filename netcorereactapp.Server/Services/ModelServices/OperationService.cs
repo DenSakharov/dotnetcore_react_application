@@ -58,39 +58,48 @@ namespace netcorereactapp.Server.Services.ModelServices
         }
         public async Task<OperationDTO> UpdateOperation(int operationId, IFormCollection form)
         {
-            try
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
-                var existingSelectedOperation = await _dbContext.Operations.FirstOrDefaultAsync(operation => operation.Id == operationId);
-
-                if (existingSelectedOperation != null)
+                try
                 {
-                    // Получаем статус из FormData
-                    string jsonString = form["operation"];
-                    Operation operation = JsonConvert.DeserializeObject<Operation>(jsonString);
+                    var existingSelectedOperation = await _dbContext.Operations.FirstOrDefaultAsync(operation => operation.Id == operationId);
 
-                    existingSelectedOperation.Caption = operation.Caption;
-                    existingSelectedOperation.DateOfEdited = DateTime.UtcNow;
-                    //existingSelectedOperation.ChildsOperations = operation.ChildsOperations;
-                    // Сохраняем изменения в базе данных
-                    await _dbContext.SaveChangesAsync();
-                    // Получаем файл из FormData
-                    IFormFileCollection files = form.Files;
-                    foreach (var file in files)
+                    if (existingSelectedOperation != null)
                     {
-                        var path = await _fileService.SaveFile(file);
-                        var attachment = new Attachment();
-                        attachment.DateOfCreture = DateTime.UtcNow;
-                        attachment.Caption = Path.GetFileNameWithoutExtension(path);
-                        attachment.AttachmentData = path;
-                        _dbContext.Attachemnts.Add(attachment);
+                        // Получаем статус из FormData
+                        string jsonString = form["operation"];
+                        Operation operation = JsonConvert.DeserializeObject<Operation>(jsonString);
+
+                        existingSelectedOperation.Caption = operation.Caption;
+
+                        existingSelectedOperation.laborCost = operation.laborCost;
+                        existingSelectedOperation.number = operation.number;
+                        existingSelectedOperation.responsibleGroup = operation.responsibleGroup;
+
+                        existingSelectedOperation.DateOfEdited = DateTime.UtcNow;
+                        //existingSelectedOperation.ChildsOperations = operation.ChildsOperations;
+                        // Сохраняем изменения в базе данных
                         await _dbContext.SaveChangesAsync();
-                        existingSelectedOperation.Attachments.Add(attachment);
-                        await _dbContext.SaveChangesAsync();
+                        // Получаем файл из FormData
+                        IFormFileCollection files = form.Files;
+                        foreach (var file in files)
+                        {
+                            var path = await _fileService.SaveFile(file);
+                            var attachment = new Attachment();
+                            attachment.DateOfCreture = DateTime.UtcNow;
+                            attachment.Caption = Path.GetFileNameWithoutExtension(path);
+                            attachment.AttachmentData = path;
+                            _dbContext.Attachemnts.Add(attachment);
+                            await _dbContext.SaveChangesAsync();
+                            existingSelectedOperation.Attachments.Add(attachment);
+                            await _dbContext.SaveChangesAsync();
+                        }
+                        await transaction.CommitAsync();
                     }
+                    return MapService.MapChildOperations(new List<Operation> { existingSelectedOperation }).First();
                 }
-                return MapService.MapChildOperations(new List<Operation> { existingSelectedOperation }).First();
+                catch (Exception ex) { return null; }
             }
-            catch (Exception ex) { return null; }
         }
         public async Task<int> SaveProccesWithOperations(Procces procces, List<Operation> operations)
         {

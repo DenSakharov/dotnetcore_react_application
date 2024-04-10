@@ -16,6 +16,10 @@ export const FiledsCompoment
     = forwardRef((props, ref) => {
     const [procces,setProcces]=useState<Procces>({
         caption:'',
+        number:'',
+        material : '',
+        m3 : '',
+        kd : '',
     })
     useEffect(()=>{
             //console.log('FiledsCompoment useEffect\n',procces)
@@ -23,7 +27,8 @@ export const FiledsCompoment
     const [base64String,setFileData]=useState()
     useEffect(() => {
         if (base64String) {
-            downloadFile(base64String, procces.caption+'.xlsx');
+            //downloadFile(base64String, procces.caption+'.xlsx');
+            props.onClose()
         }
     }, [base64String]);
     const downloadFile = (base64String: string, fileName: string) => {
@@ -37,7 +42,7 @@ export const FiledsCompoment
     };
     const saveProcces=async()=>{
         const tokenValue = localStorage.getItem("authToken");
-        console.log('Complete procces data before send request :\n',procces)
+        //console.log('Complete procces data before send request :\n',procces)
         try {
             const response = await axios.post(
                 `${config.apiUrl}/procces/create`,

@@ -239,21 +239,26 @@ namespace netcorereactapp.Server.Services.ModelServices
 
         public async Task<bool> DeleteProcces(int id)
         {
-            try
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
-                var res=await _dbContext.Procceses.FindAsync(id);
-                if (res != null)
+                try
                 {
-                    _dbContext.Procceses.Remove(res);
-                    await _dbContext.SaveChangesAsync();
-                    return true;
+                    var res = await _dbContext.Procceses.FindAsync(id);
+                    if (res != null)
+                    {
+                        _dbContext.Procceses.Remove(res);
+                        await _dbContext.SaveChangesAsync();
+                        await transaction.CommitAsync();
+                        return true;
+
+                    }
+                    return false;
                 }
-                return false;
+                catch (Exception ex)
+                {
+                    return false;
+                }
             }
-            catch (Exception ex) 
-            { 
-                return false; 
-            } 
         }
     }
 }

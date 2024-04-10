@@ -75,9 +75,9 @@ namespace netcorereactapp.Server.Services.PostgreService
                 .HasForeignKey(operation => operation.ProccesId)
                 .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Operation>()
-                .HasMany(operation => operation.ChildsOperations)           
-                .WithOne(childOperation => childOperation.ParentOperation) 
-                .HasForeignKey(childOperation => childOperation.ParentOperationId) 
+                .HasMany(operation => operation.ChildsOperations)
+                .WithOne(childOperation => childOperation.ParentOperation)
+                .HasForeignKey(childOperation => childOperation.ParentOperationId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ClassesLibrary.Models.History>()
@@ -88,16 +88,43 @@ namespace netcorereactapp.Server.Services.PostgreService
 
             modelBuilder.Entity<Attachment>()
                 .HasOne(attachment => attachment.Procces)
-                .WithMany(procces=> procces.Attachments)
-                .HasForeignKey(fk=>fk.ProccedId)
+                .WithMany(procces => procces.Attachments)
+                .HasForeignKey(fk => fk.ProccedId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Equipment>()
-                .HasOne(equipment=>equipment.Operation)
-                .WithMany(operation=>operation.Equipments)
-                .HasForeignKey(fk=>fk.OperationId)
+                .HasOne(equipment => equipment.Operation)
+                .WithMany(operation => operation.Equipments)
+                .HasForeignKey(fk => fk.OperationId)
                 .OnDelete(DeleteBehavior.Cascade);
             #endregion
+        }
+        public override int SaveChanges()
+        {
+            foreach (var entry in ChangeTracker.Entries<Attachment>().Where(e => e.State == EntityState.Deleted))
+            {
+                // Удаление связанного файла
+                if (entry.Entity.AttachmentData != null)
+                {
+                    File.Delete(entry.Entity.AttachmentData);
+                }
+            }
+
+            return base.SaveChanges();
+        }
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            foreach (var entry in ChangeTracker.Entries<Attachment>().Where(e => e.State == EntityState.Deleted))
+            {
+                // Удаление связанного файла
+                if (entry.Entity.AttachmentData != null)
+                {
+                    File.Delete(entry.Entity.AttachmentData);
+                }
+            }
+
+            // Вызываем базовую реализацию метода SaveChangesAsync
+            return await base.SaveChangesAsync(cancellationToken);
         }
         public override void Dispose()
         {

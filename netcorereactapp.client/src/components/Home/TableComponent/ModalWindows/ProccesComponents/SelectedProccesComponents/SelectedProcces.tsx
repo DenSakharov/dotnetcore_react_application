@@ -29,7 +29,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
         getCurrentProcces()
     }, [])
     useEffect(() => {
-        console.log("selectedProcces changed:", selectedProcces);
+        //console.log("selectedProcces changed:", selectedProcces);
         setOperations(selectedProcces?.operations)
     }, [selectedProcces]);
     useEffect(() => {
@@ -256,7 +256,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                         {/* {selectedProcces.attachments &&
                                 renderAttachments(selectedProcces.attachments)
                             }*/}
-                        
+
                         {selectedProcces.attachments &&
                             <RenderAttachmentsComponent
                                 attachments={selectedProcces.attachments}

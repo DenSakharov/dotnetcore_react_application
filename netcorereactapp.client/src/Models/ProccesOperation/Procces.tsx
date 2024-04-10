@@ -4,7 +4,7 @@ import {History} from "./History.tsx";
 import {Attachment} from "./Attachment.tsx";
 
 export interface Procces extends  Entity{
-     number: string
+    number: string
     material : string
     m3 : string
     kd : string

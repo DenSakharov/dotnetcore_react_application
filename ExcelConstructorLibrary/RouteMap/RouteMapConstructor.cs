@@ -5,7 +5,8 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using System.Text.RegularExpressions;
 using Oper = ClassesLibrary.Models.Operation;
 using OfficeOpenXml;
-
+using System.Drawing;
+using Font = System.Drawing.Font;
 namespace ExcelConstructorLibrary.RouteMap
 {
     public static class RouteMapConstructor
@@ -67,10 +68,10 @@ namespace ExcelConstructorLibrary.RouteMap
                 var head_table_destinationRange = worksheet.Cells[$"A{destinationStart}:DF{destinationStart + 12}"];
                 var body_table_destinationRange = worksheet.Cells[$"A{destinationStart + 13}:DF{destinationEnd}"];
 
-               /* sourceRange.Copy(destinationRange,
-             //ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
-             ExcelRangeCopyOptionFlags.ExcludeValues
-                );*/
+                /* sourceRange.Copy(destinationRange,
+              //ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
+              ExcelRangeCopyOptionFlags.ExcludeValues
+                 );*/
 
                 head_table_sourceRange.Copy(head_table_destinationRange,
                     ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
@@ -86,6 +87,7 @@ namespace ExcelConstructorLibrary.RouteMap
             {
             }
         }
+      
         static byte[] export_excel(string destinationFilePath, Procces procces)
         {
             //get_template_table();
@@ -107,16 +109,11 @@ namespace ExcelConstructorLibrary.RouteMap
 
                 foreach (var operation in operations)
                 {
-                    /* var cell = worksheet.Cells[row, 23];
-                     cell.Value = operation.Caption;
-                     var neighborCell = worksheet.Cells[row, 1];
-                     neighborCell.Value = "A";*/
-                    worksheet.Cells[$"W{row}"].Value = operation.Caption;
-                    worksheet.Cells[$"A{row}"].Value = "A";
-
-                    worksheet.Cells[$"R{row}"].Value = operation.number;
-                    worksheet.Cells[$"F{row}"].Value = operation.responsibleGroup;
-                    worksheet.Cells[$"CY{row}"].Value = operation.laborCost;
+                    SetCellValue(worksheet, $"W{row}", operation.Caption, true);
+                    SetCellValue(worksheet, $"A{row}", "A", true);
+                    SetCellValue(worksheet, $"R{row}", operation.number, true);
+                    SetCellValue(worksheet, $"F{row}", operation.responsibleGroup, true);
+                    SetCellValue(worksheet, $"DF{row}", operation.laborCost, true);
 
                     row++;
                     countPageOperation++;
@@ -124,18 +121,57 @@ namespace ExcelConstructorLibrary.RouteMap
 
                     foreach (var equipment in operation.Equipments)
                     {
-                        worksheet.Cells[row, 23].Value = equipment.Caption;
-                        worksheet.Cells[row, 1].Value = "Б";
+                        var cellWidth = GetCellsWidth(worksheet, $"W{row}:DE{row}");
+                        float oldCellValueWidth;
+                        try
+                        {
+                            var currentValue = worksheet.Cells[$"W{row}"].Value;
+                            oldCellValueWidth = GetWidthString(currentValue.ToString());
+                        }catch (Exception ex) { oldCellValueWidth = 0; }
+                        var valueWidth = GetWidthString(equipment.Caption);
+                        if (cellWidth*9 <
+                            oldCellValueWidth+valueWidth)
+                        {
+                            row++;
+                            countPageOperation++;
+                            (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
 
-                        row++;
-                        countPageOperation++;
-                        (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                            SetCellValue(worksheet, $"W{row}", equipment.Caption, false);
+                            SetCellValue(worksheet, $"A{row}", "Б", false);
+
+                            row++;
+                            countPageOperation++;
+                            (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                        }
+                        else
+                        {
+                            // Получаем текущее значение ячейки
+                            var currentValue = worksheet.Cells[$"W{row}"].Value;
+
+                            // Проверяем, если текущее значение не пустое, иначе просто присваиваем новое значение
+                            if (currentValue != null)
+                            {
+                                // Конкатенируем текущее значение с новым текстом
+                                //worksheet.Cells[$"W{row}"].Value = currentValue.ToString() + equipment.Caption;
+                                SetCellValue(worksheet, $"W{row}", currentValue.ToString() + equipment.Caption, false);
+                                SetCellValue(worksheet, $"A{row}", "Б", false);
+                            }
+                            else
+                            {
+                                // Если текущее значение пустое, просто присваиваем новое значение
+                                SetCellValue(worksheet, $"W{row}",  equipment.Caption, false);
+                                SetCellValue(worksheet, $"A{row}", "Б", false);
+                                //worksheet.Cells[$"W{row}"].Value = equipment.Caption;
+                            }
+                        }
                     }
-
+                    row++;
+                    countPageOperation++;
+                    (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
                     foreach (var childOperation in operation.ChildsOperations)
                     {
-                        worksheet.Cells[row, 23].Value = childOperation.Caption;
-                        worksheet.Cells[row, 1].Value = "О";
+                        SetCellValue(worksheet, $"W{row}", childOperation.Caption, false);
+                        SetCellValue(worksheet, $"A{row}", "О", false);
                         row++;
                         countPageOperation++;
                         (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
@@ -205,6 +241,56 @@ namespace ExcelConstructorLibrary.RouteMap
                 return package.GetAsByteArray();
             }
 
+        }
+        static float GetWidthString(string value)
+        {
+            string text = value;
+
+            // Предположим, что у вас есть объект шрифта
+            Font font = new Font("GOST Common", 9);
+
+            // Создаем временный объект Graphics для определения ширины текста
+            using (Graphics graphics = Graphics.FromImage(new Bitmap(1, 1)))
+            {
+                // Получаем размеры текста в пикселях
+                SizeF textSize = graphics.MeasureString(text, font);
+
+                // Ширина текста в пикселях
+                float widthInPixels = textSize.Width;
+
+                //Console.WriteLine($"Ширина текста в пикселях: {widthInPixels}");
+                return widthInPixels;
+            }
+        }
+        static double GetCellsWidth(ExcelWorksheet worksheet,string rangeAddress)
+        {
+            // Получаем объект диапазона ячеек
+            ExcelRangeBase range = worksheet.Cells[rangeAddress];
+
+            // Инициализируем переменную для суммы ширины ячеек
+            double totalWidth = 0;
+
+            // Проходимся по каждой ячейке в диапазоне и добавляем ее ширину к сумме
+            foreach (ExcelRangeBase cell in range)
+            {
+                double cellWidth = worksheet.Column(cell.Start.Column).Width;
+                totalWidth += cellWidth;
+            }
+
+            return totalWidth;
+        }
+        static void SetCellValue(ExcelWorksheet worksheet,string cor,string value,bool bold)
+        {
+            var cell = worksheet.Cells[cor];
+            // Устанавливаем значение ячейки
+            cell.Value = value;
+            // Получаем объект стиля ячейки
+            var style = cell.Style;
+            // Устанавливаем свойства шрифта
+            style.Font.Name = "GOST Common"; // Название шрифта
+            style.Font.Size = 9; // Размер шрифта
+            style.Font.Bold = bold; // Жирный шрифт
+            style.Font.Italic = true; // Курсив
         }
         private static (int, int) IncrementRow(int currentRow, int count, ExcelPackage package)
         {
