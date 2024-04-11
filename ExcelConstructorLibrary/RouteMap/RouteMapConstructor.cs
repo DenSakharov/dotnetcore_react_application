@@ -7,6 +7,7 @@ using Oper = ClassesLibrary.Models.Operation;
 using OfficeOpenXml;
 using System.Drawing;
 using Font = System.Drawing.Font;
+using System.Text;
 namespace ExcelConstructorLibrary.RouteMap
 {
     public static class RouteMapConstructor
@@ -53,40 +54,7 @@ namespace ExcelConstructorLibrary.RouteMap
                 sourceRange = worksheet.Cells[$"A34:DF64"];
             }
         }
-        static void insertTemplateTable(int destinationStart, int destinationEnd, ExcelPackage package)
-        {
-            try
-            {
-                var worksheet = package.Workbook.Worksheets["МК"];
-
-                // Указываем исходный и целевой диапазоны
-                //var sourceRange = worksheet.Cells[$"A{rangeStart}:DF{rangeEnd}"];
-
-                var head_table_sourceRange = worksheet.Cells[$"A34:DF46"];
-                var body_table_sourceRange = worksheet.Cells[$"A47:DF64"];
-
-                var head_table_destinationRange = worksheet.Cells[$"A{destinationStart}:DF{destinationStart + 12}"];
-                var body_table_destinationRange = worksheet.Cells[$"A{destinationStart + 13}:DF{destinationEnd}"];
-
-                /* sourceRange.Copy(destinationRange,
-              //ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
-              ExcelRangeCopyOptionFlags.ExcludeValues
-                 );*/
-
-                head_table_sourceRange.Copy(head_table_destinationRange,
-                    ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
-                    );
-                body_table_sourceRange.Copy(body_table_destinationRange,
-                    ExcelRangeCopyOptionFlags.ExcludeValues
-                    );
-
-                // Сохраняем изменения
-                package.Save();
-            }
-            catch (Exception ex)
-            {
-            }
-        }
+       
       
         static byte[] export_excel(string destinationFilePath, Procces procces)
         {
@@ -96,6 +64,16 @@ namespace ExcelConstructorLibrary.RouteMap
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
                 var worksheet = package.Workbook.Worksheets["МК"];
+                //данные процесса в шапке 1 ой страницы
+                SetCellValue(worksheet, $"AR11", procces.Caption, true,12);
+                var currentValue = worksheet.Cells[$"CO8"].Value;
+                SetCellValue(worksheet, $"CO8", currentValue.ToString()+procces.number, false,12);
+                SetCellValue(worksheet, $"F13", procces.material, false,10);
+                SetCellValue(worksheet, $"BI15", procces.profile_size, false,10);
+                SetCellValue(worksheet, $"CD15", procces.kd, false, 10);
+                SetCellValue(worksheet, $"CJ15", procces.m3, false, 10);
+
+
                 var operations = procces.Operations;
 
                 int row = 19;
@@ -109,6 +87,7 @@ namespace ExcelConstructorLibrary.RouteMap
 
                 foreach (var operation in operations)
                 {
+                    insertMainOperationRowTemplateStringWithoutValue(row, package);
                     SetCellValue(worksheet, $"W{row}", operation.Caption, true);
                     SetCellValue(worksheet, $"A{row}", "A", true);
                     SetCellValue(worksheet, $"R{row}", operation.number, true);
@@ -119,62 +98,119 @@ namespace ExcelConstructorLibrary.RouteMap
                     countPageOperation++;
                     (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
 
-                    foreach (var equipment in operation.Equipments)
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var elem in operation.Equipments)
                     {
-                        var cellWidth = GetCellsWidth(worksheet, $"W{row}:DE{row}");
-                        float oldCellValueWidth;
-                        try
-                        {
-                            var currentValue = worksheet.Cells[$"W{row}"].Value;
-                            oldCellValueWidth = GetWidthString(currentValue.ToString());
-                        }catch (Exception ex) { oldCellValueWidth = 0; }
-                        var valueWidth = GetWidthString(equipment.Caption);
-                        if (cellWidth*9 <
-                            oldCellValueWidth+valueWidth)
-                        {
-                            row++;
-                            countPageOperation++;
-                            (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
-
-                            SetCellValue(worksheet, $"W{row}", equipment.Caption, false);
-                            SetCellValue(worksheet, $"A{row}", "Б", false);
-
-                            row++;
-                            countPageOperation++;
-                            (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
-                        }
-                        else
-                        {
-                            // Получаем текущее значение ячейки
-                            var currentValue = worksheet.Cells[$"W{row}"].Value;
-
-                            // Проверяем, если текущее значение не пустое, иначе просто присваиваем новое значение
-                            if (currentValue != null)
-                            {
-                                // Конкатенируем текущее значение с новым текстом
-                                //worksheet.Cells[$"W{row}"].Value = currentValue.ToString() + equipment.Caption;
-                                SetCellValue(worksheet, $"W{row}", currentValue.ToString() + equipment.Caption, false);
-                                SetCellValue(worksheet, $"A{row}", "Б", false);
-                            }
-                            else
-                            {
-                                // Если текущее значение пустое, просто присваиваем новое значение
-                                SetCellValue(worksheet, $"W{row}",  equipment.Caption, false);
-                                SetCellValue(worksheet, $"A{row}", "Б", false);
-                                //worksheet.Cells[$"W{row}"].Value = equipment.Caption;
-                            }
-                        }
+                        sb.Append(elem.Caption.ToString() + " ");
                     }
-                    row++;
-                    countPageOperation++;
-                    (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
-                    foreach (var childOperation in operation.ChildsOperations)
+                    var cellWidth = GetCellsWidth(worksheet, $"W{row}:DE{row}");
+                    var res_lst = SplitStringToFitCell(sb.ToString(), cellWidth * 7.8);
+                    foreach (var lst in res_lst)
                     {
-                        SetCellValue(worksheet, $"W{row}", childOperation.Caption, false);
-                        SetCellValue(worksheet, $"A{row}", "О", false);
+                        var res = lst.ToArray();
+                        insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
+                        SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
+                        SetCellValue(worksheet, $"A{row}", "Б", false);
+
                         row++;
                         countPageOperation++;
                         (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                    }
+                    #region Старая логика для инструментов
+                    /* foreach (var equipment in operation.Equipments)
+                     {
+                         //логика объеденения 
+                         insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
+                         var cellWidth = GetCellsWidth(worksheet, $"W{row}:DE{row}");
+                         float oldCellValueWidth;
+                         try
+                         {
+                             currentValue = worksheet.Cells[$"W{row}"].Value;
+                             oldCellValueWidth = GetWidthString(currentValue.ToString());
+                         }catch (Exception ex) { oldCellValueWidth = 0; }
+                         var valueWidth = GetWidthString(equipment.Caption);
+                         if (cellWidth*8 <
+                             oldCellValueWidth+valueWidth)
+                         {
+                             row++;
+                             countPageOperation++;
+                             (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+
+                             insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
+                             SetCellValue(worksheet, $"W{row}", equipment.Caption, false);
+                             SetCellValue(worksheet, $"A{row}", "Б", false);
+
+                             row++;
+                             countPageOperation++;
+                             (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                         }
+                         else
+                         {
+                             // Получаем текущее значение ячейки
+                             currentValue = worksheet.Cells[$"W{row}"].Value;
+
+                             // Проверяем, если текущее значение не пустое, иначе просто присваиваем новое значение
+                             if (currentValue != null)
+                             {
+                                 // Конкатенируем текущее значение с новым текстом
+                                 //worksheet.Cells[$"W{row}"].Value = currentValue.ToString() + equipment.Caption;
+                                 insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
+                                 SetCellValue(worksheet, $"W{row}", currentValue.ToString() + equipment.Caption, false);
+                                 SetCellValue(worksheet, $"A{row}", "Б", false);
+                             }
+                             else
+                             {
+                                 // Если текущее значение пустое, просто присваиваем новое значение
+                                 insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
+                                 SetCellValue(worksheet, $"W{row}",  equipment.Caption, false);
+                                 SetCellValue(worksheet, $"A{row}", "Б", false);
+                                 //worksheet.Cells[$"W{row}"].Value = equipment.Caption;
+                             }
+                         }
+                     }
+                     if (operation.Equipments.Count != 0)
+                     {
+                         row++;
+                         countPageOperation++;
+                         (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                     }*/
+                    #endregion  
+
+                    foreach (var childOperation in operation.ChildsOperations)
+                    {
+                        var valueWidth = GetWidthString(childOperation.Caption);
+                        try
+                        {
+                            if (cellWidth  < valueWidth)
+                            {
+                                res_lst = SplitStringToFitCell(childOperation.Caption, cellWidth * 7.8);
+                                foreach (var lst in res_lst)
+                                {
+                                    var res=lst.ToArray();
+                                    insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
+                                    SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
+                                    SetCellValue(worksheet, $"A{row}", "О", false);
+
+                                    row++;
+                                    countPageOperation++;
+                                    (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
+                            SetCellValue(worksheet, $"W{row}", childOperation.Caption, false);
+                            SetCellValue(worksheet, $"A{row}", "О", false);
+                            row++;
+                            countPageOperation++;
+                            (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                        }
+                        /* SetCellValue(worksheet, $"W{row}", childOperation.Caption, false);
+                         SetCellValue(worksheet, $"A{row}", "О", false);
+                         row++;
+                         countPageOperation++;
+                         (row, countPageOperation) = IncrementRow(row, countPageOperation, package);*/
                     }
                 }
 
@@ -242,6 +278,40 @@ namespace ExcelConstructorLibrary.RouteMap
             }
 
         }
+        static List<List<string>> SplitStringToFitCell(string value, double cellWidth)
+        {
+            List<List<string>>result_lst=new List<List<string>>();
+            List<string> parts = new List<string>();
+            string[] words = value.Split(' '); // Разбиваем строку на отдельные слова
+
+            string currentLine = "";
+            foreach (string word in words)
+            {
+                string testLine = currentLine.Length == 0 ? word : currentLine + " " + word;
+
+                // Получаем ширину текущей строки
+                var width = GetWidthString(testLine);
+
+                // Если текущая строка превышает ширину ячейки, добавляем текущую строку в список и начинаем новую
+                if (width > cellWidth)
+                {
+                    parts.Add(currentLine);
+                    currentLine = word;
+                    result_lst.Add(parts);
+                    parts = new List<string>();
+                }
+                else
+                {
+                    currentLine = testLine;
+                }
+            }
+
+            // Добавляем оставшуюся часть строки в список
+            parts.Add(currentLine);
+            result_lst.Add(parts);
+
+            return result_lst;
+        }
         static float GetWidthString(string value)
         {
             string text = value;
@@ -279,7 +349,7 @@ namespace ExcelConstructorLibrary.RouteMap
 
             return totalWidth;
         }
-        static void SetCellValue(ExcelWorksheet worksheet,string cor,string value,bool bold)
+        static void SetCellValue(ExcelWorksheet worksheet,string cor,string value,bool bold,int fontSize=9)
         {
             var cell = worksheet.Cells[cor];
             // Устанавливаем значение ячейки
@@ -288,7 +358,7 @@ namespace ExcelConstructorLibrary.RouteMap
             var style = cell.Style;
             // Устанавливаем свойства шрифта
             style.Font.Name = "GOST Common"; // Название шрифта
-            style.Font.Size = 9; // Размер шрифта
+            style.Font.Size = fontSize; // Размер шрифта
             style.Font.Bold = bold; // Жирный шрифт
             style.Font.Italic = true; // Курсив
         }
@@ -312,6 +382,58 @@ namespace ExcelConstructorLibrary.RouteMap
                 {
                     return (currentRow, count);
                 }
+            }
+        }
+        static void insertMainOperationRowTemplateStringWithoutValue(int destination, ExcelPackage package)
+        {
+            var worksheet = package.Workbook.Worksheets["МК"];
+            var body_table_sourceRange = worksheet.Cells[$"A19:DF19"];
+            var body_table_destinationRange = worksheet.Cells[$"A{destination}:DF{destination}"];
+            body_table_sourceRange.Copy(body_table_destinationRange,
+                   ExcelRangeCopyOptionFlags.ExcludeValues
+                   );
+        }
+        static void insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(int destination, ExcelPackage package)
+        {
+            var worksheet = package.Workbook.Worksheets["МК"];
+            var body_table_sourceRange = worksheet.Cells[$"A20:DF20"];
+            var body_table_destinationRange = worksheet.Cells[$"A{destination}:DF{destination}"];
+            body_table_sourceRange.Copy(body_table_destinationRange,
+                   ExcelRangeCopyOptionFlags.ExcludeValues
+                   );
+        }
+        static void insertTemplateTable(int destinationStart, int destinationEnd, ExcelPackage package)
+        {
+            try
+            {
+                var worksheet = package.Workbook.Worksheets["МК"];
+
+                // Указываем исходный и целевой диапазоны
+                //var sourceRange = worksheet.Cells[$"A{rangeStart}:DF{rangeEnd}"];
+
+                var head_table_sourceRange = worksheet.Cells[$"A34:DF46"];
+                var body_table_sourceRange = worksheet.Cells[$"A47:DF64"];
+
+                var head_table_destinationRange = worksheet.Cells[$"A{destinationStart}:DF{destinationStart + 12}"];
+                var body_table_destinationRange = worksheet.Cells[$"A{destinationStart + 13}:DF{destinationEnd}"];
+
+                /* sourceRange.Copy(destinationRange,
+              //ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
+              ExcelRangeCopyOptionFlags.ExcludeValues
+                 );*/
+
+                head_table_sourceRange.Copy(head_table_destinationRange,
+                    ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
+                    );
+                body_table_sourceRange.Copy(body_table_destinationRange,
+                    ExcelRangeCopyOptionFlags.ExcludeValues
+                    );
+
+                // Сохраняем изменения
+                package.Save();
+            }
+            catch (Exception ex)
+            {
             }
         }
         #region Open XML SDK Libary Logics
