@@ -14,8 +14,8 @@ import './styles/MainPage.css';
 
 export function Router() {
     return (
-        <div className="main-container"> {/* Добавьте класс для основного контейнера */}
-         
+        <div>
+        <div className="main-container">
             <HashRouter>
                 <Navbar />
                 <div className="content-container">
@@ -33,6 +33,7 @@ export function Router() {
                 </div>
                 <Notifications />
             </HashRouter>
+        </div>
         </div>
     );
 }

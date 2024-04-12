@@ -2,16 +2,13 @@
 
 .navbar {
     background-color: #1b5215;
+    margin: 0;
 }
 
     .navbar ul {
         list-style-type: none;
         padding: 0;
         display: flex;
-    }
-
-    .navbar li {
-        margin-right: 20px;
     }
 
     .navbar a {

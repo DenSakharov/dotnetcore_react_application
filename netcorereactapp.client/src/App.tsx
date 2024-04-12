@@ -12,7 +12,9 @@ export const isAuthenticated = () => {
 
 function App() {
     return (
-        <Router/>
+        <div>
+            <Router/>
+        </div>
     );
 }
 export default App;

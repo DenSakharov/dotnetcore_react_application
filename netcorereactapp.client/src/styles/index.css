@@ -7,13 +7,16 @@
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+
+
+  margin: 0; /* Убрать внешние отступы */
+  padding: 0; /* Убрать внутренние отступы */
+  box-sizing: border-box; /* Учитывать границу и внутренние отступы при вычислении размеров элемента */
+
+  text-align: center;
 }
 
-a {
+/*a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
@@ -56,4 +59,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+}*/
