@@ -9,7 +9,9 @@ export const Template=()=>{
     };
 
     const handleClose = () => {
-        setOpen(false);
+        if (window.confirm('Вы уверены, что хотите закрыть окно?')) {
+            setOpen(false);
+        }
     };
     return (
         <div className="container">

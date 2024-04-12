@@ -102,9 +102,11 @@ export default function Table() {
         setSelectedProccesId(int)
         setModalExcelExport(true);
     }
-    const clickExcelExport =(e)=>{
-        getData();
-        setModalExcelExport(!isModalExcelExport);
+    const clickExcelExport = (e) => {
+        if (window.confirm('Вы уверены, что хотите закрыть окно?')) {
+            getData();
+            setModalExcelExport(!isModalExcelExport);
+        }
     }
     return (
         <div>

@@ -97,24 +97,27 @@ namespace ExcelConstructorLibrary.RouteMap
                     row++;
                     countPageOperation++;
                     (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
-
-                    StringBuilder sb = new StringBuilder();
-                    foreach (var elem in operation.Equipments)
+                    if (operation.Equipments.Count != 0)
                     {
-                        sb.Append(elem.Caption.ToString() + " ");
-                    }
-                    var cellWidth = GetCellsWidth(worksheet, $"W{row}:DE{row}");
-                    var res_lst = SplitStringToFitCell(sb.ToString(), cellWidth * 7.8);
-                    foreach (var lst in res_lst)
-                    {
-                        var res = lst.ToArray();
+                        StringBuilder sb = new StringBuilder();
+                        foreach (var elem in operation.Equipments)
+                        {
+                            sb.Append(elem.Caption.ToString() + " ");
+                        }
                         insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
-                        SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
-                        SetCellValue(worksheet, $"A{row}", "Б", false);
+                        var cellWidth = GetCellsWidth(worksheet, $"W{row}:DE{row}");
+                        var res_lst = SplitStringToFitCell(sb.ToString(), cellWidth * 7.5);
+                        foreach (var lst in res_lst)
+                        {
+                            var res = lst.ToArray();
+                            insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
+                            SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
+                            SetCellValue(worksheet, $"A{row}", "Б", false);
 
-                        row++;
-                        countPageOperation++;
-                        (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                            row++;
+                            countPageOperation++;
+                            (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                        }
                     }
                     #region Старая логика для инструментов
                     /* foreach (var equipment in operation.Equipments)
@@ -175,44 +178,51 @@ namespace ExcelConstructorLibrary.RouteMap
                          (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
                      }*/
                     #endregion  
-
-                    foreach (var childOperation in operation.ChildsOperations)
+                    try
                     {
-                        var valueWidth = GetWidthString(childOperation.Caption);
-                        try
-                        {
-                            if (cellWidth  < valueWidth)
-                            {
-                                res_lst = SplitStringToFitCell(childOperation.Caption, cellWidth * 7.8);
-                                foreach (var lst in res_lst)
-                                {
-                                    var res=lst.ToArray();
-                                    insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
-                                    SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
-                                    SetCellValue(worksheet, $"A{row}", "О", false);
-
-                                    row++;
-                                    countPageOperation++;
-                                    (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
-                                }
-                            }
-                        }
-                        catch
+                        foreach (var childOperation in operation.ChildsOperations)
                         {
                             insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
-                            SetCellValue(worksheet, $"W{row}", childOperation.Caption, false);
-                            SetCellValue(worksheet, $"A{row}", "О", false);
-                            row++;
-                            countPageOperation++;
-                            (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                            var valueWidth = GetWidthString(childOperation.Caption);
+                            var cellWidth = GetCellsWidth(worksheet, $"W{row}:DE{row}");
+                            try
+                            {
+                                if (cellWidth < valueWidth)
+                                {
+                                    var res_lst = SplitStringToFitCell(childOperation.Caption, cellWidth * 7.5);
+                                    foreach (var lst in res_lst)
+                                    {
+                                        var res = lst.ToArray();
+                                        insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
+                                        SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
+                                        SetCellValue(worksheet, $"A{row}", "О", false);
+
+                                        row++;
+                                        countPageOperation++;
+                                        (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                                    }
+                                }
+                            }
+                            catch
+                            {
+                                insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
+                                SetCellValue(worksheet, $"W{row}", childOperation.Caption, false);
+                                SetCellValue(worksheet, $"A{row}", "О", false);
+                                row++;
+                                countPageOperation++;
+                                (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                            }
+                            /* SetCellValue(worksheet, $"W{row}", childOperation.Caption, false);
+                             SetCellValue(worksheet, $"A{row}", "О", false);
+                             row++;
+                             countPageOperation++;
+                             (row, countPageOperation) = IncrementRow(row, countPageOperation, package);*/
                         }
-                        /* SetCellValue(worksheet, $"W{row}", childOperation.Caption, false);
-                         SetCellValue(worksheet, $"A{row}", "О", false);
-                         row++;
-                         countPageOperation++;
-                         (row, countPageOperation) = IncrementRow(row, countPageOperation, package);*/
+                    }catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
                     }
-                }
+                    }
 
                 /*  for (int row = startRow; 
                       ; row++)
@@ -386,21 +396,30 @@ namespace ExcelConstructorLibrary.RouteMap
         }
         static void insertMainOperationRowTemplateStringWithoutValue(int destination, ExcelPackage package)
         {
-            var worksheet = package.Workbook.Worksheets["МК"];
-            var body_table_sourceRange = worksheet.Cells[$"A19:DF19"];
-            var body_table_destinationRange = worksheet.Cells[$"A{destination}:DF{destination}"];
-            body_table_sourceRange.Copy(body_table_destinationRange,
-                   ExcelRangeCopyOptionFlags.ExcludeValues
-                   );
+            try
+            {
+                var worksheet = package.Workbook.Worksheets["МК"];
+                var body_table_sourceRange = worksheet.Cells[$"A19:DF19"];
+                var body_table_destinationRange = worksheet.Cells[$"A{destination}:DF{destination}"];
+                body_table_sourceRange.Copy(body_table_destinationRange,
+                       ExcelRangeCopyOptionFlags.ExcludeValues
+                       );
+            } catch(Exception ex) { Console.WriteLine(ex.ToString()); }
         }
         static void insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(int destination, ExcelPackage package)
         {
-            var worksheet = package.Workbook.Worksheets["МК"];
-            var body_table_sourceRange = worksheet.Cells[$"A20:DF20"];
-            var body_table_destinationRange = worksheet.Cells[$"A{destination}:DF{destination}"];
-            body_table_sourceRange.Copy(body_table_destinationRange,
-                   ExcelRangeCopyOptionFlags.ExcludeValues
-                   );
+            try
+            {
+                var worksheet = package.Workbook.Worksheets["МК"];
+                var body_table_sourceRange = worksheet.Cells[$"A20:DF20"];
+                var body_table_destinationRange = worksheet.Cells[$"A{destination}:DF{destination}"];
+                body_table_sourceRange.Copy(body_table_destinationRange,
+                       ExcelRangeCopyOptionFlags.ExcludeValues
+                       );
+            }catch(Exception ex)
+            {
+                Console.WriteLine( ex.ToString() );
+            }
         }
         static void insertTemplateTable(int destinationStart, int destinationEnd, ExcelPackage package)
         {

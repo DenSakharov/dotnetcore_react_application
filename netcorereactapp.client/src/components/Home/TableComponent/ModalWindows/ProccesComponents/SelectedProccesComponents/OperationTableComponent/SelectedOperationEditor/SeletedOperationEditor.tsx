@@ -16,7 +16,7 @@ import SelectingFilesComponents from "../../../../../../CommonComponents/Selecti
 export const SeletedOperationEditor=({operation,onClose,notif})=>{
     const [oper,setOper]=useState<Operation>()
     useEffect(() => {
-        console.info('SeletedOperationEditor operation data :\n',operation)
+        //console.info('SeletedOperationEditor operation data :\n',operation)
         setOper(operation)
     }, [operation]);
     const inputRef = useRef(null);
