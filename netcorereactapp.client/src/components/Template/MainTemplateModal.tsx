@@ -7,14 +7,16 @@ const modalBoxSx = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 'auto',
-    bgcolor: 'rgba(0, 128, 0, 1)',
+    bgcolor: 'rgba(0, 128, 0, 0.9)',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
 };
 const btnSX = {
-    color:'green',
+    margin: '15px',
+    color:'darkgreen',
     bgcolor: 'black',
+    border: '2px solid #000',
 };
 
 export default function MainTemplateModal({ open, handleClose }) {

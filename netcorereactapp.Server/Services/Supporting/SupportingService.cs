@@ -31,7 +31,7 @@ namespace netcorereactapp.Server.Services.Supporting
             _fileService = fileService;
         }
         private readonly string path_to_files;
-        public async Task<byte[]> CreateRouteMapTemplate(Procces procces=null)
+        public async Task<byte[]> CreateRouteMapTemplate(Procces procces = null)
         {
             try
             {
@@ -55,28 +55,30 @@ namespace netcorereactapp.Server.Services.Supporting
                 }
                 if (procces != null)
                 {
-                    var path=_fileService.GetUniqueFileName(procces.Caption, ".xlsx");
+                    var path = _fileService.GetUniqueFileName(procces.Caption, ".xlsx");
 
                     using (var transaction = await _dbContext.Database.BeginTransactionAsync())
                     {
-                        try {
-                            var res=await _dbContext.Procceses.Where(proc => proc.Id == procces.Id).FirstOrDefaultAsync();
-                            var attach=new Attachment() { 
-                                Caption=procces.Caption+"MK",
-                                DateOfCreture=procces.DateOfCreture,
-                                AttachmentData= path_to_files + path
+                        try
+                        {
+                            var res = await _dbContext.Procceses.Where(proc => proc.Id == procces.Id).FirstOrDefaultAsync();
+                            var attach = new Attachment()
+                            {
+                                Caption = procces.Caption + "MK",
+                                DateOfCreture = procces.DateOfCreture,
+                                AttachmentData = path_to_files + path
                             };
                             res.Attachments.Add(attach);
-                            await  _dbContext.SaveChangesAsync();
+                            await _dbContext.SaveChangesAsync();
                             await transaction.CommitAsync();
                         }
                         catch (Exception ex) { return null; }
                     }
 
                     return RouteMapConstructor.CreateCopyFileRouteMap(
-                        path_to_files+path, 
+                        path_to_files + path,
                         procces,
-                        path_to_files+ "mainTemplateExcel.xlsx"
+                        path_to_files + "mainTemplateExcel.xlsx"
                         );
                 }
                 else
@@ -102,7 +104,7 @@ namespace netcorereactapp.Server.Services.Supporting
                 LoadChildOperationsRecursive(childOperation);
             }
         }
-        public List<OperationDTO> ReadExcel(string filePath, string sheetName)
+        public List<OperationDTO> ReadExcelToGetTemplateOperations(string filePath, string sheetName)
         {
             using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(filePath, true))
             {
@@ -198,7 +200,47 @@ namespace netcorereactapp.Server.Services.Supporting
                 }
             }
         }
+        public List<EquipmentDTO> ReadExcelToGetTemplateEquipments(string filePath, string sheetName)
+        {
+            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(filePath, true))
+            {
 
+                List<EquipmentDTO> operations = new List<EquipmentDTO>();
+
+                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+                WorksheetPart worksheetPart = GetWorksheetPartByName(workbookPart, sheetName);
+                if (worksheetPart != null)
+                {
+                    SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
+                    EquipmentDTO operation = new EquipmentDTO();
+                    foreach (Row row in sheetData.Elements<Row>())
+                    {
+
+                        foreach (Cell cell in row.Elements<Cell>())
+                        {
+                            string text = GetCellValue(cell, workbookPart);
+                            if (text != null && text != "")
+                            {
+                                if (cell.CellReference.ToString().StartsWith('C'))
+                                {
+                                    operation = new EquipmentDTO();
+                                    operation.Caption = GetCellValue(cell, workbookPart);
+                                    operations.Add(operation);
+                                }
+                            }
+
+                        }
+                    }
+                    return operations;
+                }
+                else
+                {
+                    Console.WriteLine("Sheet not found");
+                    return null;
+                }
+            }
+
+        }
         private static WorksheetPart GetWorksheetPartByName(WorkbookPart workbookPart, string sheetName)
         {
             Sheet sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault(s => s.Name == sheetName);

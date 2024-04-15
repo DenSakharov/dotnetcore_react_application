@@ -6,6 +6,23 @@ namespace ClassesLibrary.Services
 {
     public static class MapService
     {
+        public static ProccesDTO GetProcces(Procces proccesDTO)
+        {
+            return new ProccesDTO()
+            {
+                Id = proccesDTO.Id,
+                Caption = proccesDTO.Caption,
+                DateOfCreture = proccesDTO.DateOfCreture,
+                DateOfEdited = proccesDTO.DateOfEdited,
+                number = proccesDTO.number,
+                material = proccesDTO.material,
+                m3 = proccesDTO.m3,
+                kd = proccesDTO.kd,
+                profile_size = proccesDTO.profile_size,
+                Operations = MapChildOperations(proccesDTO.Operations),
+                Attachments = MapAttachments(proccesDTO.Attachments),
+            };
+        }
         public static Procces GetProcces(ProccesDTO proccesDTO)
         {
             return new Procces()
@@ -37,6 +54,7 @@ namespace ClassesLibrary.Services
                     number = operation.number,
                     laborCost = operation.laborCost,
                     responsibleGroup = operation.responsibleGroup,
+                    textOper=operation.textOper,
                     DateOfCreture = operation.DateOfCreture,
                     ParentOperationId = operation.ParentOperationId,
                     Attachments = MapAttachments(operation.Attachments),
@@ -67,6 +85,7 @@ namespace ClassesLibrary.Services
                     number = operation.number,
                     laborCost = operation.laborCost,
                     responsibleGroup = operation.responsibleGroup,
+                    textOper = operation.textOper,  
                     DateOfCreture = operation.DateOfCreture,
                     ParentOperationId = operation.ParentOperationId,
                     Attachments = MapAttachments(operation.Attachments),
@@ -104,6 +123,7 @@ namespace ClassesLibrary.Services
                     number=operationDTO.number,
                     laborCost = operationDTO.laborCost, 
                     responsibleGroup = operationDTO.responsibleGroup,
+                    textOper=operationDTO.textOper,
                     DateOfCreture = operationDTO.DateOfCreture,
                     ParentOperationId = operationDTO.ParentOperationId,
                     Attachments = MapAttachments(operationDTO.Attachments),
@@ -133,6 +153,7 @@ namespace ClassesLibrary.Services
                     number = operationDTO.number,
                     laborCost = operationDTO.laborCost,
                     responsibleGroup = operationDTO.responsibleGroup,
+                    textOper = operationDTO.textOper,
                     DateOfCreture = operationDTO.DateOfCreture,
                     ParentOperationId = operationDTO.ParentOperationId,
                     Attachments = MapAttachments(operationDTO.Attachments),

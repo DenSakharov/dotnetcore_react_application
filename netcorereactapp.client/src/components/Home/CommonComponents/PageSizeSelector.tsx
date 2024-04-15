@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {MenuItem, Select} from "@mui/material";
 
 export const PageSizeSelector = ({value, onChange}) => {
     const [customPageSize, setCustomPageSize] = useState("");
@@ -21,19 +22,32 @@ export const PageSizeSelector = ({value, onChange}) => {
     };
     return (
         <div>
-            <select value={value} onChange={handlePageSizeChange}>
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
+            <Select
+                labelId="select-label"
+                id="select"
+                value={value}
+                onChange={handlePageSizeChange}
+                sx={{
+                    bgcolor: 'background.paper',
+                    boxShadow: 1,
+                    borderRadius: 2,
+                    p: 2,
+                    height: '4px',
+                    width: '120px',
+                }}
+            >
+                <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={20}>20</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
                 {/*<option value={"custom"}>∆елаемый размер страницы</option>*/}
                 {/* <option value={() => {
                     setValueLocal("custom")
                 }}>¬ведите желаемый размер страницы
                 </option>*/}
                 {/* ƒобавл€ем опцию дл€ пользовательского значени€ */}
-            </select>
+            </Select>
             {valueLocal === "custom" && ( // ѕоказываем текстовое поле только при выборе пользовательского значени€
                 <input
                     type="number"

@@ -7,6 +7,7 @@ namespace ClassesLibrary.Models
         public string? number { get; set; }
         public string? laborCost { get; set; }
         public string? responsibleGroup { get; set; }
+        public string? textOper { get; set; }
         [JsonIgnore]
         public List<Equipment> Equipments { get; set; }  = new List<Equipment>();   
         [JsonIgnore]

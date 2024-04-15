@@ -1,6 +1,7 @@
 ﻿using ClassesLibrary.DataTransferObjects;
 using ClassesLibrary.Models;
 using ClassesLibrary.Services;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.EntityFrameworkCore;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
@@ -40,7 +41,7 @@ namespace netcorereactapp.Server.Services.ModelServices
             }
             return mapDTOoper;
         }
-        public async Task<OperationDTO> CreateNewChildOperationForParentOperation(int parentId,string caption)
+        public async Task<OperationDTO> CreateNewChildOperationForParentOperation(int parentId, string caption)
         {
             var existingSelectedOperation = await _dbContext.Operations.FirstOrDefaultAsync(operation => operation.Id == parentId);
             var mapDTOoper = new OperationDTO();
@@ -52,7 +53,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                 childOperation.DateOfCreture = DateTime.UtcNow;
                 existingSelectedOperation.ChildsOperations.Add(childOperation);
                 await _dbContext.SaveChangesAsync();
-                mapDTOoper=MapService.MapChildOperations(new List<Operation> { childOperation }).FirstOrDefault();
+                mapDTOoper = MapService.MapChildOperations(new List<Operation> { childOperation }).FirstOrDefault();
             }
             return mapDTOoper;
         }
@@ -75,6 +76,11 @@ namespace netcorereactapp.Server.Services.ModelServices
                         existingSelectedOperation.laborCost = operation.laborCost;
                         existingSelectedOperation.number = operation.number;
                         existingSelectedOperation.responsibleGroup = operation.responsibleGroup;
+                        existingSelectedOperation.textOper = operation.textOper;
+                        // Сохранить изменения в базе данных
+                        await _dbContext.SaveChangesAsync();
+
+                        //existingSelectedOperation.Equipments=operation.Equipments; // Добавляем новые элементы
 
                         existingSelectedOperation.DateOfEdited = DateTime.UtcNow;
                         //existingSelectedOperation.ChildsOperations = operation.ChildsOperations;

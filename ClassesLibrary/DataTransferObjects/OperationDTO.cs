@@ -15,6 +15,7 @@ namespace ClassesLibrary.DataTransferObjects
         [StringLength(50, ErrorMessage = "Поле 'ResponsibleGroup' не должно превышать 50 символов.")]
         public string? responsibleGroup { get; set; }
 
+        public string? textOper { get; set; }
         public List<EquipmentDTO>? Equipments { get; set; }
             = new List<EquipmentDTO>();
         public int? ProccesId { get; set; }

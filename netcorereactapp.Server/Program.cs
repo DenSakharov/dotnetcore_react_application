@@ -16,7 +16,8 @@ builder.Host.AddInfrostructre()
 //builder.Services.AddScoped<PostgreService>();
 string connection = builder.Configuration["Configuration:db"];
 builder.Services.AddDbContext<ApplicationContext>(options =>
-    options.UseNpgsql(connection),
+    options.UseNpgsql(connection)
+    .UseLoggerFactory(null),
     ServiceLifetime.Scoped
     );
 

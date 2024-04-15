@@ -33,8 +33,14 @@ namespace netcorereactapp.Server.Controllers.Supporting
         [HttpGet("template_operations")]
         public async Task<List<OperationDTO>> GetTemplateOpertionsList()
         {
-            var lst= _supportingService.ReadExcel(path_excel_template, "операции");
+            var lst = _supportingService.ReadExcelToGetTemplateOperations(path_excel_template, "операции");
             //ReadExcel(path_excel_template, "оборудование");
+            return lst;
+        }
+        [HttpGet("template_equipments")]
+        public async Task<List<EquipmentDTO>> GetTemplateEquipmentList()
+        {
+            var lst = _supportingService.ReadExcelToGetTemplateEquipments(path_excel_template, "оборудование");
             return lst;
         }
         [HttpPost("createroutemap")]

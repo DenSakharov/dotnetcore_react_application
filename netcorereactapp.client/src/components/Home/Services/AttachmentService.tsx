@@ -99,7 +99,7 @@ export const RenderAttachmentsComponent = ({ attachments ,send_request}: { attac
                             </IconButton>
                         </ListItemAvatar>
                         {/* Добавьте здесь код для отображения вложений */}
-                        <StyledListItemText primary={attachment.attachmentData}/>
+                        <StyledListItemText primary={attachment.attachmentData.split('\\').pop()}/>
                         <ListItemAvatar>
                             <StyledIconButton edge="end" aria-label="delete"
                                         onClick={()=>{

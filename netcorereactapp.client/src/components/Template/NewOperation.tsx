@@ -19,7 +19,7 @@ export const NewOperation=({hidden,addChildOperartion})=>{
     const inputRef = useRef(null);
 
     const [options, setOptions] = useState([]);
-    const [value, setValue] = useState('');
+    const [selectedTemplateOperation, setSelectedTemplateOperation] = useState('');
     useEffect(() => {
         // Загрузите список опций из бэкенда
         fetchOptionsFromBackend()
@@ -55,7 +55,7 @@ export const NewOperation=({hidden,addChildOperartion})=>{
     };
     
     const handleChangeSelect = (event) => {
-        setValue(event.target.value);
+        setSelectedTemplateOperation(event.target.value);
         //console.log('event.target.value\n',event.target.value)
         const capt= event.target.value.caption
         const equip= event.target.value.equipments
@@ -124,7 +124,7 @@ export const NewOperation=({hidden,addChildOperartion})=>{
                 <Select
                     labelId="select-label"
                     id="select"
-                    value={value}
+                    value={selectedTemplateOperation}
                     onChange={handleChangeSelect}
                     name="operation"
                 >

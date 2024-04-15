@@ -22,12 +22,12 @@ namespace netcorereactapp.Server.Services.PostgreService
         public ApplicationContext(DbContextOptions<ApplicationContext> options, ILogger<ApplicationContext> logger)
             : base(options)
         {
-            _logger = logger;
+            //_logger = logger;
             //_logger.LogInformation("ApplicationContext created.");
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
+            //optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
             //optionsBuilder.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.MultipleCollectionIncludeWarning));
             base.OnConfiguring(optionsBuilder);
         }
@@ -128,7 +128,7 @@ namespace netcorereactapp.Server.Services.PostgreService
         }
         public override void Dispose()
         {
-            _logger.LogInformation("ApplicationContext disposed.");
+            //_logger.LogInformation("ApplicationContext disposed.");
             base.Dispose();
         }
     }

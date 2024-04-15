@@ -104,7 +104,14 @@ export const FiledsCompoment
     };
     return (
         <CenteredDivColumn>
-            <CenteredDivRow>
+            <CenteredDivRow
+                sx={{
+                    backgroundColor: 'darkgreen',
+                    border: '2px solid ',
+                    borderRadius: '25px',
+                    padding: '10px'
+                }}
+            >
                 <CenteredDivColumn>
                     <CenteredDivRow>
                         <StyledTextField

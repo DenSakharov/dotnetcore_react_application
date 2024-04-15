@@ -67,7 +67,8 @@ namespace netcorereactapp.Server.Services.ModelServices
                 {
                     return null; // Возвращаем 404 Not Found, если операция не найдена
                 }
-                var procces = new ProccesDTO();
+                var procces = MapService.GetProcces(existingProcces);
+                    /* new ProccesDTO();
                 // Обновляем существующую операцию данными из отредактированной операции
                 procces.Id = id;
                 procces.Caption = existingProcces.Caption;
@@ -83,7 +84,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                 //var operations = _dbContext.Operations.Where(o => o.ProccesId == existingProcces.Id).ToList();
 
                 procces.Operations= MapService.MapChildOperations(existingProcces.Operations);
-                procces.Attachments=MapService.MapAttachments(existingProcces.Attachments);
+                procces.Attachments=MapService.MapAttachments(existingProcces.Attachments);*/
                 return procces;
             }
             catch (Exception ex)

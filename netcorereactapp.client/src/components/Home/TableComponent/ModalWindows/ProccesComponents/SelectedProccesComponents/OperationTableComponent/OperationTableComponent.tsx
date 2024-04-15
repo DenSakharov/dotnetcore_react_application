@@ -1,5 +1,5 @@
 import {MaterialReactTable, type MRT_ColumnDef, useMaterialReactTable} from "material-react-table";
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {MRT_Localization_RU} from "material-react-table/locales/ru";
 import {
     Box,
@@ -8,7 +8,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle, IconButton,
-    List, ListItemAvatar,
+    List, ListItemAvatar, Typography,
 } from "@mui/material";
 import {SeletedOperationEditor} from "./SelectedOperationEditor/SeletedOperationEditor.tsx";
 import AutoAwesomeMotionRoundedIcon from '@mui/icons-material/AutoAwesomeMotionRounded';
@@ -19,8 +19,6 @@ import {Notifications} from "../../../../../../UniversalComponents/Notifications
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import config from "../../../../../../../config/config.json";
-import {ZIndexUtils} from "primereact/utils";
-import set = ZIndexUtils.set;
 
 export const OperationTableComponent = ({procces,operations,send_request}) => {
 
@@ -219,6 +217,26 @@ export const OperationTableComponent = ({procces,operations,send_request}) => {
     const handleClick_openNotificationUpdateOperation = () => {
         setOpenNotificationUpdateOperation(true);
     };
+
+    const btnSX = {
+        margin: '15px',
+        color:'darkgreen',
+        bgcolor: 'black',
+        border: '2px solid #000',
+        '&:hover': {
+            color: 'white', // Изменение цвета текста при наведении
+            bgcolor: 'green', // Изменение цвета фона при наведении
+            border: '2px solid #000', // Изменение цвета границы при наведении
+        },
+    };
+
+    const childRef = useRef(null);
+
+    const callChildMethod = () => {
+        if (childRef.current) {
+            childRef.current.saveEdtingOper();
+        }
+    };
     return (
         <div>
             <MaterialReactTable table={table_Of_Operartions_From_Selected_Procces}/>
@@ -235,19 +253,42 @@ export const OperationTableComponent = ({procces,operations,send_request}) => {
             <Dialog open={open} onClose={handleClose}
                     PaperProps={{
                         sx: {
+                            width: 'auto',
+                            borderRadius:'25px',
+                           /* backgroundColor: 'rgba(0, 128, 0, 0.9)',*/
                             backgroundColor: 'darkgreen',
-                            color: 'white'
+                            border: '2px solid #000',
+                            boxShadow: 24,
+                            p: 10,
                         }
                     }}>
-                <DialogTitle>Выбранная операция</DialogTitle>
-                <DialogContent>
+                <DialogTitle>
+                    <Typography sx={{
+                        fontSize:20,
+                        color: 'white',
+                        textShadow: '4px 4px 32px rgba(0, 0, 0, 1), -4px -4px 32px rgba(0, 0, 0, 1)'
+                    }}>Выбранная операция</Typography>
+                </DialogTitle>
+                <DialogContent
+                    sx={{
+                        overflowY: 'auto',
+                        maxHeight: '700px', // Максимальная высота контейнера
+                        '&::-webkit-scrollbar': {
+                            display: 'none', // Скрываем скроллбар для браузеров на основе WebKit (например, Chrome, Safari)
+                        },
+                        scrollbarWidth: 'none', // Скрываем скроллбар для остальных браузеров
+                    }}
+                >
                     {/*<p>Содержимое модального окна...</p>*/}
-                    <SeletedOperationEditor operation={selectedOperation}
+                    <SeletedOperationEditor
+                                            operation={selectedOperation}
+                                            ref={childRef}
                                             onClose={handleClose}
                                             notif={handleClick_openNotificationUpdateOperation}/>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Закрыть</Button>
+                    <Button  sx={btnSX} onClick={callChildMethod}>Сохранить</Button>
+                    <Button  sx={btnSX} onClick={handleClose}>Закрыть</Button>
                 </DialogActions>
             </Dialog>
         </div>
