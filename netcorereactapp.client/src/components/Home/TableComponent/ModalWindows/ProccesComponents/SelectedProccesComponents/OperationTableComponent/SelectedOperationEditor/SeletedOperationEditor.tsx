@@ -126,20 +126,69 @@ export const SeletedOperationEditor = forwardRef((props, ref) => {
         setSelectEquipment(event.target.value)
 
     };
-    const addEquipment=()=>{
-        setOper(prevOper => {
-            if (prevOper) {
-                return {
-                    ...prevOper,
-                    equipments: [...prevOper.equipments, selectEquipment] // Добавляем новый элемент в массив equipments
-                };
+    const addEquipment=async ()=>{
+        try {
+            const tokenValue = localStorage.getItem("authToken");
+            //console.log('',selectEquipment.caption)
+
+            const caption = selectEquipment.caption
+            const response=await axios.post(`${config.apiUrl}/equipment/${oper.id}`,
+                {caption:caption}, {
+                headers: {
+                    Authorization: `Bearer ${tokenValue}`,
+                    'Content-Type': 'application/json',
+                }
+            })
+            if (response.status == 200) {
+                setOper(prevOper => {
+                    if (prevOper) {
+                        return {
+                            ...prevOper,
+                            equipments: [...prevOper.equipments, selectEquipment] // Добавляем новый элемент в массив equipments
+                        };
+                    } else {
+                        return prevOper; // Возвращаем предыдущее состояние, если prevOper равен undefined или null
+                    }
+                });
             } else {
-                return prevOper; // Возвращаем предыдущее состояние, если prevOper равен undefined или null
+                console.error('request failed')
             }
-        });
+        }catch (e) {
+            console.error("Before request \n", e)
+        }
         toggleVisibleEquipmentList()
     }
-    const removeEquipment = (equipmentToRemove) => {
+    const removeEquipment =async (equipmentToRemove) => {
+        if(equipmentToRemove.id ){
+        try {
+            const tokenValue = localStorage.getItem("authToken");
+            //console.log('Request sending in procces')
+            const response = await axios.delete(`${config.apiUrl}/equipment/${equipmentToRemove.id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${tokenValue}`,
+                    }
+                })
+            if (response.status==200) {
+                setOper(prevOper => {
+                    if (prevOper) {
+                        const updatedEquipments = prevOper.equipments.filter(equipment => equipment !== equipmentToRemove);
+                        return {
+                            ...prevOper,
+                            equipments: updatedEquipments
+                        };
+                    } else {
+                        return prevOper; // Возвращаем предыдущее состояние, если prevOper равен undefined или null
+                    }
+                })
+            } else {
+                console.error('request failed')
+            }
+        } catch (e) {
+            console.error("Before request \n", e)
+        }
+        }
+        else{
         setOper(prevOper => {
             if (prevOper) {
                 const updatedEquipments = prevOper.equipments.filter(equipment => equipment !== equipmentToRemove);
@@ -150,7 +199,8 @@ export const SeletedOperationEditor = forwardRef((props, ref) => {
             } else {
                 return prevOper; // Возвращаем предыдущее состояние, если prevOper равен undefined или null
             }
-        });
+        })
+        }
     };
 
     return (

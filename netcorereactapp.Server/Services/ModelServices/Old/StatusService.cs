@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using netcorereactapp.Server.Models;
-using netcorereactapp.Server.Models.DataTransferObjects;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
-using netcorereactapp.Server.Services.ModelServices.Interfaces;
+using netcorereactapp.Server.Services.ModelServices.Old.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
 
-namespace netcorereactapp.Server.Services.ModelServices
+namespace netcorereactapp.Server.Services.ModelServices.Old
 {
-    public class StatusService: IStatusService
+    public class StatusService : IStatusService
     {
         private readonly ApplicationContext _dbContext;
         private readonly ILogger<StatusService> _logger;
@@ -18,9 +17,9 @@ namespace netcorereactapp.Server.Services.ModelServices
             _logger = logger;
             _fileService = fileService;
         }
-        public async Task<int> Add_status_to_status(int statID,string type, IFormFile file)
+        public async Task<int> Add_status_to_status(int statID, string type, IFormFile file)
         {
-            var selectedStatus= await _dbContext.StatusesOfOrders.FirstOrDefaultAsync(status => status.Id == statID);
+            var selectedStatus = await _dbContext.StatusesOfOrders.FirstOrDefaultAsync(status => status.Id == statID);
             if (selectedStatus != null)
             {
                 string temp_file_name = await _fileService.SaveFile(file);

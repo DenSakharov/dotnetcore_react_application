@@ -27,7 +27,7 @@ namespace netcorereactapp.Server.Controllers.ProccesController
             _logger = logger;
             _proccesService = proccesService;
             _supportingService = supportingService;
-            _logger.LogInformation("ProccesController is called.");
+            //_logger.LogInformation("ProccesController is called.");
         }
         [HttpGet]
         [Route("{id}")]

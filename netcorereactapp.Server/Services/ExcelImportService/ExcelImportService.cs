@@ -1,6 +1,6 @@
 ﻿using netcorereactapp.Server.Services.ExcelImportService.Interfaces;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
-using netcorereactapp.Server.Services.ModelServices;
+using netcorereactapp.Server.Services.ModelServices.Old;
 using netcorereactapp.Server.Services.PostgreService;
 
 namespace netcorereactapp.Server.Services.ExcelImportService

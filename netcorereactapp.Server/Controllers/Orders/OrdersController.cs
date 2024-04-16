@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using netcorereactapp.Server.Models;
 using netcorereactapp.Server.Models.DataTransferObjects;
-using netcorereactapp.Server.Services.ModelServices.Interfaces;
+using netcorereactapp.Server.Services.ModelServices.Old.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
 
 namespace netcorereactapp.Server.Controllers.Orders

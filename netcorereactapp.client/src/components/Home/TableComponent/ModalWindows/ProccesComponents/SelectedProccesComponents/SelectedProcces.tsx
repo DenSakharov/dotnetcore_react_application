@@ -165,8 +165,15 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                     <CircularProgress/>
                 </CenteredDivRow>)}
             {selectedProcces && (
-                <div>
-                    <CenteredDivRow>
+                <CenteredDivColumn>
+                    <CenteredDivRow
+                        sx={{
+                            backgroundColor: 'green',
+                            border: '4px solid ',
+                            borderRadius: '25px',
+                            padding: '1px',
+                        }}
+                    >
                         <CenteredDivColumn>
                             <IconButton onClick={confirmEditedOperation} style={{color: 'white'}}>
                                 <CenteredDivColumn>
@@ -281,12 +288,18 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                         variant="scrollable"
                         scrollButtons
                         allowScrollButtonsMobile
+                        sx={{
+                            width: '100%',
+                        }}
                     >
                         <Tab label="Операции выбранного процесса"/>
                         <Tab label="История изменений"/>
                         {/* Добавьте другие вкладки по аналогии */}
                     </Tabs>
-                    <TabPanel value={value} index={0}>
+                    <TabPanel sx={{
+                        width: '100%',
+                    }}
+                              value={value} index={0}>
                         <ListItemAvatar>
                             <IconButton style={{color: 'white'}} onClick={handleClick_addOperation_To_Procces}>
                                 Добавить операцию
@@ -303,34 +316,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                         </Typography>
                         <HistoryComponent int={selectedProcces?.id}/>
                     </TabPanel>
-                    {/* <button className="styled-button"
-                            title={view ? "Показать таблицу" : "Показать Список"} onClick={click_view_table}>
-                        {view ? "Показать таблицу" : "Показать Список"}
-                    </button>
-
-                    {
-                        view ? (
-                                operations !== undefined && operations !== null &&
-                                <OperationListComponent operations={operations}/>
-                            )
-                            :
-                            (
-                                operations !== undefined && operations !== null &&
-                                <div>
-                                    <OperationTableComponent operations={operations}/>
-                                </div>
-                            )
-                         :
-                         (
-                             <div>
-                                 <CenteredDivRow>
-                                     <CircularProgress/>
-                                 </CenteredDivRow>
-                             </div>
-                         )
-                    }*/}
-
-                </div>
+                </CenteredDivColumn>
             )}
         </div>
     )
@@ -360,6 +346,7 @@ function TabPanel(props) {
 export const StyledTextField = styled(TextField)({
     margin: '5px',
     width: '40ch',
+    color:'white',
     '& .MuiInputBase-input, & .MuiInputBase-multiline, & .MuiInputLabel-root, & .MuiFormHelperText-root': {
         color: 'white',
     },

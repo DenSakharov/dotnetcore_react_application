@@ -1,7 +1,6 @@
 ﻿using ClassesLibrary.DataTransferObjects;
 using ClassesLibrary.Models;
 using ClassesLibrary.Services;
-using DocumentFormat.OpenXml.InkML;
 using Microsoft.EntityFrameworkCore;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
@@ -63,7 +62,9 @@ namespace netcorereactapp.Server.Services.ModelServices
             {
                 try
                 {
-                    var existingSelectedOperation = await _dbContext.Operations.FirstOrDefaultAsync(operation => operation.Id == operationId);
+                    var existingSelectedOperation = _dbContext.Operations
+                                                        .Include(p => p.Equipments)
+                                                        .FirstOrDefault(operation => operation.Id == operationId);
 
                     if (existingSelectedOperation != null)
                     {
@@ -77,15 +78,14 @@ namespace netcorereactapp.Server.Services.ModelServices
                         existingSelectedOperation.number = operation.number;
                         existingSelectedOperation.responsibleGroup = operation.responsibleGroup;
                         existingSelectedOperation.textOper = operation.textOper;
-                        // Сохранить изменения в базе данных
-                        await _dbContext.SaveChangesAsync();
 
-                        //existingSelectedOperation.Equipments=operation.Equipments; // Добавляем новые элементы
-
-                        existingSelectedOperation.DateOfEdited = DateTime.UtcNow;
-                        //existingSelectedOperation.ChildsOperations = operation.ChildsOperations;
-                        // Сохраняем изменения в базе данных
-                        await _dbContext.SaveChangesAsync();
+                       /* try
+                        {
+                            existingSelectedOperation.Equipments = operation.Equipments;
+                            await _dbContext.SaveChangesAsync();
+                        }
+                        catch (Exception ex) { }
+*/
                         // Получаем файл из FormData
                         IFormFileCollection files = form.Files;
                         foreach (var file in files)
@@ -100,12 +100,17 @@ namespace netcorereactapp.Server.Services.ModelServices
                             existingSelectedOperation.Attachments.Add(attachment);
                             await _dbContext.SaveChangesAsync();
                         }
-                        await transaction.CommitAsync();
+
+                        existingSelectedOperation.DateOfEdited = DateTime.UtcNow;
+                        // Сохраняем изменения в базе данных
+                        await _dbContext.SaveChangesAsync();
+                       
                     }
                     return MapService.MapChildOperations(new List<Operation> { existingSelectedOperation }).First();
                 }
                 catch (Exception ex) { return null; }
             }
+            
         }
         public async Task<int> SaveProccesWithOperations(Procces procces, List<Operation> operations)
         {

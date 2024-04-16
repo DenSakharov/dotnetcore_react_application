@@ -15,6 +15,8 @@ using netcorereactapp.Server.Services.History;
 using netcorereactapp.Server.Services.History.Interfaces;
 using netcorereactapp.Server.Services.ModelServices;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
+using netcorereactapp.Server.Services.ModelServices.Old;
+using netcorereactapp.Server.Services.ModelServices.Old.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
 using netcorereactapp.Server.Services.Supporting;
 using netcorereactapp.Server.Services.Supporting.Interfaces;
@@ -209,11 +211,22 @@ namespace netcorereactapp.Server.Infrostructure.Exctentions
                 services.AddScoped<IOperationService, OperationService>();
                 services.AddScoped<IAttachmentService, AttachmentService>();
                 services.AddScoped<IHistoryService, HistoryService>();
+                services.AddScoped<IEquipmentService, EquipmentService>();
 
                 services.AddScoped<ISupportingService,SupportingService>();
 
                 services.AddScoped<LoggingActionFilter>();
             });
+            return hostBuilder;
+        }
+        public static IHostBuilder AddLoggingThreshold(this IHostBuilder hostBuilder)
+        {
+            hostBuilder.ConfigureLogging((hostingContext, logging) =>
+            {
+                logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
+                logging.AddFilter("Microsoft.EntityFrameworkCore.Infrastructure", LogLevel.Warning);
+            });
+
             return hostBuilder;
         }
     }

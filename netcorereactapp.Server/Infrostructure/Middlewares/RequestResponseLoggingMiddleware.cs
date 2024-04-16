@@ -27,7 +27,7 @@ namespace netcorereactapp.Server.Infrostructure.Middlewares
             {
                 // Log errors
                 _logger.LogError(ex, "An error occurred during request processing.");
-                Console.WriteLine(ex);
+                //Console.WriteLine(ex);
             }
             finally
             {

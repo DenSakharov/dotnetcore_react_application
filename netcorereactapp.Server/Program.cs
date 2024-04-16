@@ -11,7 +11,8 @@ builder.Host.AddInfrostructre()
     .AddHttp()
     .AddCors()
     .AddAuthnticationAndAuthorization(builder.Configuration)
-    .AddServicesForControllers();
+    .AddServicesForControllers()
+    .AddLoggingThreshold();
 
 //builder.Services.AddScoped<PostgreService>();
 string connection = builder.Configuration["Configuration:db"];

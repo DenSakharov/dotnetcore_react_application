@@ -2,11 +2,11 @@
 using netcorereactapp.Server.Models;
 using netcorereactapp.Server.Models.DataTransferObjects;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
-using netcorereactapp.Server.Services.ModelServices.Interfaces;
+using netcorereactapp.Server.Services.ModelServices.Old.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
 using System.Text;
 
-namespace netcorereactapp.Server.Services.ModelServices
+namespace netcorereactapp.Server.Services.ModelServices.Old
 {
     public class OrderSevice : IOrderService
     {
@@ -39,7 +39,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                     {
                         Id = status.Id,
                         Type = status.type,
-                        ParentId= status.ParentStatusId.HasValue ? status.ParentStatusId.Value : 0,
+                        ParentId = status.ParentStatusId.HasValue ? status.ParentStatusId.Value : 0,
                         DateOfCreature = status.date_of_creature,
                         Attachments = MapAttachments(status.Attachments),
                         //ChildStatuses= status.ChildStatuses.Count != 0 ? rewrite_array_to_ChildStatusesDTO(status) : new List<StatusDTO>()
@@ -158,7 +158,7 @@ namespace netcorereactapp.Server.Services.ModelServices
           return null;
       }
   }*/
-        
+
         void ProcessChildStatuses(StatusModels statusDTO, StringBuilder sb)
         {
             // Проверяем, есть ли у статуса дочерние статусы
@@ -180,7 +180,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                 // Обрабатываем каждый дочерний статус
                 foreach (var childStatus in statusDTO.ChildStatuses)
                 {
-                    sb.AppendLine("parent -> "+ statusDTO.Id+" ; child -> "+childStatus.Id);
+                    sb.AppendLine("parent -> " + statusDTO.Id + " ; child -> " + childStatus.Id);
                     ProcessChildStatusesDTO(childStatus, sb);
                 }
             }
@@ -261,7 +261,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                         DateOfCreature = childStatus.date_of_creature,
                         ParentId = childStatus.ParentStatusId,
                         Attachments = MapAttachments(childStatus.Attachments),
-                        ChildStatuses = MapChildStatusesRecursive(childStatus.ChildStatuses, childStatus.Id) 
+                        ChildStatuses = MapChildStatusesRecursive(childStatus.ChildStatuses, childStatus.Id)
                     };
                     childStatusDTOs.Add(childStatusDTO);
                 }

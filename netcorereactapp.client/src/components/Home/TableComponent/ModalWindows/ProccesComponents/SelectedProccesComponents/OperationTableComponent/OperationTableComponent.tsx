@@ -253,16 +253,17 @@ export const OperationTableComponent = ({procces,operations,send_request}) => {
             <Dialog open={open} onClose={handleClose}
                     PaperProps={{
                         sx: {
+                            height:'950px',
                             width: 'auto',
                             borderRadius:'25px',
                            /* backgroundColor: 'rgba(0, 128, 0, 0.9)',*/
-                            backgroundColor: 'darkgreen',
-                            border: '2px solid #000',
+                            backgroundColor: 'rgba(0, 100, 0, 0.9)', /*'darkgreen',*/
+                            border: '4px solid #000',
                             boxShadow: 24,
-                            p: 10,
                         }
                     }}>
-                <DialogTitle>
+                <DialogTitle
+                >
                     <Typography sx={{
                         fontSize:20,
                         color: 'white',
@@ -272,7 +273,7 @@ export const OperationTableComponent = ({procces,operations,send_request}) => {
                 <DialogContent
                     sx={{
                         overflowY: 'auto',
-                        maxHeight: '700px', // Максимальная высота контейнера
+                        height: '750px', // Максимальная высота контейнера
                         '&::-webkit-scrollbar': {
                             display: 'none', // Скрываем скроллбар для браузеров на основе WebKit (например, Chrome, Safari)
                         },
@@ -286,7 +287,8 @@ export const OperationTableComponent = ({procces,operations,send_request}) => {
                                             onClose={handleClose}
                                             notif={handleClick_openNotificationUpdateOperation}/>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions
+                >
                     <Button  sx={btnSX} onClick={callChildMethod}>Сохранить</Button>
                     <Button  sx={btnSX} onClick={handleClose}>Закрыть</Button>
                 </DialogActions>
