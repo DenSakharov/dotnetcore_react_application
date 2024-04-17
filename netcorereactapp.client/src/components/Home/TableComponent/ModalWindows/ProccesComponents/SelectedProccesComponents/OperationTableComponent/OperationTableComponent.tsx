@@ -165,6 +165,8 @@ export const OperationTableComponent = ({procces,operations,send_request}) => {
                                 renderAttachments(attachments)
                             }*/}
                             {attachments &&
+                                attachments.length!==0
+                                &&
                                 <RenderAttachmentsComponent
                                     attachments={attachments}
                                     send_request={send_request}

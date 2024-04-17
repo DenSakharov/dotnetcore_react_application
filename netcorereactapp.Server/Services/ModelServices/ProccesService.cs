@@ -16,15 +16,17 @@ namespace netcorereactapp.Server.Services.ModelServices
         private readonly ILogger<ProccesService> _logger;
         private readonly IFileService _fileService;
         private readonly IHistoryService _historyService;
-        public ProccesService(ApplicationContext dbContext, 
+        public readonly IAttachmentService _attachmentService;
+        public ProccesService(ApplicationContext dbContext,
             ILogger<ProccesService> logger, IFileService fileService,
-            IHistoryService historyService
+            IHistoryService historyService, IAttachmentService attachmentService
             )
         {
             _dbContext = dbContext;
             _logger = logger;
             _fileService = fileService;
             _historyService = historyService;
+            _attachmentService = attachmentService;
         }
         void LoadChildOperationsRecursive(Operation operation)
         {
@@ -63,28 +65,28 @@ namespace netcorereactapp.Server.Services.ModelServices
                     }
                 }
 
-                if (existingProcces == null) 
+                if (existingProcces == null)
                 {
                     return null; // Возвращаем 404 Not Found, если операция не найдена
                 }
                 var procces = MapService.GetProcces(existingProcces);
-                    /* new ProccesDTO();
-                // Обновляем существующую операцию данными из отредактированной операции
-                procces.Id = id;
-                procces.Caption = existingProcces.Caption;
+                /* new ProccesDTO();
+            // Обновляем существующую операцию данными из отредактированной операции
+            procces.Id = id;
+            procces.Caption = existingProcces.Caption;
 
-                procces.m3 = existingProcces.m3;
-                procces.kd = existingProcces.kd;
-                procces.material = existingProcces.material;
-                procces.number = existingProcces.number;
-                procces.profile_size = existingProcces.profile_size;
+            procces.m3 = existingProcces.m3;
+            procces.kd = existingProcces.kd;
+            procces.material = existingProcces.material;
+            procces.number = existingProcces.number;
+            procces.profile_size = existingProcces.profile_size;
 
-                procces.DateOfEdited = existingProcces.DateOfCreture ;
-                procces.DateOfEdited = existingProcces.DateOfEdited ;
-                //var operations = _dbContext.Operations.Where(o => o.ProccesId == existingProcces.Id).ToList();
+            procces.DateOfEdited = existingProcces.DateOfCreture ;
+            procces.DateOfEdited = existingProcces.DateOfEdited ;
+            //var operations = _dbContext.Operations.Where(o => o.ProccesId == existingProcces.Id).ToList();
 
-                procces.Operations= MapService.MapChildOperations(existingProcces.Operations);
-                procces.Attachments=MapService.MapAttachments(existingProcces.Attachments);*/
+            procces.Operations= MapService.MapChildOperations(existingProcces.Operations);
+            procces.Attachments=MapService.MapAttachments(existingProcces.Attachments);*/
                 return procces;
             }
             catch (Exception ex)
@@ -107,7 +109,7 @@ namespace netcorereactapp.Server.Services.ModelServices
             return (processes, totalCount);
         }
 
-        public async Task<Procces>Create(ProccesDTO procces)
+        public async Task<Procces> Create(ProccesDTO procces)
         {
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
@@ -227,8 +229,6 @@ namespace netcorereactapp.Server.Services.ModelServices
                             await _dbContext.SaveChangesAsync();
                             existingSelectedProcces.Attachments.Add(attachment);
                             await _dbContext.SaveChangesAsync();
-
-
                         }
                     }
                     await transaction.CommitAsync();
@@ -237,7 +237,35 @@ namespace netcorereactapp.Server.Services.ModelServices
                 catch (Exception ex) { return null; }
             }
         }
-
+        public async Task<Procces> AddingAttachmentsWithCategoriesToSelectedProcces(int proccesId, IFormCollection formFilesWithCategories)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var existingSelectedProcces = await _dbContext.Procceses.FirstOrDefaultAsync(procces => procces.Id == proccesId);
+                    if (existingSelectedProcces != null)
+                    {
+                        for (var i = 0; i < formFilesWithCategories.Files.Count; i++)
+                        {
+                            var path = await _fileService.SaveFile(formFilesWithCategories.Files[i]);
+                            var attachment = new Attachment();
+                            attachment.DateOfCreture = DateTime.UtcNow;
+                            attachment.Caption = Path.GetFileNameWithoutExtension(path);
+                            attachment.AttachmentData = path;
+                            attachment.Category= _attachmentService.MapStringToAttachmentCategory( formFilesWithCategories[$"file_{i}_category"]);
+                            _dbContext.Attachemnts.Add(attachment);
+                            await _dbContext.SaveChangesAsync();
+                            existingSelectedProcces.Attachments.Add(attachment);
+                            await _dbContext.SaveChangesAsync();
+                        }
+                        await transaction.CommitAsync();
+                    }
+                    return existingSelectedProcces;
+                }
+                catch (Exception ex) { return null; }
+            }
+        }
         public async Task<bool> DeleteProcces(int id)
         {
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())

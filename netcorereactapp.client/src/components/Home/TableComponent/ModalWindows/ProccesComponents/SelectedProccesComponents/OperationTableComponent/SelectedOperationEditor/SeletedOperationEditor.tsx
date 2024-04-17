@@ -10,7 +10,10 @@ import {Operation} from "../../../../../../../../Models/ProccesOperation/Operati
 import config from '../../../../../../../../config/config.json'
 import {CenteredDivColumn, CenteredDivRow} from "../../../../../../CommonComponents/CenteredDivRow.tsx";
 import {StyledTextField} from "../../SelectedProcces.tsx";
-import {RenderAttachmentsComponent} from "../../../../../../Services/AttachmentService.tsx";
+import {
+    RenderAttachmentsComponent,
+    saveOperationWithAttachments
+} from "../../../../../../Services/AttachmentService.tsx";
 import SelectingFilesComponents from "../../../../../../CommonComponents/SelectingFilesComponents.tsx";
 import ConstructionSharpIcon from '@mui/icons-material/ConstructionSharp';
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -45,7 +48,7 @@ export const SeletedOperationEditor = forwardRef((props, ref) => {
     const saveEdtingOper = async () => {
         //console.log("test")
         try {
-            await saveOperation(); // Ждем завершения выполнения функции saveOperation
+            await saveOperationWithAttachments(oper,selectedFiles); // Ждем завершения выполнения функции saveOperation
             props.notif()
             props.onClose(); // После успешного завершения вызываем onClose
         } catch (error) {
@@ -58,33 +61,7 @@ export const SeletedOperationEditor = forwardRef((props, ref) => {
             saveEdtingOper();
         },
     }));
-    const saveOperation = async () => {
-        try {
-            const tokenValue = localStorage.getItem("authToken");
-            const formData = new FormData();
-            selectedFiles.forEach((file, index) => {
-                formData.append(`file${index}`, file);
-            });
-            //console.info('Перед отправкой запроса о сохраненнии изменения\n',oper)
-            formData.append("operation", JSON.stringify(oper))
-            const response = await axios.put(
-                `${config.apiUrl}/operation/${oper.id}`,
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${tokenValue}`,
-                    },
-                }
-            );
-            //console.log(response.status)
-            if (response.status === 200) {
-            }
-        } catch (error) {
-            console.error("Error during request:", error);
-            throw error; // Передаем ошибку дальше, чтобы ее обработать в вызывающем коде
-        }
-    };
+
     const [visibleEquipmentList, setVisibleEquipmentList] = useState(false);
     const toggleVisibleEquipmentList = () => {
         setVisibleEquipmentList(!visibleEquipmentList);
@@ -391,6 +368,7 @@ export const SeletedOperationEditor = forwardRef((props, ref) => {
                             renderAttachments (oper.attachments)
                         }*/}
                             {oper.attachments &&
+                                oper.attachments.length!==0 &&
                                 <RenderAttachmentsComponent
                                     attachments={oper.attachments}
                                     send_request={props.onClose}

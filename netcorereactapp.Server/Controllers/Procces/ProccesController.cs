@@ -100,7 +100,8 @@ namespace netcorereactapp.Server.Controllers.ProccesController
         public async Task<IActionResult> UpdateProccesesFiles(int proccedId, IFormCollection form
             )
         {
-            var res = await _proccesService.AddingAttachmentsToSelectedProcces(proccedId, form.Files);
+            //var res = await _proccesService.AddingAttachmentsToSelectedProcces(proccedId, form.Files);
+            var res = await _proccesService.AddingAttachmentsWithCategoriesToSelectedProcces(proccedId, form);
             if (res != null)
             {
                 return Ok(res);

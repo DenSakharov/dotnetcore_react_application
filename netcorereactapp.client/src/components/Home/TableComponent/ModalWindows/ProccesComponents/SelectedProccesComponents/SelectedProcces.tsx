@@ -8,7 +8,7 @@ import {
     RenderAttachmentsComponent
 } from "../../../../Services/AttachmentService.tsx";
 import {CenteredDivColumn, CenteredDivRow} from "../../../../CommonComponents/CenteredDivRow.tsx";
-import {Box, CircularProgress, IconButton, ListItemAvatar, Tab, Tabs, TextField, Typography} from "@mui/material";
+import {Box, CircularProgress, Grid, IconButton, ListItemAvatar, Tab, Tabs, TextField, Typography} from "@mui/material";
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 import RemoveSharpIcon from '@mui/icons-material/RemoveSharp';
 import AssignmentTurnedInSharpIcon from '@mui/icons-material/AssignmentTurnedInSharp';
@@ -264,20 +264,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                                 renderAttachments(selectedProcces.attachments)
                             }*/}
 
-                        {selectedProcces.attachments &&
-                            <RenderAttachmentsComponent
-                                attachments={selectedProcces.attachments}
-                                send_request={update_dependencies_selected_procces}
-                            />
-                        }
-                        <IconButton onClick={toggleInfoVisibility}>
-                            {infoVisible ? <RemoveSharpIcon/> : <AddSharpIcon/>}
-                        </IconButton>
-                        {infoVisible && (
-                            <div>
-                                <SelectingFilesComponents onSelectedFilesChange={addAttachments}/>
-                            </div>
-                        )}
+
                     </CenteredDivRow>
 
                     <Tabs
@@ -293,6 +280,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                         }}
                     >
                         <Tab label="Операции выбранного процесса"/>
+                        <Tab label="Прикрепленные вложения процесса"/>
                         <Tab label="История изменений"/>
                         {/* Добавьте другие вкладки по аналогии */}
                     </Tabs>
@@ -311,6 +299,26 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
 
                     </TabPanel>
                     <TabPanel value={value} index={1}>
+                        <CenteredDivColumn>
+                            {selectedProcces.attachments &&
+                                selectedProcces.attachments.length!==0
+                                &&
+                                    <RenderAttachmentsComponent
+                                        attachments={selectedProcces.attachments}
+                                        send_request={update_dependencies_selected_procces}
+                                    />
+                                }
+                            <CenteredDivColumn >
+                                <IconButton onClick={toggleInfoVisibility}>
+                                    {infoVisible ? <RemoveSharpIcon sx={{color:'white',}}/> : <AddSharpIcon sx={{color:'white',}}/>}
+                                </IconButton>
+                                {infoVisible && (
+                                    <SelectingFilesComponents onSelectedFilesChange={addAttachments}/>
+                                )}
+                            </CenteredDivColumn>
+                        </CenteredDivColumn>
+                    </TabPanel>
+                    <TabPanel value={value} index={2}>
                         <Typography variant="body1">
                             История процесса :
                         </Typography>

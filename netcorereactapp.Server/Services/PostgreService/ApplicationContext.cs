@@ -91,6 +91,9 @@ namespace netcorereactapp.Server.Services.PostgreService
                 .WithMany(procces => procces.Attachments)
                 .HasForeignKey(fk => fk.ProccedId)
                 .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Attachment>()
+                .Property(a => a.Category)
+                .IsRequired(false); // Разрешаем значение NULL для столбца категории
 
             modelBuilder.Entity<Equipment>()
                 .HasOne(equipment => equipment.Operation)

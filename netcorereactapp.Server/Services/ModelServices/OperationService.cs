@@ -2,6 +2,7 @@
 using ClassesLibrary.Models;
 using ClassesLibrary.Services;
 using Microsoft.EntityFrameworkCore;
+using netcorereactapp.Server.Services.FileServices;
 using netcorereactapp.Server.Services.FileServices.Interfaces;
 using netcorereactapp.Server.Services.ModelServices.Interfaces;
 using netcorereactapp.Server.Services.PostgreService;
@@ -14,11 +15,13 @@ namespace netcorereactapp.Server.Services.ModelServices
         private readonly ApplicationContext _dbContext;
         private readonly ILogger<OperationService> _logger;
         private readonly IFileService _fileService;
-        public OperationService(ApplicationContext dbContext, ILogger<OperationService> logger, IFileService fileService)
+        private readonly IAttachmentService _attachmentService;
+        public OperationService(ApplicationContext dbContext, ILogger<OperationService> logger, IFileService fileService, IAttachmentService attachmentService)
         {
             _dbContext = dbContext;
             _logger = logger;
             _fileService = fileService;
+            _attachmentService = attachmentService;
         }
         public async Task Get(int id)
         {
@@ -79,22 +82,22 @@ namespace netcorereactapp.Server.Services.ModelServices
                         existingSelectedOperation.responsibleGroup = operation.responsibleGroup;
                         existingSelectedOperation.textOper = operation.textOper;
 
-                       /* try
-                        {
-                            existingSelectedOperation.Equipments = operation.Equipments;
-                            await _dbContext.SaveChangesAsync();
-                        }
-                        catch (Exception ex) { }
-*/
+                        /* try
+                         {
+                             existingSelectedOperation.Equipments = operation.Equipments;
+                             await _dbContext.SaveChangesAsync();
+                         }
+                         catch (Exception ex) { }
+ */
                         // Получаем файл из FormData
-                        IFormFileCollection files = form.Files;
-                        foreach (var file in files)
+                        for (var i = 0; i < form.Files.Count; i++)
                         {
-                            var path = await _fileService.SaveFile(file);
+                            var path = await _fileService.SaveFile(form.Files[i]);
                             var attachment = new Attachment();
                             attachment.DateOfCreture = DateTime.UtcNow;
                             attachment.Caption = Path.GetFileNameWithoutExtension(path);
                             attachment.AttachmentData = path;
+                            attachment.Category = _attachmentService.MapStringToAttachmentCategory(form[$"file_{i}_category"]);
                             _dbContext.Attachemnts.Add(attachment);
                             await _dbContext.SaveChangesAsync();
                             existingSelectedOperation.Attachments.Add(attachment);
@@ -104,6 +107,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                         existingSelectedOperation.DateOfEdited = DateTime.UtcNow;
                         // Сохраняем изменения в базе данных
                         await _dbContext.SaveChangesAsync();
+                        await transaction.CommitAsync();
                        
                     }
                     return MapService.MapChildOperations(new List<Operation> { existingSelectedOperation }).First();

@@ -1,18 +1,25 @@
 import  {useEffect, useRef, useState} from "react";
-import {IconButton, ListItem, ListItemAvatar, ListItemText} from "@mui/material";
+import {IconButton, List, ListItem, ListItemAvatar, ListItemText, MenuItem, Select, Typography} from "@mui/material";
 import AttachFileSharpIcon from "@mui/icons-material/AttachFileSharp";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
-    CenteredDivColumn
+    CenteredDivColumn, CenteredDivRow
 } from "./CenteredDivRow.tsx";
+import {AttachmentCategory} from "../../../Models/ProccesOperation/Attachment.tsx";
 
-export default function SelectingFilesComponents(props ) {
+export interface FileWithCategory{
+    file: File,
+    category: string,
+}
+
+export default function SelectingFilesComponents(props) {
     const fileInputRef = useRef(null);
-    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [selectedFiles, setSelectedFiles] = useState<FileWithCategory[]>([]);
+
     useEffect(() => {
-        //console.log("SelectingFiles useEffect selectedFiles :\n",selectedFiles)
-        props.onSelectedFilesChange(selectedFiles);
+        props.onSelectedFilesChange(selectedFiles.map(file => ({ ...file, category: file.category || '' })));
     }, [selectedFiles]);
+
     const handleDragOver = (event) => {
         event.preventDefault();
     };
@@ -20,65 +27,87 @@ export default function SelectingFilesComponents(props ) {
     const handleDrop = (event) => {
         event.preventDefault();
         const files = event.dataTransfer.files;
-        setSelectedFiles(prevSelectedFiles => [...prevSelectedFiles, ...files]);
-
+        setSelectedFiles(prevSelectedFiles => [...prevSelectedFiles, ...files.map(file => ({ file, category: '' }))]);
     };
+
     const addAttachments = () => {
-        // Вызовет нажатие на скрытый input
         fileInputRef.current.click();
     };
+
     const onChangeLocal = (event) => {
-        const files = event.target.files;
-        //console.log("files into SelectingFiles component :\n",files)
-        setSelectedFiles(prevSelectedFiles => [...prevSelectedFiles, ...files]);
+        const files = Array.from(event.target.files);
+        setSelectedFiles(prevSelectedFiles => [...prevSelectedFiles, ...files.map(file => ({ file, category: '' }))]);
+    };
 
+    const handleSelectCategoryChanged = (event, index) => {
+        const newSelectedFiles = [...selectedFiles];
+        newSelectedFiles[index].category = event.target.value;
+        setSelectedFiles(newSelectedFiles);
     };
-    const removeFile = (indexToRemove) => {
-        setSelectedFiles(prevSelectedFiles =>
-            prevSelectedFiles.filter((file, index) => index !== indexToRemove)
-        );
+
+    const removeFile = (index) => {
+        const newSelectedFiles = [...selectedFiles];
+        newSelectedFiles.splice(index, 1);
+        setSelectedFiles(newSelectedFiles);
     };
+
     return (
-        <div>
-            <CenteredDivColumn>
-                {/* Область для перетаскивания */}
-                <div
-                    style={{
-                        border: '2px dashed #cccccc',
-                        padding: '20px',
-                        textAlign: 'center'
-                    }}
-                    onDragOver={handleDragOver}
-                    onDrop={handleDrop}
-                >
-                    Перетащите файлы сюда или нажмите для выбора
-                </div>
-
-                {/* Инпут для выбора файла */}
-                <input
-                    ref={fileInputRef}
-                    type="file"
-                    multiple
-                    onChange={onChangeLocal}
-                    style={{display: 'none'}} // Скрытый input
-                />
-                <IconButton onClick={addAttachments}>
-                    <AttachFileSharpIcon/>
-                </IconButton>
-                {/* Список выбранных файлов */}
-                <ul>
-                    {selectedFiles.map((file, index) => (
-                        <ListItem key={index}>
-                            <ListItemText primary={file.name} />
-                            <ListItemAvatar>
-                                <IconButton onClick={() => removeFile(index)} edge="end" aria-label="delete">
-                                    <DeleteIcon  />
-                                </IconButton>
-                            </ListItemAvatar>
-                        </ListItem>
-                    ))}
-                </ul>
+        <CenteredDivColumn>
+            <CenteredDivColumn
+                style={{
+                    backgroundColor: 'darkgreen',
+                    border: '2px dashed #cccccc',
+                    borderRadius: '25px',
+                    padding: '1px',
+                    textAlign: 'center',
+                    width:'300px',
+                    height: '200px',
+                }}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+            >
+                Перетащите файлы сюда или нажмите для выбора
             </CenteredDivColumn>
-        </div>
+
+            <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                onChange={onChangeLocal}
+                style={{ display: 'none' }}
+            />
+            <IconButton onClick={addAttachments}>
+                <AttachFileSharpIcon />
+            </IconButton>
+
+            <List>
+                {selectedFiles.map((fileWithCategory, index) => (
+                    <ListItem key={index}>
+                        <CenteredDivRow>
+                        <ListItemText primary={fileWithCategory.file.name} />
+                        <ListItemAvatar>
+                            <IconButton onClick={() => removeFile(index)} edge="end" aria-label="delete">
+                                <DeleteIcon />
+                            </IconButton>
+                        </ListItemAvatar>
+                        <Select
+                            value={fileWithCategory.category}
+                            onChange={(event) => handleSelectCategoryChanged(event, index)}
+                            sx={{
+                                color: "white"
+                            }}
+                        >
+
+                            {Object.values(AttachmentCategory).map((category) => (
+                                <MenuItem key={category} value={category}>
+                                    {category}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        </CenteredDivRow>
+                    </ListItem>
+                ))}
+            </List>
+        </CenteredDivColumn>
     );
 }

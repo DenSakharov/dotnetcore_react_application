@@ -106,6 +106,7 @@ namespace ClassesLibrary.Services
                 var e = new AttachmentDTO();
                 e.AttachmentData = attachmentModel.AttachmentData;
                 e.Id = attachmentModel.Id;
+                e.Category= attachmentModel.Category;
                 list_of_AttacmentDTO.Add(e);
             }
             return list_of_AttacmentDTO;
@@ -174,7 +175,8 @@ namespace ClassesLibrary.Services
                 var attachment = new Attachment
                 {
                     Id = attachmentDTO.Id,
-                    AttachmentData = attachmentDTO.AttachmentData
+                    AttachmentData = attachmentDTO.AttachmentData,
+                    Category = attachmentDTO.Category,
                 };
                 attachments.Add(attachment);
             }
