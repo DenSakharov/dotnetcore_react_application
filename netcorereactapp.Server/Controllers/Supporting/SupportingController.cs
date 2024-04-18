@@ -28,19 +28,20 @@ namespace netcorereactapp.Server.Controllers.Supporting
             _dbContext = dbContext;
             _logger = logger;
             _supportingService = supportingService;
+
         }
-        private readonly string path_excel_template = "C:\\Uploads\\templates.xlsx";
+        //private readonly string path_excel_template = "C:\\Uploads\\templates.xlsx";
         [HttpGet("template_operations")]
         public async Task<List<OperationDTO>> GetTemplateOpertionsList()
         {
-            var lst = _supportingService.ReadExcelToGetTemplateOperations(path_excel_template, "операции");
+            var lst = _supportingService.ReadExcelToGetTemplateOperations( "операции");
             //ReadExcel(path_excel_template, "оборудование");
             return lst;
         }
         [HttpGet("template_equipments")]
         public async Task<List<EquipmentDTO>> GetTemplateEquipmentList()
         {
-            var lst = _supportingService.ReadExcelToGetTemplateEquipments(path_excel_template, "оборудование");
+            var lst = _supportingService.ReadExcelToGetTemplateEquipments("оборудование");
             return lst;
         }
         [HttpPost("createroutemap")]

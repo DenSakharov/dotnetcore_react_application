@@ -14,7 +14,7 @@ namespace ExcelConstructorLibrary.RouteMap
     {
         //private static readonly string pathMainTemplate = "C:\\Uploads\\mainTemplateExcel.xlsx";
         static string destinationFilePath;
-        public static byte[] CreateCopyFileRouteMap(string destinationFilePath_, Procces procces,string pathMainTemplate)
+        public static byte[] CreateCopyFileRouteMap(string destinationFilePath_, Procces procces, string pathMainTemplate)
         {
             destinationFilePath = destinationFilePath_;
             //создание копии пустого шаблона
@@ -54,8 +54,8 @@ namespace ExcelConstructorLibrary.RouteMap
                 sourceRange = worksheet.Cells[$"A34:DF64"];
             }
         }
-       
-      
+
+
         static byte[] export_excel(string destinationFilePath, Procces procces)
         {
             //get_template_table();
@@ -65,11 +65,11 @@ namespace ExcelConstructorLibrary.RouteMap
 
                 var worksheet = package.Workbook.Worksheets["МК"];
                 //данные процесса в шапке 1 ой страницы
-                SetCellValue(worksheet, $"AR11", procces.Caption, true,12);
+                SetCellValue(worksheet, $"AR11", procces.Caption, true, 12);
                 var currentValue = worksheet.Cells[$"CO8"].Value;
-                SetCellValue(worksheet, $"CO8", currentValue.ToString()+procces.number, false,12);
-                SetCellValue(worksheet, $"F13", procces.material, false,10);
-                SetCellValue(worksheet, $"BI15", procces.profile_size, false,10);
+                SetCellValue(worksheet, $"CO8", currentValue.ToString() + procces.number, false, 12);
+                SetCellValue(worksheet, $"F13", procces.material, false, 10);
+                SetCellValue(worksheet, $"BI15", procces.profile_size, false, 10);
                 SetCellValue(worksheet, $"CD15", procces.kd, false, 10);
                 SetCellValue(worksheet, $"CJ15", procces.m3, false, 10);
 
@@ -178,6 +178,30 @@ namespace ExcelConstructorLibrary.RouteMap
                          (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
                      }*/
                     #endregion  
+                    //логика для добвления текста операции
+                    try
+                    {
+
+                        insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
+                        var cellWidth = GetCellsWidth(worksheet, $"W{row}:DE{row}");
+                        var res_lst = SplitStringToFitCell(operation.textOper, cellWidth * 7.4);
+                        foreach (var lst in res_lst)
+                        {
+                            var res = lst.ToArray();
+                            insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
+                            SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
+                            SetCellValue(worksheet, $"A{row}", "О", false);
+
+                            row++;
+                            countPageOperation++;
+                            (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                    //логика заполнения Excel для дочрених операций (переходов)
                     try
                     {
                         foreach (var childOperation in operation.ChildsOperations)
@@ -195,7 +219,7 @@ namespace ExcelConstructorLibrary.RouteMap
                                         var res = lst.ToArray();
                                         insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
                                         SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
-                                        SetCellValue(worksheet, $"A{row}", "О", false);
+                                        SetCellValue(worksheet, $"A{row}", "О1", false);
 
                                         row++;
                                         countPageOperation++;
@@ -207,7 +231,7 @@ namespace ExcelConstructorLibrary.RouteMap
                             {
                                 insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
                                 SetCellValue(worksheet, $"W{row}", childOperation.Caption, false);
-                                SetCellValue(worksheet, $"A{row}", "О", false);
+                                SetCellValue(worksheet, $"A{row}", "О1", false);
                                 row++;
                                 countPageOperation++;
                                 (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
@@ -218,11 +242,12 @@ namespace ExcelConstructorLibrary.RouteMap
                              countPageOperation++;
                              (row, countPageOperation) = IncrementRow(row, countPageOperation, package);*/
                         }
-                    }catch(Exception ex)
+                    }
+                    catch (Exception ex)
                     {
                         Console.WriteLine(ex.ToString());
                     }
-                    }
+                }
 
                 /*  for (int row = startRow; 
                       ; row++)
@@ -290,7 +315,7 @@ namespace ExcelConstructorLibrary.RouteMap
         }
         static List<List<string>> SplitStringToFitCell(string value, double cellWidth)
         {
-            List<List<string>>result_lst=new List<List<string>>();
+            List<List<string>> result_lst = new List<List<string>>();
             List<string> parts = new List<string>();
             string[] words = value.Split(' '); // Разбиваем строку на отдельные слова
 
@@ -342,7 +367,7 @@ namespace ExcelConstructorLibrary.RouteMap
                 return widthInPixels;
             }
         }
-        static double GetCellsWidth(ExcelWorksheet worksheet,string rangeAddress)
+        static double GetCellsWidth(ExcelWorksheet worksheet, string rangeAddress)
         {
             // Получаем объект диапазона ячеек
             ExcelRangeBase range = worksheet.Cells[rangeAddress];
@@ -359,7 +384,7 @@ namespace ExcelConstructorLibrary.RouteMap
 
             return totalWidth;
         }
-        static void SetCellValue(ExcelWorksheet worksheet,string cor,string value,bool bold,int fontSize=9)
+        static void SetCellValue(ExcelWorksheet worksheet, string cor, string value, bool bold, int fontSize = 9)
         {
             var cell = worksheet.Cells[cor];
             // Устанавливаем значение ячейки
@@ -404,7 +429,8 @@ namespace ExcelConstructorLibrary.RouteMap
                 body_table_sourceRange.Copy(body_table_destinationRange,
                        ExcelRangeCopyOptionFlags.ExcludeValues
                        );
-            } catch(Exception ex) { Console.WriteLine(ex.ToString()); }
+            }
+            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
         }
         static void insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(int destination, ExcelPackage package)
         {
@@ -416,9 +442,10 @@ namespace ExcelConstructorLibrary.RouteMap
                 body_table_sourceRange.Copy(body_table_destinationRange,
                        ExcelRangeCopyOptionFlags.ExcludeValues
                        );
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine( ex.ToString() );
+                Console.WriteLine(ex.ToString());
             }
         }
         static void insertTemplateTable(int destinationStart, int destinationEnd, ExcelPackage package)

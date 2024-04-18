@@ -1,18 +1,26 @@
-import {CenteredDivRow} from "../Home/CommonComponents/CenteredDivRow.tsx";
+import {CenteredDivColumn, CenteredDivRow} from "../Home/CommonComponents/CenteredDivRow.tsx";
 import {useEffect, useRef, useState} from "react";
 import {StyledTextField} from "./FiledsCompoment.tsx";
-import {FormControl, IconButton, InputLabel, MenuItem, Select} from "@mui/material";
+import {FormControl, IconButton, InputLabel, keyframes, MenuItem, Select, Typography} from "@mui/material";
 import axios from "axios";
 import config from "../../config/config.json";
 import PlaylistAddCheckTwoToneIcon from '@mui/icons-material/PlaylistAddCheckTwoTone';
 import {Operation} from "../../Models/ProccesOperation/Operation.tsx";
+import {buttonHover} from "../../styles/Annimations/Buttons/button_animations_hover.tsx";
+import {selectStyle} from "../../styles/SingleComponents/Select/selectStyle.ts";
 
 export const NewOperation=({hidden,addChildOperartion})=>{
     //const [operation,setOperation]=useState<Operation>()
-    const [operation, setOperation] = useState<Operation >({
-        operation: '',
-        // Другие свойства
+    const [operation, setOperation] = useState({
+        operation: {
+            caption:'',
+            number: '',
+            laborCost: '',
+            responsibleGroup: '',
+            textOper:'',
+        }
     });
+    const [errors, setErrors] = useState({});
     useEffect(()=>{
         //console.log('NewOperation operation\n',operation)
     }),[operation]
@@ -53,15 +61,22 @@ export const NewOperation=({hidden,addChildOperartion})=>{
             console.error("Before request \n", e)
         }
     };
-    
+
+    const [error, setError] = useState(false);
     const handleChangeSelect = (event) => {
         setSelectedTemplateOperation(event.target.value);
         //console.log('event.target.value\n',event.target.value)
         const capt= event.target.value.caption
         const equip= event.target.value.equipments
         const childsOperations= event.target.value.childsOperations
-        //console.log('equip',equip)
-        //console.log('test\n',operation)
+        const textOper= event.target.value.textOper
+
+        if (event.target.value.error) {
+            // Обработка ошибки: вывод сообщения об ошибке или другие действия
+            console.error('Ошибка в выбранном значении:', event.target.value.error);
+            // Остановка обновления состояния
+            return;
+        }
         setOperation(prevProcess => {
 
             // Создаем новый объект operation с обновленными полями
@@ -70,7 +85,8 @@ export const NewOperation=({hidden,addChildOperartion})=>{
                 // Устанавливаем новые значения для полей caption и equipments
                 caption: capt,
                 equipments: equip,
-                childsOperations: childsOperations
+                childsOperations: childsOperations,
+                textOper:textOper,
             };
             // Возвращаем обновленный объект prevProcess с обновленным operation
             return {
@@ -82,24 +98,60 @@ export const NewOperation=({hidden,addChildOperartion})=>{
 
     const handleTextFieldChange = (event) => {
         const { name, value } = event.target;
-        setOperation(prevState => ({
-            ...prevState,
-            operation: {
-                ...prevState?.operation, // Добавлена проверка на существование operation
-                [name]: value
-            }
-        }));
+        // Валидация для поля "number"
+        if (name === 'number' && !value.match(/^\d+$/)) {
+            setErrors(prevErrors => ({
+                ...prevErrors,
+                [name]: 'Пожалуйста, введите число.'
+            }));
+        } else {
+            setErrors(prevErrors => ({
+                ...prevErrors,
+                [name]: null
+            }));
+            setOperation(prevState => ({
+                ...prevState,
+                operation: {
+                    ...prevState?.operation,
+                    [name]: value
+                }
+            }));
+        }
     };
 
-    const addBtn=()=>{
-        //console.log('addBtn\n',operation)
-        addChildOperartion({operation})
+    const addBtn = () => {
+        const oper = operation.operation;
+        //console.log('', oper);
+        const allFieldsFilled = Object.entries(oper).every(([fieldName, value]) => {
+            // Проверяем, что значение не пустое, является строкой и не является массивом или объектом
+            return (typeof value === 'string' && value.trim() !== '') || Array.isArray(value) || typeof value === 'object';
+        });
+
+        if (!allFieldsFilled) {
+            // Если не все поля заполнены, устанавливаем сообщения об ошибке для каждого незаполненного поля
+            const newErrors = {};
+            for (const fieldName in oper) {
+                if (typeof oper[fieldName] === 'string' && !oper[fieldName].trim() && fieldName !== 'equipments') {
+                    newErrors[fieldName] = 'Это поле обязательно для заполнения.';
+                }
+            }
+            setErrors(newErrors);
+            console.error(errors)
+            return; // Прерываем отправку данных
+        }
+        //console.log('addBtn\n', operation);
+        addChildOperartion({ operation });
         hidden();
-    }
+    };
     return(
         <CenteredDivRow>
             <IconButton onClick={addBtn} sx={{color: 'white'}}>
-                 <PlaylistAddCheckTwoToneIcon style={{ fontSize: 50 }}/>
+                <CenteredDivColumn
+                    sx={{ ...buttonHover.centeredDivColumn }}
+                >
+                    <PlaylistAddCheckTwoToneIcon />
+                    <Typography sx={{fontSize:13}}>Добавить</Typography>
+                </CenteredDivColumn>
             </IconButton>
             <StyledTextField
                 ref={inputRef}
@@ -110,16 +162,11 @@ export const NewOperation=({hidden,addChildOperartion})=>{
                 onChange={handleTextFieldChange}
                 autoFocus
                 sx={{width: '10ch',}}
+
+                error={Boolean(errors.number)}
+                helperText={errors.number ? 'Поле обязательно для заполнения' : ''}
             />
-            <FormControl sx={
-                {width: '50ch',
-                    '& .MuiInputBase-input, & .MuiInputBase-multiline, & .MuiInputLabel-root, & .MuiFormHelperText-root': {
-                        color: 'white',
-                        '& .MuiInputBase-input:focus, & .MuiInputBase-multiline:focus': {
-                            color: 'black', // Измените цвет текста при выделении
-                        },
-                    },
-            }}>
+            <FormControl sx={selectStyle}>
                 <InputLabel id="select-label">Выберите что-нибудь</InputLabel>
                 <Select
                     labelId="select-label"
@@ -144,6 +191,9 @@ export const NewOperation=({hidden,addChildOperartion})=>{
                 name="laborCost"
                 onChange={handleTextFieldChange}
                 autoFocus
+
+                error={Boolean(errors.laborCost)}
+                helperText={errors.laborCost ? 'Поле обязательно для заполнения' : ''}
             />
             <StyledTextField
                 ref={inputRef}
@@ -153,6 +203,9 @@ export const NewOperation=({hidden,addChildOperartion})=>{
                 name="responsibleGroup"
                 onChange={handleTextFieldChange}
                 autoFocus
+
+                error={Boolean(errors.responsibleGroup)}
+                helperText={errors.responsibleGroup ? 'Поле обязательно для заполнения' : ''}
             />
         </CenteredDivRow>
     )

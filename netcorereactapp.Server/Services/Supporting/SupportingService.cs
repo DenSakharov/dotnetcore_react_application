@@ -26,11 +26,13 @@ namespace netcorereactapp.Server.Services.Supporting
         {
             _configuration = configuration;
             path_to_files = _configuration["Configuration:fileDirectoryPath"];
+            path_excel_template = path_to_files + path_excel_template;
             _dbContext = dbContext;
             _logger = logger;
             _fileService = fileService;
         }
         private readonly string path_to_files;
+        private readonly string path_excel_template = "\\templates.xlsx";
         public async Task<byte[]> CreateRouteMapTemplate(Procces procces = null)
         {
             try
@@ -104,9 +106,9 @@ namespace netcorereactapp.Server.Services.Supporting
                 LoadChildOperationsRecursive(childOperation);
             }
         }
-        public List<OperationDTO> ReadExcelToGetTemplateOperations(string filePath, string sheetName)
+        public List<OperationDTO> ReadExcelToGetTemplateOperations(string sheetName)
         {
-            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(filePath, true))
+            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(path_excel_template, true))
             {
                 List<Oper> operations = new List<Oper>();
 
@@ -142,7 +144,9 @@ namespace netcorereactapp.Server.Services.Supporting
                                 }
                                 if (cell.CellReference.ToString().StartsWith('C'))
                                 {
-                                    if (text.Contains("Примечание"))
+                                    operation.textOper += " " + text;
+                                    //логика для чтения шаблона Excel и получения дочрених операций (переходов)
+                                    /*if (text.Contains("Примечание"))
                                     {
                                         childOperation = new Oper();
                                         childOperation.Caption = text;
@@ -164,7 +168,7 @@ namespace netcorereactapp.Server.Services.Supporting
                                         continue;
                                     }
 
-                                    childOperation.Caption += " " + text;
+                                    childOperation.Caption += " " + text;*/
                                 }
                                 if (cell.CellReference.ToString().StartsWith('D'))
                                 {
@@ -200,9 +204,9 @@ namespace netcorereactapp.Server.Services.Supporting
                 }
             }
         }
-        public List<EquipmentDTO> ReadExcelToGetTemplateEquipments(string filePath, string sheetName)
+        public List<EquipmentDTO> ReadExcelToGetTemplateEquipments(string sheetName)
         {
-            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(filePath, true))
+            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(path_excel_template, true))
             {
 
                 List<EquipmentDTO> operations = new List<EquipmentDTO>();

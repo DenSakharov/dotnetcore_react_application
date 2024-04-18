@@ -11,6 +11,7 @@ import {OperationList} from "./OperationList.tsx";
 import '../../styles/FiledsCompoment.scss'
 import axios from "axios";
 import config from "../../config/config.json";
+import {buttonHover} from "../../styles/Annimations/Buttons/button_animations_hover.tsx";
 
 export const FiledsCompoment
     = forwardRef((props, ref) => {
@@ -20,7 +21,9 @@ export const FiledsCompoment
         material : '',
         m3 : '',
         kd : '',
+        profile_size: '',
     })
+    const [errors, setErrors] = useState({});
     useEffect(()=>{
             //console.log('FiledsCompoment useEffect\n',procces)
     }),[procces]
@@ -41,8 +44,30 @@ export const FiledsCompoment
         props.onClose()
     };
     const saveProcces=async()=>{
+        console.log('',procces)
+        // Проверяем, что все поля заполнены
+        const allFieldsFilled = Object.values(procces).every(value => {
+            // Проверяем, является ли значение строкой и, если да, обрезаем пробельные символы
+            if (typeof value === 'string') {
+                return value.trim() !== '';
+            }
+            // Если значение не является строкой, считаем его заполненным
+            return true;
+        });
+        if (!allFieldsFilled) {
+            // Если не все поля заполнены, устанавливаем сообщения об ошибке для каждого незаполненного поля
+            const newErrors = {};
+            for (const fieldName in procces) {
+                if (!procces[fieldName].trim()) {
+                    newErrors[fieldName] = 'Это поле обязательно для заполнения.';
+                }
+            }
+            setErrors(newErrors);
+            return; // Прерываем отправку данных
+        }
+
         const tokenValue = localStorage.getItem("authToken");
-        //console.log('Complete procces data before send request :\n',procces)
+        console.log('Complete procces data before send request :\n',procces)
         try {
             const response = await axios.post(
                 `${config.apiUrl}/procces/create`,
@@ -74,10 +99,24 @@ export const FiledsCompoment
         const {name, value} = event.target;
         const valu = inputRef.current.value;
         //console.log('Value changed:', valu);
-        setProcces(prevProcces => ({
-            ...prevProcces,
-            [name]: value
-        }));
+
+        // Валидация для поля "number"
+        if (name === 'number' && !value.match(/^\d+$/)) {
+            setErrors(prevErrors => ({
+                ...prevErrors,
+                [name]: 'Пожалуйста, введите число.'
+            }));
+        } else {
+            setErrors(prevErrors => ({
+                ...prevErrors,
+                [name]: null
+            }));
+
+            setProcces(prevProcces => ({
+                ...prevProcces,
+                [name]: value
+            }));
+        }
     };
 
     const [hidden, setHidden] = useState(false);
@@ -109,7 +148,7 @@ export const FiledsCompoment
                     backgroundColor: 'darkgreen',
                     border: '2px solid ',
                     borderRadius: '25px',
-                    padding: '10px'
+                    padding: '20px'
                 }}
             >
                 <CenteredDivColumn>
@@ -123,6 +162,9 @@ export const FiledsCompoment
                             onChange={handleTextFieldChange}
                             autoFocus
                             sx={{width: '10ch',}}
+
+                            error={Boolean(errors.number)}
+                            helperText={errors.number}
                         />
                         <StyledTextField
                             ref={inputRef}
@@ -132,9 +174,12 @@ export const FiledsCompoment
                             name="caption"
                             onChange={handleTextFieldChange}
                             autoFocus
+
+                            error={Boolean(errors.caption)}
+                            helperText={errors.caption}
                         />
                     </CenteredDivRow>
-                    <IconButton onClick={toggleInfoVisibility} sx={{color: 'white'}}>
+                    <IconButton onClick={toggleInfoVisibility} sx={{ ...buttonHover.iconButton }}>
                         {hidden ? <RemoveCircleTwoToneIcon style={{ fontSize: 50 }}/> :
                             <AddBoxSharpIcon style={{ fontSize: 50 }}/>}
                     </IconButton>
@@ -148,6 +193,9 @@ export const FiledsCompoment
                         name="material"
                         onChange={handleTextFieldChange}
                         autoFocus
+
+                        error={Boolean(errors.material)}
+                        helperText={errors.material}
                     />
                     <StyledTextField
                         ref={inputRef}
@@ -157,6 +205,9 @@ export const FiledsCompoment
                         name="kd"
                         onChange={handleTextFieldChange}
                         autoFocus
+
+                        error={Boolean(errors.kd)}
+                        helperText={errors.kd}
                     />
                 </CenteredDivColumn>
                 <CenteredDivColumn>
@@ -168,6 +219,9 @@ export const FiledsCompoment
                         name="m3"
                         onChange={handleTextFieldChange}
                         autoFocus
+
+                        error={Boolean(errors.m3)}
+                        helperText={errors.m3}
                     />
                     <StyledTextField
                         ref={inputRef}
@@ -177,6 +231,9 @@ export const FiledsCompoment
                         name="profile_size"
                         onChange={handleTextFieldChange}
                         autoFocus
+
+                        error={Boolean(errors.profile_size)}
+                        helperText={errors.profile_size}
                     />
                 </CenteredDivColumn>
             </CenteredDivRow>
