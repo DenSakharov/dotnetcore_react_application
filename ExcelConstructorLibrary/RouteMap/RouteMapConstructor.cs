@@ -5,9 +5,8 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using System.Text.RegularExpressions;
 using Oper = ClassesLibrary.Models.Operation;
 using OfficeOpenXml;
-using System.Drawing;
-using Font = System.Drawing.Font;
 using System.Text;
+
 namespace ExcelConstructorLibrary.RouteMap
 {
     public static class RouteMapConstructor
@@ -44,14 +43,13 @@ namespace ExcelConstructorLibrary.RouteMap
             }
 
         }
-        static ExcelRange sourceRange;
+
         static void get_template_table()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using (var package = new ExcelPackage(new FileInfo(destinationFilePath)))
             {
                 var worksheet = package.Workbook.Worksheets["МК"];
-                sourceRange = worksheet.Cells[$"A34:DF64"];
             }
         }
 
@@ -65,13 +63,13 @@ namespace ExcelConstructorLibrary.RouteMap
 
                 var worksheet = package.Workbook.Worksheets["МК"];
                 //данные процесса в шапке 1 ой страницы
-                SetCellValue(worksheet, $"AR11", procces.Caption, true, 12);
+                ExcelAssistant.SetCellValue(worksheet, $"AR11", procces.Caption, true, 12);
                 var currentValue = worksheet.Cells[$"CO8"].Value;
-                SetCellValue(worksheet, $"CO8", currentValue.ToString() + procces.number, false, 12);
-                SetCellValue(worksheet, $"F13", procces.material, false, 10);
-                SetCellValue(worksheet, $"BI15", procces.profile_size, false, 10);
-                SetCellValue(worksheet, $"CD15", procces.kd, false, 10);
-                SetCellValue(worksheet, $"CJ15", procces.m3, false, 10);
+                ExcelAssistant.SetCellValue(worksheet, $"CO8", currentValue.ToString() + procces.number, false, 12);
+                ExcelAssistant.SetCellValue(worksheet, $"F13", procces.material, false, 10);
+                ExcelAssistant.SetCellValue(worksheet, $"BI15", procces.profile_size, false, 10);
+                ExcelAssistant.SetCellValue(worksheet, $"CD15", procces.kd, false, 10);
+                ExcelAssistant.SetCellValue(worksheet, $"CJ15", procces.m3, false, 10);
 
 
                 var operations = procces.Operations;
@@ -88,15 +86,15 @@ namespace ExcelConstructorLibrary.RouteMap
                 foreach (var operation in operations)
                 {
                     insertMainOperationRowTemplateStringWithoutValue(row, package);
-                    SetCellValue(worksheet, $"W{row}", operation.Caption, true);
-                    SetCellValue(worksheet, $"A{row}", "A", true);
-                    SetCellValue(worksheet, $"R{row}", operation.number, true);
-                    SetCellValue(worksheet, $"F{row}", operation.responsibleGroup, true);
-                    SetCellValue(worksheet, $"DF{row}", operation.laborCost, true);
+                    ExcelAssistant.SetCellValue(worksheet, $"W{row}", operation.Caption, true);
+                    ExcelAssistant.SetCellValue(worksheet, $"A{row}", "A", true);
+                    ExcelAssistant.SetCellValue(worksheet, $"R{row}", operation.number, true);
+                    ExcelAssistant.SetCellValue(worksheet, $"F{row}", operation.responsibleGroup, true);
+                    ExcelAssistant.SetCellValue(worksheet, $"DF{row}", operation.laborCost, true);
 
                     row++;
                     countPageOperation++;
-                    (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                    (row, countPageOperation) = ExcelAssistant.IncrementRow(row, countPageOperation, package);
                     if (operation.Equipments.Count != 0)
                     {
                         StringBuilder sb = new StringBuilder();
@@ -105,18 +103,18 @@ namespace ExcelConstructorLibrary.RouteMap
                             sb.Append(elem.Caption.ToString() + " ");
                         }
                         insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
-                        var cellWidth = GetCellsWidth(worksheet, $"W{row}:DE{row}");
-                        var res_lst = SplitStringToFitCell(sb.ToString(), cellWidth * 7.5);
+                        var cellWidth = ExcelAssistant.GetCellsWidth(worksheet, $"W{row}:DE{row}");
+                        var res_lst = ExcelAssistant.SplitStringToFitCell(sb.ToString(), cellWidth * 7.5);
                         foreach (var lst in res_lst)
                         {
                             var res = lst.ToArray();
                             insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
-                            SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
-                            SetCellValue(worksheet, $"A{row}", "Б", false);
+                            ExcelAssistant.SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
+                            ExcelAssistant.SetCellValue(worksheet, $"A{row}", "Б", false);
 
                             row++;
                             countPageOperation++;
-                            (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                            (row, countPageOperation) = ExcelAssistant.IncrementRow(row, countPageOperation, package);
                         }
                     }
                     #region Старая логика для инструментов
@@ -183,18 +181,18 @@ namespace ExcelConstructorLibrary.RouteMap
                     {
 
                         insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
-                        var cellWidth = GetCellsWidth(worksheet, $"W{row}:DE{row}");
-                        var res_lst = SplitStringToFitCell(operation.textOper, cellWidth * 7.4);
+                        var cellWidth = ExcelAssistant.GetCellsWidth(worksheet, $"W{row}:DE{row}");
+                        var res_lst = ExcelAssistant.SplitStringToFitCell(operation.textOper, cellWidth * 7.3);
                         foreach (var lst in res_lst)
                         {
                             var res = lst.ToArray();
                             insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
-                            SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
-                            SetCellValue(worksheet, $"A{row}", "О", false);
+                            ExcelAssistant.SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
+                            ExcelAssistant.SetCellValue(worksheet, $"A{row}", "О", false);
 
                             row++;
                             countPageOperation++;
-                            (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                            (row, countPageOperation) = ExcelAssistant.IncrementRow(row, countPageOperation, package);
                         }
                     }
                     catch
@@ -207,34 +205,34 @@ namespace ExcelConstructorLibrary.RouteMap
                         foreach (var childOperation in operation.ChildsOperations)
                         {
                             insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
-                            var valueWidth = GetWidthString(childOperation.Caption);
-                            var cellWidth = GetCellsWidth(worksheet, $"W{row}:DE{row}");
+                            var valueWidth = ExcelAssistant.GetWidthString(childOperation.Caption);
+                            var cellWidth = ExcelAssistant.GetCellsWidth(worksheet, $"W{row}:DE{row}");
                             try
                             {
                                 if (cellWidth < valueWidth)
                                 {
-                                    var res_lst = SplitStringToFitCell(childOperation.Caption, cellWidth * 7.5);
+                                    var res_lst = ExcelAssistant.SplitStringToFitCell(childOperation.Caption, cellWidth * 7.5);
                                     foreach (var lst in res_lst)
                                     {
                                         var res = lst.ToArray();
                                         insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
-                                        SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
-                                        SetCellValue(worksheet, $"A{row}", "О1", false);
+                                        ExcelAssistant.SetCellValue(worksheet, $"W{row}", res[res.Length - 1], false);
+                                        ExcelAssistant.SetCellValue(worksheet, $"A{row}", "О1", false);
 
                                         row++;
                                         countPageOperation++;
-                                        (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                                        (row, countPageOperation) = ExcelAssistant.IncrementRow(row, countPageOperation, package);
                                     }
                                 }
                             }
                             catch
                             {
                                 insertMainChildOperationOrEquipmentRowTemplateStringWithoutValue(row, package);
-                                SetCellValue(worksheet, $"W{row}", childOperation.Caption, false);
-                                SetCellValue(worksheet, $"A{row}", "О1", false);
+                                ExcelAssistant.SetCellValue(worksheet, $"W{row}", childOperation.Caption, false);
+                                ExcelAssistant.SetCellValue(worksheet, $"A{row}", "О1", false);
                                 row++;
                                 countPageOperation++;
-                                (row, countPageOperation) = IncrementRow(row, countPageOperation, package);
+                                (row, countPageOperation) = ExcelAssistant.IncrementRow(row, countPageOperation, package);
                             }
                             /* SetCellValue(worksheet, $"W{row}", childOperation.Caption, false);
                              SetCellValue(worksheet, $"A{row}", "О", false);
@@ -249,63 +247,8 @@ namespace ExcelConstructorLibrary.RouteMap
                     }
                 }
 
-                /*  for (int row = startRow; 
-                      ; row++)
-                  {
-                      try
-                      {
-
-                          //var excelRow = worksheet.Cells[row, 1, row, worksheet.Dimension.End.Column];
-
-                          foreach (var cell in worksheet.Cells)
-                          {
-                              if (cell.Start.Column == 23 && cell.Start.Row == row)
-                              {
-                                  Oper operation;
-                                  try
-                                  {
-                                      operation = operations[index];
-                                  }catch (Exception ex)
-                                  {
-                                      break;
-                                  }
-                                  cell.Value = operation.Caption;
-                                  var neighborCell = worksheet.Cells[row, 1];
-                                  neighborCell.Value = "A";
-                                  row++;
-                                  countPageOperation++;
-                                  (row, countPageOperation) = IncrementRow(row, countPageOperation);
-
-                                  foreach (var equipment in operation.Equipments)
-                                  {
-                                      worksheet.Cells[row, 23].Value = equipment.Caption;
-                                      worksheet.Cells[row, 1].Value = "Б";
-                                      row++;
-                                      countPageOperation++;
-                                      (row, countPageOperation) = IncrementRow(row, countPageOperation);
-                                  }
-
-                                  foreach (var childOperation in operation.ChildsOperations)
-                                  {
-                                      worksheet.Cells[row, 23].Value = childOperation.Caption;
-                                      worksheet.Cells[row, 1].Value = "О";
-                                      row++;
-                                      countPageOperation++;
-                                      (row, countPageOperation) = IncrementRow(row, countPageOperation);
-                                  }
-                                  index++;
-                                  row--;
-                              }
-                          }
-
-
-                      }
-                      catch (Exception ex)
-                      {
-                          break;
-                          // Handle exceptions if needed
-                      }
-                  }*/
+                //логика по заполнению листа ВТР Пооперационная ведомость трудоемкости
+                WorkSheetVTR.OperationalLaborIntensitySheet(package,procces);
 
                 package.Save();
 
@@ -313,112 +256,9 @@ namespace ExcelConstructorLibrary.RouteMap
             }
 
         }
-        static List<List<string>> SplitStringToFitCell(string value, double cellWidth)
-        {
-            List<List<string>> result_lst = new List<List<string>>();
-            List<string> parts = new List<string>();
-            string[] words = value.Split(' '); // Разбиваем строку на отдельные слова
-
-            string currentLine = "";
-            foreach (string word in words)
-            {
-                string testLine = currentLine.Length == 0 ? word : currentLine + " " + word;
-
-                // Получаем ширину текущей строки
-                var width = GetWidthString(testLine);
-
-                // Если текущая строка превышает ширину ячейки, добавляем текущую строку в список и начинаем новую
-                if (width > cellWidth)
-                {
-                    parts.Add(currentLine);
-                    currentLine = word;
-                    result_lst.Add(parts);
-                    parts = new List<string>();
-                }
-                else
-                {
-                    currentLine = testLine;
-                }
-            }
-
-            // Добавляем оставшуюся часть строки в список
-            parts.Add(currentLine);
-            result_lst.Add(parts);
-
-            return result_lst;
-        }
-        static float GetWidthString(string value)
-        {
-            string text = value;
-
-            // Предположим, что у вас есть объект шрифта
-            Font font = new Font("GOST Common", 9);
-
-            // Создаем временный объект Graphics для определения ширины текста
-            using (Graphics graphics = Graphics.FromImage(new Bitmap(1, 1)))
-            {
-                // Получаем размеры текста в пикселях
-                SizeF textSize = graphics.MeasureString(text, font);
-
-                // Ширина текста в пикселях
-                float widthInPixels = textSize.Width;
-
-                //Console.WriteLine($"Ширина текста в пикселях: {widthInPixels}");
-                return widthInPixels;
-            }
-        }
-        static double GetCellsWidth(ExcelWorksheet worksheet, string rangeAddress)
-        {
-            // Получаем объект диапазона ячеек
-            ExcelRangeBase range = worksheet.Cells[rangeAddress];
-
-            // Инициализируем переменную для суммы ширины ячеек
-            double totalWidth = 0;
-
-            // Проходимся по каждой ячейке в диапазоне и добавляем ее ширину к сумме
-            foreach (ExcelRangeBase cell in range)
-            {
-                double cellWidth = worksheet.Column(cell.Start.Column).Width;
-                totalWidth += cellWidth;
-            }
-
-            return totalWidth;
-        }
-        static void SetCellValue(ExcelWorksheet worksheet, string cor, string value, bool bold, int fontSize = 9)
-        {
-            var cell = worksheet.Cells[cor];
-            // Устанавливаем значение ячейки
-            cell.Value = value;
-            // Получаем объект стиля ячейки
-            var style = cell.Style;
-            // Устанавливаем свойства шрифта
-            style.Font.Name = "GOST Common"; // Название шрифта
-            style.Font.Size = fontSize; // Размер шрифта
-            style.Font.Bold = bold; // Жирный шрифт
-            style.Font.Italic = true; // Курсив
-        }
-        private static (int, int) IncrementRow(int currentRow, int count, ExcelPackage package)
-        {
-            if (currentRow == 33)
-            {
-                return (currentRow + 14, 0);
-            }
-            else
-            {
-                if (count == 17)
-                {
-                    int destinationStart = currentRow + 1;
-                    int destinationEnd = destinationStart + 30;
-                    insertTemplateTable(destinationStart, destinationEnd, package);
-
-                    return (currentRow + 14, 0);
-                }
-                else
-                {
-                    return (currentRow, count);
-                }
-            }
-        }
+        
+       
+        
         static void insertMainOperationRowTemplateStringWithoutValue(int destination, ExcelPackage package)
         {
             try
@@ -448,40 +288,7 @@ namespace ExcelConstructorLibrary.RouteMap
                 Console.WriteLine(ex.ToString());
             }
         }
-        static void insertTemplateTable(int destinationStart, int destinationEnd, ExcelPackage package)
-        {
-            try
-            {
-                var worksheet = package.Workbook.Worksheets["МК"];
-
-                // Указываем исходный и целевой диапазоны
-                //var sourceRange = worksheet.Cells[$"A{rangeStart}:DF{rangeEnd}"];
-
-                var head_table_sourceRange = worksheet.Cells[$"A34:DF46"];
-                var body_table_sourceRange = worksheet.Cells[$"A47:DF64"];
-
-                var head_table_destinationRange = worksheet.Cells[$"A{destinationStart}:DF{destinationStart + 12}"];
-                var body_table_destinationRange = worksheet.Cells[$"A{destinationStart + 13}:DF{destinationEnd}"];
-
-                /* sourceRange.Copy(destinationRange,
-              //ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
-              ExcelRangeCopyOptionFlags.ExcludeValues
-                 );*/
-
-                head_table_sourceRange.Copy(head_table_destinationRange,
-                    ExcelRangeCopyOptionFlags.ExcludeConditionalFormatting
-                    );
-                body_table_sourceRange.Copy(body_table_destinationRange,
-                    ExcelRangeCopyOptionFlags.ExcludeValues
-                    );
-
-                // Сохраняем изменения
-                package.Save();
-            }
-            catch (Exception ex)
-            {
-            }
-        }
+       
         #region Open XML SDK Libary Logics
         static void exportExcel(string destinationFilePath, Procces procces)
         {

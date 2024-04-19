@@ -5,10 +5,11 @@ namespace ClassesLibrary.Models
     public class Procces : Entity
     {
         public string? number { get; set; }
-        public string? material { get; set; }
-        public string? m3 { get; set; }
+        public string? OrganizationCaption { get; set; }
+        public string? EquipmentType { get; set; }
+        public Detail? detail { get; set; }
+        public Material? material { get; set; }
         public string? kd { get; set; }
-        public string? profile_size { get; set; }
         [JsonIgnore]
         public List<Operation> Operations { get; set; } = new List<Operation>();
         [JsonIgnore]
