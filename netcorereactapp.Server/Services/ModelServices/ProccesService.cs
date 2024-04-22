@@ -119,11 +119,11 @@ namespace netcorereactapp.Server.Services.ModelServices
                     newProcces.DateOfCreture = DateTime.UtcNow;
                     newProcces.Caption = procces.Caption;
 
-                    newProcces.m3 = procces.m3;
-                    newProcces.kd = procces.kd;
-                    newProcces.material = procces.material;
+                    //newProcces.m3 = procces.m3;
+                    //newProcces.kd = procces.kd;
+                    //newProcces.material = procces.material;
                     newProcces.number = procces.number;
-                    newProcces.profile_size = procces.profile_size;
+                    //newProcces.profile_size = procces.profile_size;
 
                     newProcces.Operations = MapService.MapChildOperations(procces.Operations);
                     _dbContext.Procceses.Add(newProcces);
@@ -184,11 +184,11 @@ namespace netcorereactapp.Server.Services.ModelServices
                     // Обновляем существующую операцию данными из отредактированной операции
                     existingProcces.Caption = editedProcces.Caption;
 
-                    existingProcces.kd = editedProcces.kd;
-                    existingProcces.m3 = editedProcces.m3;
+                    //existingProcces.kd = editedProcces.kd;
+                    //existingProcces.m3 = editedProcces.m3;
                     existingProcces.number = editedProcces.number;
-                    existingProcces.material = editedProcces.material;
-                    existingProcces.profile_size = editedProcces.profile_size;
+                    //existingProcces.material = editedProcces.material;
+                    //existingProcces.profile_size = editedProcces.profile_size;
 
                     existingProcces.DateOfCreture = editedProcces.DateOfCreture;
                     existingProcces.DateOfEdited = DateTime.UtcNow;

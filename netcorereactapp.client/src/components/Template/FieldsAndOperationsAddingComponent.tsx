@@ -1,27 +1,32 @@
-import {CenteredDivColumn, CenteredDivRow} from "../Home/CommonComponents/CenteredDivRow.tsx";
-import {IconButton, TextField} from "@mui/material";
-
+import {CenteredDivColumn} from "../Home/CommonComponents/CenteredDivRow.tsx";
+import { TextField} from "@mui/material";
 import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import {styled} from "@mui/system";
-import RemoveCircleTwoToneIcon from '@mui/icons-material/RemoveCircleTwoTone';
-import AddBoxSharpIcon from '@mui/icons-material/AddBoxSharp';
 import {NewOperation} from "./NewOperation.tsx";
 import {Procces} from "../../Models/ProccesOperation/Procces.tsx";
 import {OperationList} from "./OperationList.tsx";
 import '../../styles/FiledsCompoment.scss'
 import axios from "axios";
 import config from "../../config/config.json";
-import {buttonHover} from "../../styles/Annimations/Buttons/button_animations_hover.tsx";
+import ProccesFields from "./FiledSet/ProccesFields.tsx";
 
-export const FiledsCompoment
+export const FieldsAndOperationsAddingComponent
     = forwardRef((props, ref) => {
     const [procces,setProcces]=useState<Procces>({
         caption:'',
         number:'',
-        material : '',
-        m3 : '',
-        kd : '',
-        profile_size: '',
+        OrganizationCaption: '',
+        EquipmentType: '',
+        EquipmentModel: '',
+        PartVolume: '',
+        VolumeIncludingSupportingStructures: '',
+        BuildingHeight: '',
+        LayerThickness:'',
+        AmountOfRequiredMaterialTakingIntoAccount: '',
+        ShieldingGasVolume: '',
+        PrintTime:'',
+        LaborIntensity: '',
+        AdditionallyInformation: '',
     })
     const [errors, setErrors] = useState({});
     useEffect(()=>{
@@ -143,7 +148,8 @@ export const FiledsCompoment
     };
     return (
         <CenteredDivColumn>
-            <CenteredDivRow
+            <ProccesFields/>
+           {/* <CenteredDivRow
                 sx={{
                     backgroundColor: 'darkgreen',
                     border: '2px solid ',
@@ -236,7 +242,7 @@ export const FiledsCompoment
                         helperText={errors.profile_size}
                     />
                 </CenteredDivColumn>
-            </CenteredDivRow>
+            </CenteredDivRow>*/}
             {hidden &&
                 <NewOperation
                     hidden={toggleInfoVisibility}

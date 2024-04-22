@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
     "@mui/material": "^5.15.13",
     "@mui/styles": "^5.15.14",
     "@mui/x-data-grid": "^7.0.0",

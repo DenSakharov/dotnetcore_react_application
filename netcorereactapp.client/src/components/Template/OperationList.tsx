@@ -7,7 +7,7 @@ import {
 import { CenteredDivRow} from "../Home/CommonComponents/CenteredDivRow.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {styled} from "@mui/system";
-import {StyledTextField} from "./FiledsCompoment.tsx";
+import {StyledTextField} from "./FieldsAndOperationsAddingComponent.tsx";
 import {Procces} from "../../Models/ProccesOperation/Procces.tsx";
 
 export const theme = createTheme({
@@ -17,7 +17,8 @@ export const theme = createTheme({
         },
     // Другие параметры темы
 });
-export const OperationList = ({procces, setProcces }):{procces:Procces,setProcces:void} => {
+export const OperationList
+    = ({procces, setProcces }):{procces:Procces,setProcces:void} => {
 // Обработчик удаления элемента из массива по индексу
     const handleDelete = (index) => {
         // Создание нового массива без удаленного элемента

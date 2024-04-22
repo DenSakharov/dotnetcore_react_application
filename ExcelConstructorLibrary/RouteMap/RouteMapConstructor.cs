@@ -66,10 +66,10 @@ namespace ExcelConstructorLibrary.RouteMap
                 ExcelAssistant.SetCellValue(worksheet, $"AR11", procces.Caption, true, 12);
                 var currentValue = worksheet.Cells[$"CO8"].Value;
                 ExcelAssistant.SetCellValue(worksheet, $"CO8", currentValue.ToString() + procces.number, false, 12);
-                ExcelAssistant.SetCellValue(worksheet, $"F13", procces.material, false, 10);
-                ExcelAssistant.SetCellValue(worksheet, $"BI15", procces.profile_size, false, 10);
-                ExcelAssistant.SetCellValue(worksheet, $"CD15", procces.kd, false, 10);
-                ExcelAssistant.SetCellValue(worksheet, $"CJ15", procces.m3, false, 10);
+                //ExcelAssistant.SetCellValue(worksheet, $"F13", procces.material, false, 10);
+                //ExcelAssistant.SetCellValue(worksheet, $"BI15", procces.profile_size, false, 10);
+                //ExcelAssistant.SetCellValue(worksheet, $"CD15", procces.kd, false, 10);
+                //ExcelAssistant.SetCellValue(worksheet, $"CJ15", procces.m3, false, 10);
 
 
                 var operations = procces.Operations;

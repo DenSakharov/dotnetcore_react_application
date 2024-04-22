@@ -4,12 +4,22 @@ namespace ClassesLibrary.Models
 {
     public class Procces : Entity
     {
-        public string? number { get; set; }
-        public string? OrganizationCaption { get; set; }
-        public string? EquipmentType { get; set; }
-        public Detail? detail { get; set; }
-        public Material? material { get; set; }
-        public string? kd { get; set; }
+        public string? number { get; set; }//номер
+        public string? OrganizationCaption { get; set; }//Наименование организации
+        public string? EquipmentType { get; set; }//Тип оборудования
+        public string? EquipmentModel { get; set; }//Модель оборудования
+        public List<Detail> details { get; set; } = new List<Detail>();
+        public List<Material> materials { get; set; } = new List<Material>();
+        public string? PartVolume { get; set; }
+        public string? VolumeIncludingSupportingStructures { get; set; }
+        public string? BuildingHeight { get; set; }
+        public string? LayerThickness { get; set; }
+        public string? AmountOfRequiredMaterialTakingIntoAccount { get; set; }
+        public string? ShieldingGasVolume { get; set; }
+        public string? PrintTime { get; set; }
+        public string? LaborIntensity { get; set; }
+        public string? AdditionallyInformation { get; set; }
+        //public string? kd { get; set; }
         [JsonIgnore]
         public List<Operation> Operations { get; set; } = new List<Operation>();
         [JsonIgnore]

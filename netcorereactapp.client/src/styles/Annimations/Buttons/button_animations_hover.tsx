@@ -72,3 +72,38 @@ export const buttonHover = {
         },
     },
 };
+export const buttonHoverBorderRadius = {
+    centeredDivColumn: {
+        width: '100px',
+        border: '4px solid',
+        borderRadius: '25px',
+        backgroundColor: 'darkgreen',
+        "&:hover": {
+            cursor: 'pointer',
+            color: 'black',
+            backgroundColor: 'white',
+            animation: `${changeBackgroundColor} 0.5s ease-in-out`,
+        },
+        "&:not(:hover)": {
+            cursor: 'default',
+            backgroundColor: 'darkgreen',
+            animation: `${backBackgroundColor} 0.5s ease-in-out`,
+        },
+    },
+    iconButton: {
+        fontSize: '50px',
+        "&:hover": {
+            cursor: 'pointer',
+            color: 'black',
+            backgroundColor: 'white',
+            borderRadius: '25px',
+            animation: `${changeBackgroundColor} 0.5s ease-in-out`,
+        },
+        "&:not(:hover)": {
+            cursor: 'default',
+            backgroundColor: 'darkgreen',
+            borderRadius: '25px',
+            animation: `${backBackgroundColor} 0.5s ease-in-out`,
+        },
+    },
+};

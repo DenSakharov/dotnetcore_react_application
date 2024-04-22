@@ -1,6 +1,6 @@
 import {useRef, useState} from 'react';
 import { Button, Modal, Box, Typography } from '@mui/material';
-import {FiledsCompoment} from "./FiledsCompoment.tsx";
+import {FieldsAndOperationsAddingComponent} from "./FieldsAndOperationsAddingComponent.tsx";
 const modalBoxSx = {
     position: 'absolute',
     top: '50%',
@@ -8,9 +8,10 @@ const modalBoxSx = {
     transform: 'translate(-50%, -50%)',
     width: 'auto',
     bgcolor: 'rgba(0, 128, 0, 0.9)',
-    border: '2px solid #000',
+    border: '10px solid #000',
+    borderRadius: '25px',
     boxShadow: 24,
-    p: 4,
+    p: 1,
 };
 const btnSX = {
     margin: '15px',
@@ -38,7 +39,7 @@ export default function MainTemplateModal({ open, handleClose }) {
                 <Typography id="modal-title" variant="h6" component="h2">
                     Создание процесса
                 </Typography>
-                <FiledsCompoment ref={childRef} onClose={handleClose}/>
+                <FieldsAndOperationsAddingComponent ref={childRef} onClose={handleClose}/>
                 <Button sx={btnSX} className="styled-button" onClick={handleClose}>Закрыть</Button>
                 <Button sx={btnSX} className="styled-button" onClick={save}>Сохранить</Button>
             </Box>

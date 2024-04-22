@@ -1,6 +1,6 @@
 import {CenteredDivColumn, CenteredDivRow} from "../Home/CommonComponents/CenteredDivRow.tsx";
 import {useEffect, useRef, useState} from "react";
-import {StyledTextField} from "./FiledsCompoment.tsx";
+import {StyledTextField} from "./FieldsAndOperationsAddingComponent.tsx";
 import {FormControl, IconButton, InputLabel, keyframes, MenuItem, Select, Typography} from "@mui/material";
 import axios from "axios";
 import config from "../../config/config.json";
