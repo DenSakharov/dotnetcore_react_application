@@ -225,8 +225,8 @@ export default function MaterialForm(materialInputArray: Material[]) {
             }
 
             {Array.isArray(materials) && // Проверяем, что details является массивом
-                materials.map((material,index) => (
-                    <CenteredDivRow key={index}>
+                materials.map(material => (
+                    <CenteredDivRow key={material.id}>
                         <IconButton>
                             <EditSharpIcon/>
                         </IconButton>

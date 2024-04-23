@@ -6,11 +6,10 @@ import TabPanel, {StyledTab, StyledTextFieldLocal} from "../../../styles/SingleC
 import a11yProps from "../../../styles/SingleComponents/TabPanel/styles.tsx";
 import MaterialForm from "./MaterialForm.tsx";
 
-export default function ProccesFields(){
+export default function ProccesFields({setProccesLocal}){
     const [procces,setProcces]=useState<Procces>({
         caption:'',
         number:'',
-        material : '',
         m3 : '',
         kd : '',
         profile_size: '',
@@ -23,7 +22,19 @@ export default function ProccesFields(){
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-    const inputRef = useRef(null);
+    const numberRef = useRef(null);
+    const organizationCaptionRef = useRef(null);
+    const equipmentTypeRef = useRef(null);
+    const equipmentModelRef = useRef(null);
+    const partVolumeRef = useRef(null);
+    const volumeIncludingSupportingStructuresRef = useRef(null);
+    const buildingHeightRef = useRef(null);
+    const layerThicknessRef = useRef(null);
+    const amountOfRequiredMaterialRef = useRef(null);
+    const shieldingGasVolumeRef = useRef(null);
+    const printTimeRef = useRef(null);
+    const laborIntensityRef = useRef(null);
+    const additionallyInformationRef = useRef(null);
     const handleTextFieldChange = (event) => {
         const {name, value} = event.target;
         const valu = inputRef.current.value;
@@ -43,6 +54,7 @@ export default function ProccesFields(){
                 ...prevProcces,
                 [name]: value
             }));
+            setProccesLocal(procces)
         }
     };
     return(
@@ -69,18 +81,18 @@ export default function ProccesFields(){
             }}
             >
                 <StyledTab
-                    label="Название " {...a11yProps(0)}
+                    label="Название"
                 />
-                <StyledTab label="Информация об используемом оборудовании" {...a11yProps(1)} />
-                <StyledTab label="Спецификация платформы построения" {...a11yProps(2)} />
-                <StyledTab label="Материал" {...a11yProps(3)} />
-                <StyledTab label="Размеры параметров построения" {...a11yProps(4)} />
-                <StyledTab label="Характеристики печати" {...a11yProps(5)} />
-                <StyledTab label="Доплнительная информация" {...a11yProps(6)} />
+                <StyledTab label="Информация об используемом оборудовании" />
+                <StyledTab label="Спецификация платформы построения" />
+                <StyledTab label="Материал" />
+                <StyledTab label="Размеры параметров построения" />
+                <StyledTab label="Характеристики печати" />
+                <StyledTab label="Доплнительная информация" />
             </Tabs>
             <TabPanel value={value} index={0}>
                     <StyledTextFieldLocal
-                        ref={inputRef}
+                        ref={numberRef}
                         id="outlined-helperText"
                         label="№"
                         variant="outlined"
@@ -93,7 +105,7 @@ export default function ProccesFields(){
                         helperText={errors.number}
                     />
                     <StyledTextFieldLocal
-                        ref={inputRef}
+                        ref={organizationCaptionRef}
                         id="outlined-helperText"
                         label="Наименование организации"
                         variant="outlined"
@@ -107,7 +119,7 @@ export default function ProccesFields(){
             </TabPanel>
             <TabPanel value={value} index={1}>
                     <StyledTextFieldLocal
-                        ref={inputRef}
+                        ref={equipmentTypeRef}
                         id="outlined-helperText"
                         label="Тип оборудования"
                         variant="outlined"
@@ -120,7 +132,7 @@ export default function ProccesFields(){
                         helperText={errors.EquipmentType}
                     />
                     <StyledTextFieldLocal
-                        ref={inputRef}
+                        ref={equipmentModelRef}
                         id="outlined-helperText"
                         label="Модель оборудования"
                         variant="outlined"
@@ -140,7 +152,7 @@ export default function ProccesFields(){
             </TabPanel>
             <TabPanel value={value} index={4}>
                 <StyledTextFieldLocal
-                    ref={inputRef}
+                    ref={partVolumeRef}
                     id="outlined-helperText"
                     label="Объем детали"
                     variant="outlined"
@@ -158,7 +170,7 @@ export default function ProccesFields(){
                     helperText={errors.PartVolume}
                 />
                 <StyledTextFieldLocal
-                    ref={inputRef}
+                    ref={volumeIncludingSupportingStructuresRef}
                     id="outlined-helperText"
                     label="Объем с учетом поддерживающих структур"
                     variant="outlined"
@@ -176,7 +188,7 @@ export default function ProccesFields(){
                     helperText={errors.VolumeIncludingSupportingStructures}
                 />
                 <StyledTextFieldLocal
-                    ref={inputRef}
+                    ref={buildingHeightRef}
                     id="outlined-helperText"
                     label="Высота построения"
                     variant="outlined"
@@ -194,7 +206,7 @@ export default function ProccesFields(){
                     helperText={errors.BuildingHeight}
                 />
                 <StyledTextFieldLocal
-                    ref={inputRef}
+                    ref={layerThicknessRef}
                     id="outlined-helperText"
                     label="Толщина слоя"
                     variant="outlined"
@@ -214,7 +226,7 @@ export default function ProccesFields(){
             </TabPanel>
             <TabPanel value={value} index={5}>
                 <StyledTextFieldLocal
-                    ref={inputRef}
+                    ref={amountOfRequiredMaterialRef}
                     id="outlined-helperText"
                     label="Количество необходимого материала с учетом КИМ"
                     variant="outlined"
@@ -232,7 +244,7 @@ export default function ProccesFields(){
                     helperText={errors.AmountOfRequiredMaterialTakingIntoAccount}
                 />
                 <StyledTextFieldLocal
-                    ref={inputRef}
+                    ref={shieldingGasVolumeRef}
                     id="outlined-helperText"
                     label="Объем зщитного газа"
                     variant="outlined"
@@ -250,7 +262,7 @@ export default function ProccesFields(){
                     helperText={errors.ShieldingGasVolume}
                 />
                 <StyledTextFieldLocal
-                    ref={inputRef}
+                    ref={printTimeRef}
                     id="outlined-helperText"
                     label="Время печати"
                     variant="outlined"
@@ -268,7 +280,7 @@ export default function ProccesFields(){
                     helperText={errors.PrintTime}
                 />
                 <StyledTextFieldLocal
-                    ref={inputRef}
+                    ref={laborIntensityRef}
                     id="outlined-helperText"
                     label="Трудоемкость"
                     variant="outlined"
@@ -288,7 +300,7 @@ export default function ProccesFields(){
             </TabPanel>
             <TabPanel value={value} index={6}>
                 <TextField
-                    ref={inputRef}
+                    ref={additionallyInformationRef}
                     label="Дополнительная информация"
                     multiline
                     maxRows={10}

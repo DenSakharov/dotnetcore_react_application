@@ -80,7 +80,12 @@ export default function TabPanel(props: TabPanelProps) {
 
     useEffect(() => {
         // Задаем ширину содержимого только для активной вкладки
+        try {
         setContentWidth(value === index ? document.getElementById(`tabpanel-${index}`)?.offsetWidth : 0);
+        }
+        catch (e){
+
+        }
     }, [value, index]);
 
     return (

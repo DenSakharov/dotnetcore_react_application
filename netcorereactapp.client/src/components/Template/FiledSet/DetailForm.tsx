@@ -136,8 +136,8 @@ export default function DetailForm(detailArray: Detail[]) {
             }
 
                 {Array.isArray(details) && // Проверяем, что details является массивом
-                    details.map((detail,index) => (
-                        <CenteredDivRow key={index}>
+                    details.map((detail) => (
+                        <CenteredDivRow key={detail.id}>
                             <IconButton>
                                 <EditSharpIcon/>
                             </IconButton>

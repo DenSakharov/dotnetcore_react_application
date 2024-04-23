@@ -30,7 +30,7 @@ export const FieldsAndOperationsAddingComponent
     })
     const [errors, setErrors] = useState({});
     useEffect(()=>{
-            //console.log('FiledsCompoment useEffect\n',procces)
+            console.log('FieldsAndOperationsAddingComponent useEffect\n',procces)
     }),[procces]
     const [base64String,setFileData]=useState()
     useEffect(() => {
@@ -148,7 +148,7 @@ export const FieldsAndOperationsAddingComponent
     };
     return (
         <CenteredDivColumn>
-            <ProccesFields/>
+            <ProccesFields setProccesLocal={setProcces}/>
            {/* <CenteredDivRow
                 sx={{
                     backgroundColor: 'darkgreen',
