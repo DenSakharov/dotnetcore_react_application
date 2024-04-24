@@ -6,7 +6,7 @@ import {Detail} from "./Detail.tsx";
 import {Material} from "./Material.tsx";
 
 export interface Procces extends  Entity{
-    number: string,
+    number: number,
     OrganizationCaption: string,
     EquipmentType: string,
     EquipmentModel: string,
@@ -18,7 +18,7 @@ export interface Procces extends  Entity{
     ShieldingGasVolume: number
     PrintTime: number
     LaborIntensity: number
-    AdditionallyInformation: number
+    AdditionallyInformation: string
 
     operations: Operation[];
     histories: History[];

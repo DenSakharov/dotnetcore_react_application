@@ -1,5 +1,5 @@
 import {CenteredDivColumn} from "../Home/CommonComponents/CenteredDivRow.tsx";
-import { TextField} from "@mui/material";
+import {IconButton, TextField} from "@mui/material";
 import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import {styled} from "@mui/system";
 import {NewOperation} from "./NewOperation.tsx";
@@ -9,29 +9,29 @@ import '../../styles/FiledsCompoment.scss'
 import axios from "axios";
 import config from "../../config/config.json";
 import ProccesFields from "./FiledSet/ProccesFields.tsx";
+import {buttonHover} from "../../styles/Annimations/Buttons/button_animations_hover.tsx";
+import RemoveCircleTwoToneIcon from "@mui/icons-material/RemoveCircleTwoTone";
+import AddBoxSharpIcon from "@mui/icons-material/AddBoxSharp";
+import {reaction, toJS} from "mobx";
+import {ProccesMobXStore} from "../../store/ProccesMobXStore.ts";
 
 export const FieldsAndOperationsAddingComponent
     = forwardRef((props, ref) => {
-    const [procces,setProcces]=useState<Procces>({
-        caption:'',
-        number:'',
-        OrganizationCaption: '',
-        EquipmentType: '',
-        EquipmentModel: '',
-        PartVolume: '',
-        VolumeIncludingSupportingStructures: '',
-        BuildingHeight: '',
-        LayerThickness:'',
-        AmountOfRequiredMaterialTakingIntoAccount: '',
-        ShieldingGasVolume: '',
-        PrintTime:'',
-        LaborIntensity: '',
-        AdditionallyInformation: '',
-    })
+    const [procces, setProcces] = useState<Procces>();
     const [errors, setErrors] = useState({});
     useEffect(()=>{
-            console.log('FieldsAndOperationsAddingComponent useEffect\n',procces)
+            //console.log('FieldsAndOperationsAddingComponent useEffect\n',procces)
     }),[procces]
+    reaction(
+        () => ProccesMobXStore.procces,
+        (newProcces) => {
+            //console.log('Procces Fields:');
+           /* Object.entries(newProcces).forEach(([key, value]) => {
+                console.log(`${key}: ${value}`);
+            });*/
+            setProcces(newProcces)
+        }
+    );
     const [base64String,setFileData]=useState()
     useEffect(() => {
         if (base64String) {
@@ -48,10 +48,11 @@ export const FieldsAndOperationsAddingComponent
         document.body.removeChild(link);
         props.onClose()
     };
+
     const saveProcces=async()=>{
-        console.log('',procces)
+        console.log('',ProccesMobXStore.procces)
         // Проверяем, что все поля заполнены
-        const allFieldsFilled = Object.values(procces).every(value => {
+        const allFieldsFilled = Object.values(ProccesMobXStore.procces).every(value => {
             // Проверяем, является ли значение строкой и, если да, обрезаем пробельные символы
             if (typeof value === 'string') {
                 return value.trim() !== '';
@@ -62,8 +63,8 @@ export const FieldsAndOperationsAddingComponent
         if (!allFieldsFilled) {
             // Если не все поля заполнены, устанавливаем сообщения об ошибке для каждого незаполненного поля
             const newErrors = {};
-            for (const fieldName in procces) {
-                if (!procces[fieldName].trim()) {
+            for (const fieldName in ProccesMobXStore.procces) {
+                if (typeof ProccesMobXStore.procces[fieldName] === 'string' && !ProccesMobXStore.procces[fieldName].trim()) {
                     newErrors[fieldName] = 'Это поле обязательно для заполнения.';
                 }
             }
@@ -72,11 +73,11 @@ export const FieldsAndOperationsAddingComponent
         }
 
         const tokenValue = localStorage.getItem("authToken");
-        console.log('Complete procces data before send request :\n',procces)
+        console.log('procces data before send request :\n',toJS(procces))
         try {
             const response = await axios.post(
                 `${config.apiUrl}/procces/create`,
-                procces, // Передаем отредактированный объект
+                toJS(procces), // Передаем отредактированный объект
                 {
                     headers: {
                         //'Content-Type': 'application/json', // Устанавливаем заголовок для JSON
@@ -87,6 +88,9 @@ export const FieldsAndOperationsAddingComponent
             if(response.status==200)
             {
                 setFileData(response.data)
+            }
+            else {
+                console.log('Some response',response)
             }
         } catch (error) {
             console.error("Error while confirming edited operation:", error);
@@ -99,7 +103,7 @@ export const FieldsAndOperationsAddingComponent
             saveProcces();
         },
     }));
-    const inputRef = useRef(null);
+    /*const inputRef = useRef(null);
     const handleTextFieldChange = (event) => {
         const {name, value} = event.target;
         const valu = inputRef.current.value;
@@ -122,7 +126,7 @@ export const FieldsAndOperationsAddingComponent
                 [name]: value
             }));
         }
-    };
+    };*/
 
     const [hidden, setHidden] = useState(false);
     const toggleInfoVisibility = () => {
@@ -243,6 +247,10 @@ export const FieldsAndOperationsAddingComponent
                     />
                 </CenteredDivColumn>
             </CenteredDivRow>*/}
+            <IconButton onClick={toggleInfoVisibility} sx={{ ...buttonHover.iconButton }}>
+                {hidden ? <RemoveCircleTwoToneIcon style={{ fontSize: 50 }}/> :
+                    <AddBoxSharpIcon style={{ fontSize: 50 }}/>}
+            </IconButton>
             {hidden &&
                 <NewOperation
                     hidden={toggleInfoVisibility}

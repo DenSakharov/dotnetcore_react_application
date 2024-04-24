@@ -118,11 +118,24 @@ namespace netcorereactapp.Server.Services.ModelServices
                     var newProcces = new Procces();
                     newProcces.DateOfCreture = DateTime.UtcNow;
                     newProcces.Caption = procces.Caption;
-
-                    //newProcces.m3 = procces.m3;
+                    
+                    newProcces.number = procces.number;
+                    newProcces.OrganizationCaption = procces.OrganizationCaption;
+                    newProcces.EquipmentType = procces.EquipmentType;
+                    newProcces.EquipmentModel = procces.EquipmentModel;
+                    newProcces.PartVolume = procces.PartVolume;
+                    newProcces.VolumeIncludingSupportingStructures = procces.VolumeIncludingSupportingStructures;
+                    newProcces.BuildingHeight = procces.BuildingHeight;
+                    newProcces.LayerThickness = procces.LayerThickness;
+                    newProcces.AmountOfRequiredMaterialTakingIntoAccount = procces.AmountOfRequiredMaterialTakingIntoAccount;
+                    newProcces.ShieldingGasVolume = procces.ShieldingGasVolume;
+                    newProcces.PrintTime = procces.PrintTime;
+                    newProcces.LaborIntensity = procces.LaborIntensity;
+                    newProcces.AdditionallyInformation = procces.AdditionallyInformation;
+                    
                     //newProcces.kd = procces.kd;
                     //newProcces.material = procces.material;
-                    newProcces.number = procces.number;
+                    
                     //newProcces.profile_size = procces.profile_size;
 
                     newProcces.Operations = MapService.MapChildOperations(procces.Operations);

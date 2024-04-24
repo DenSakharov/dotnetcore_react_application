@@ -1,27 +1,44 @@
 import {Box, Tabs, TextField} from "@mui/material";
-import {SyntheticEvent, useRef, useState} from "react";
+import {SyntheticEvent, useEffect, useRef, useState} from "react";
 import DetailForm from "./DetailForm.tsx";
 import {Procces} from "../../../Models/ProccesOperation/Procces.tsx";
 import TabPanel, {StyledTab, StyledTextFieldLocal} from "../../../styles/SingleComponents/TabPanel/styles.tsx";
-import a11yProps from "../../../styles/SingleComponents/TabPanel/styles.tsx";
 import MaterialForm from "./MaterialForm.tsx";
+import {ProccesMobXStore} from "../../../store/ProccesMobXStore.ts";
+import {errorsStore} from "../../../store/ErrorsMobXStore.ts";
+import { observer } from 'mobx-react';
 
 export default function ProccesFields({setProccesLocal}){
-    const [procces,setProcces]=useState<Procces>({
-        caption:'',
-        number:'',
-        m3 : '',
-        kd : '',
-        profile_size: '',
-        details:[],
-        materials:[],
-    })
+    const [procces, setProcces] = useState<Procces>(ProccesMobXStore.procces);
+
+    useEffect(() => {
+        //console.log('Changing : ',procces);
+        const isAllFieldsValid = Object.values(procces).every(value => value !== '' && value !== 0);
+
+        if (isAllFieldsValid) {
+
+            ProccesMobXStore.setErrors({});
+        } else {
+            // Создание объекта с ошибками
+            const errors = {};
+            // Проверка каждого поля и установка соответствующей ошибки
+            Object.entries(procces).forEach(([key, value]) => {
+                if (value === '' || value === 0) {
+                    errors[key] = 'Значение не может быть пустым или равно 0';
+                }
+            });
+            // Установка ошибок в MobX store
+            ProccesMobXStore.setErrors(errors);
+        }
+    }, [procces]);
     const [errors, setErrors] = useState({});
     const [value, setValue] = useState(0);
 
     const handleChange = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
+
+    //#region объявление ссылок для text input
     const numberRef = useRef(null);
     const organizationCaptionRef = useRef(null);
     const equipmentTypeRef = useRef(null);
@@ -35,28 +52,42 @@ export default function ProccesFields({setProccesLocal}){
     const printTimeRef = useRef(null);
     const laborIntensityRef = useRef(null);
     const additionallyInformationRef = useRef(null);
+    //#endregion
+
     const handleTextFieldChange = (event) => {
         const {name, value} = event.target;
-        const valu = inputRef.current.value;
         // Валидация для поля "number"
+        if (value.trim() === '') {
+            errorsStore.setFieldError(name, 'Это поле обязательно для заполнения.');
+        }
         if (name === 'number' && !value.match(/^\d+$/)) {
             setErrors(prevErrors => ({
                 ...prevErrors,
                 [name]: 'Пожалуйста, введите число.'
             }));
+            errorsStore.setFieldError(name, 'Пожалуйста, введите число.');
         } else {
             setErrors(prevErrors => ({
                 ...prevErrors,
                 [name]: null
             }));
+            errorsStore.setFieldError(name, null);
 
             setProcces(prevProcces => ({
                 ...prevProcces,
                 [name]: value
             }));
-            setProccesLocal(procces)
+            // Создаем новый объект процесса с обновленным значением поля
+            const newProcces = {
+                ...ProccesMobXStore.procces,
+                [name]: value
+            };
+
+            // Устанавливаем новый объект процесса с помощью setProcces
+            ProccesMobXStore.setProcces(newProcces);
         }
     };
+
     return(
         <Box
             sx={{ flexGrow: 1, display: 'flex',height: '400px',width:'100' }}
@@ -101,8 +132,10 @@ export default function ProccesFields({setProccesLocal}){
                         autoFocus
                         sx={{width: '10ch',}}
 
-                        error={Boolean(errors.number)}
-                        helperText={errors.number}
+                        defaultValue={ProccesMobXStore.procces.number}
+
+                        error={Boolean(ProccesMobXStore.errors.number)}
+                        helperText={ProccesMobXStore.errors.number}
                     />
                     <StyledTextFieldLocal
                         ref={organizationCaptionRef}
@@ -113,8 +146,11 @@ export default function ProccesFields({setProccesLocal}){
                         onChange={handleTextFieldChange}
                         autoFocus
                         sx={{width: '50ch',}}
-                        error={Boolean(errors.OrganizationCaption)}
-                        helperText={errors.OrganizationCaption}
+
+                        defaultValue={ProccesMobXStore.procces.OrganizationCaption}
+
+                        error={Boolean(ProccesMobXStore.errors.OrganizationCaption)}
+                        helperText={ProccesMobXStore.errors.OrganizationCaption}
                     />
             </TabPanel>
             <TabPanel value={value} index={1}>
@@ -128,8 +164,11 @@ export default function ProccesFields({setProccesLocal}){
                         autoFocus
                         sx={{width: '50ch',}}
 
-                        error={Boolean(errors.EquipmentType)}
-                        helperText={errors.EquipmentType}
+                        defaultValue={ProccesMobXStore.procces.EquipmentType}
+
+                        error={Boolean(ProccesMobXStore.errors.EquipmentType)}
+                        helperText={ProccesMobXStore.errors.EquipmentType}
+
                     />
                     <StyledTextFieldLocal
                         ref={equipmentModelRef}
@@ -140,11 +179,34 @@ export default function ProccesFields({setProccesLocal}){
                         onChange={handleTextFieldChange}
                         autoFocus
                         sx={{width: '50ch',}}
-                        error={Boolean(errors.EquipmentModel)}
-                        helperText={errors.EquipmentModel}
+
+                        defaultValue={ProccesMobXStore.procces.EquipmentModel}
+
+                        error={Boolean(ProccesMobXStore.errors.EquipmentModel)}
+                        helperText={ProccesMobXStore.errors.EquipmentModel}
                     />
             </TabPanel>
             <TabPanel value={value} index={2}>
+                <StyledTextFieldLocal
+                    ref={partVolumeRef}
+                    id="outlined-helperText"
+                    label="Наименование деталей (название процесса)"
+                    variant="outlined"
+                    name="caption"
+                    onChange={handleTextFieldChange}
+                    autoFocus
+                    sx={{
+                        width: '50ch',
+                        '& .MuiInputLabel-root': {
+                            fontSize: '15px',
+                        },
+                    }}
+
+                    defaultValue={ProccesMobXStore.procces.caption}
+
+                    error={Boolean(ProccesMobXStore.errors.caption)}
+                    helperText={ProccesMobXStore.errors.caption}
+                />
                 <DetailForm detailArray={procces.details}/>
             </TabPanel>
             <TabPanel value={value} index={3}>
@@ -166,8 +228,10 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    error={Boolean(errors.PartVolume)}
-                    helperText={errors.PartVolume}
+                    defaultValue={ProccesMobXStore.procces.PartVolume}
+
+                    error={Boolean(ProccesMobXStore.errors.PartVolume)}
+                    helperText={ProccesMobXStore.errors.PartVolume}
                 />
                 <StyledTextFieldLocal
                     ref={volumeIncludingSupportingStructuresRef}
@@ -184,8 +248,10 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    error={Boolean(errors.VolumeIncludingSupportingStructures)}
-                    helperText={errors.VolumeIncludingSupportingStructures}
+                    defaultValue={ProccesMobXStore.procces.VolumeIncludingSupportingStructures}
+
+                    error={Boolean(ProccesMobXStore.errors.VolumeIncludingSupportingStructures)}
+                    helperText={ProccesMobXStore.errors.VolumeIncludingSupportingStructures}
                 />
                 <StyledTextFieldLocal
                     ref={buildingHeightRef}
@@ -202,8 +268,10 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    error={Boolean(errors.BuildingHeight)}
-                    helperText={errors.BuildingHeight}
+                    defaultValue={ProccesMobXStore.procces.BuildingHeight}
+
+                    error={Boolean(ProccesMobXStore.errors.BuildingHeight)}
+                    helperText={ProccesMobXStore.errors.BuildingHeight}
                 />
                 <StyledTextFieldLocal
                     ref={layerThicknessRef}
@@ -220,8 +288,10 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    error={Boolean(errors.LayerThickness)}
-                    helperText={errors.LayerThickness}
+                    defaultValue={ProccesMobXStore.procces.LayerThickness}
+
+                    error={Boolean(ProccesMobXStore.errors.LayerThickness)}
+                    helperText={ProccesMobXStore.errors.LayerThickness}
                 />
             </TabPanel>
             <TabPanel value={value} index={5}>
@@ -240,8 +310,10 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    error={Boolean(errors.AmountOfRequiredMaterialTakingIntoAccount)}
-                    helperText={errors.AmountOfRequiredMaterialTakingIntoAccount}
+                    defaultValue={ProccesMobXStore.procces.AmountOfRequiredMaterialTakingIntoAccount}
+
+                    error={Boolean(ProccesMobXStore.errors.AmountOfRequiredMaterialTakingIntoAccount)}
+                    helperText={ProccesMobXStore.errors.AmountOfRequiredMaterialTakingIntoAccount}
                 />
                 <StyledTextFieldLocal
                     ref={shieldingGasVolumeRef}
@@ -258,8 +330,10 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    error={Boolean(errors.ShieldingGasVolume)}
-                    helperText={errors.ShieldingGasVolume}
+                    defaultValue={ProccesMobXStore.procces.ShieldingGasVolume}
+
+                    error={Boolean(ProccesMobXStore.errors.ShieldingGasVolume)}
+                    helperText={ProccesMobXStore.errors.ShieldingGasVolume}
                 />
                 <StyledTextFieldLocal
                     ref={printTimeRef}
@@ -276,8 +350,10 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    error={Boolean(errors.PrintTime)}
-                    helperText={errors.PrintTime}
+                    defaultValue={ProccesMobXStore.procces.PrintTime}
+
+                    error={Boolean(ProccesMobXStore.errors.PrintTime)}
+                    helperText={ProccesMobXStore.errors.PrintTime}
                 />
                 <StyledTextFieldLocal
                     ref={laborIntensityRef}
@@ -294,8 +370,10 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    error={Boolean(errors.LaborIntensity)}
-                    helperText={errors.LaborIntensity}
+                    defaultValue={ProccesMobXStore.procces.LaborIntensity}
+
+                    error={Boolean(ProccesMobXStore.errors.LaborIntensity)}
+                    helperText={ProccesMobXStore.errors.LaborIntensity}
                 />
             </TabPanel>
             <TabPanel value={value} index={6}>
@@ -326,8 +404,10 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    error={Boolean(errors.AdditionallyInformation)}
-                    helperText={errors.AdditionallyInformation}
+                    defaultValue={ProccesMobXStore.procces.AdditionallyInformation}
+
+                    error={Boolean(ProccesMobXStore.errors.AdditionallyInformation)}
+                    helperText={ProccesMobXStore.errors.AdditionallyInformation}
                 />
             </TabPanel>
         </Box>

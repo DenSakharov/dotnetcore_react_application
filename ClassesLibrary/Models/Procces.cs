@@ -8,17 +8,17 @@ namespace ClassesLibrary.Models
         public string? OrganizationCaption { get; set; }//Наименование организации
         public string? EquipmentType { get; set; }//Тип оборудования
         public string? EquipmentModel { get; set; }//Модель оборудования
-        public List<Detail> details { get; set; } = new List<Detail>();
-        public List<Material> materials { get; set; } = new List<Material>();
-        public string? PartVolume { get; set; }
-        public string? VolumeIncludingSupportingStructures { get; set; }
-        public string? BuildingHeight { get; set; }
-        public string? LayerThickness { get; set; }
-        public string? AmountOfRequiredMaterialTakingIntoAccount { get; set; }
-        public string? ShieldingGasVolume { get; set; }
-        public string? PrintTime { get; set; }
-        public string? LaborIntensity { get; set; }
-        public string? AdditionallyInformation { get; set; }
+        public List<Detail> details { get; set; } = new List<Detail>();// массив деталей
+        public List<Material> materials { get; set; } = new List<Material>();//массив материалов
+        public string? PartVolume { get; set; }//Объем детали
+        public string? VolumeIncludingSupportingStructures { get; set; }//Объем с учетом поддерживающих структур
+        public string? BuildingHeight { get; set; }//высота построения
+        public string? LayerThickness { get; set; }//толщина слоя
+        public string? AmountOfRequiredMaterialTakingIntoAccount { get; set; }//Количество необходимого материала с учетом КИМ
+        public string? ShieldingGasVolume { get; set; }//Объем защитного газа
+        public string? PrintTime { get; set; }//Время печати
+        public string? LaborIntensity { get; set; }//Трудоемкость 
+        public string? AdditionallyInformation { get; set; }//Дополнительная информация
         //public string? kd { get; set; }
         [JsonIgnore]
         public List<Operation> Operations { get; set; } = new List<Operation>();

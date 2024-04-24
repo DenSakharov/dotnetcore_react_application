@@ -53,16 +53,21 @@ namespace netcorereactapp.Server.Controllers.ProccesController
         [HttpPost("create")]
         public async Task<string> CreateNewProcces([FromBody] ProccesDTO procces)
         {
-            var v = procces;
-            var res = await _proccesService.Create(v);
-            if (res != null)
+            if (procces != null)
             {
-                var fileBytes = await _supportingService.CreateRouteMapTemplate(res);
-                // Устанавливаем тип содержимого и имя файла
-                string base64String = Convert.ToBase64String(fileBytes);
+                var res = await _proccesService.Create(procces);
+                if (res != null)
+                {
+                    var fileBytes = await _supportingService.CreateRouteMapTemplate(res);
+                    // Устанавливаем тип содержимого и имя файла
+                    string base64String = Convert.ToBase64String(fileBytes);
 
-                return base64String;
+                    return base64String;
+                }
+
+                return null;
             }
+
             return null;
         }
         /* [HttpPut]
