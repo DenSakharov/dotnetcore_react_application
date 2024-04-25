@@ -9,6 +9,7 @@ import ModalViewSelectedProcces
 import {Box} from "@mui/material";
 import {PageSizeSelector} from "../CommonComponents/PageSizeSelector.tsx";
 import {Pagination} from "../CommonComponents/Pagination.tsx";
+import {ProccesMobXStore} from "../../../store/ProccesMobXStore.ts";
 
 export default function Table() {
     const [data, setData] = useState<Procces[]>([])
@@ -101,11 +102,13 @@ export default function Table() {
         //console.info(int)
         setSelectedProccesId(int)
         setModalExcelExport(true);
+
     }
     const clickExcelExport = (e) => {
         if (window.confirm('Вы уверены, что хотите закрыть окно?')) {
             getData();
             setModalExcelExport(!isModalExcelExport);
+            ProccesMobXStore.resetProcces()
         }
     }
     return (

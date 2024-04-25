@@ -9,6 +9,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {styled} from "@mui/system";
 import {StyledTextField} from "./FieldsAndOperationsAddingComponent.tsx";
 import {Procces} from "../../Models/ProccesOperation/Procces.tsx";
+import {ProccesMobXStore} from "../../store/ProccesMobXStore.ts";
 
 export const theme = createTheme({
     spacing: 8, // Пример значений отступов
@@ -28,6 +29,7 @@ export const OperationList
             ...prevState,
             operations: updatedOperations
         }));
+        ProccesMobXStore.removeOperation(index);
     };
     return (
         <ThemeProvider theme={theme}>

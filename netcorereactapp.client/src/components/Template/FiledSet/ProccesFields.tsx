@@ -7,16 +7,16 @@ import MaterialForm from "./MaterialForm.tsx";
 import {ProccesMobXStore} from "../../../store/ProccesMobXStore.ts";
 import {errorsStore} from "../../../store/ErrorsMobXStore.ts";
 import { observer } from 'mobx-react';
+import {toJS} from "mobx";
 
-export default function ProccesFields({setProccesLocal}){
-    const [procces, setProcces] = useState<Procces>(ProccesMobXStore.procces);
+export default function ProccesFields(){
+    const [procces, setProcces] = useState<Procces>(ProccesMobXStore?.procces);
 
     useEffect(() => {
-        //console.log('Changing : ',procces);
+        console.log('Changing : ', procces);
         const isAllFieldsValid = Object.values(procces).every(value => value !== '' && value !== 0);
 
         if (isAllFieldsValid) {
-
             ProccesMobXStore.setErrors({});
         } else {
             // Создание объекта с ошибками
@@ -90,8 +90,11 @@ export default function ProccesFields({setProccesLocal}){
 
     return(
         <Box
-            sx={{ flexGrow: 1, display: 'flex',height: '400px',width:'100' }}
+            sx={{
+                flexGrow: 1, display: 'flex',height: '400px',width:'100'
+        }}
         >
+
             <Tabs
                 orientation="vertical"
                 variant="scrollable"
@@ -121,6 +124,7 @@ export default function ProccesFields({setProccesLocal}){
                 <StyledTab label="Характеристики печати" />
                 <StyledTab label="Доплнительная информация" />
             </Tabs>
+
             <TabPanel value={value} index={0}>
                     <StyledTextFieldLocal
                         ref={numberRef}
@@ -132,7 +136,7 @@ export default function ProccesFields({setProccesLocal}){
                         autoFocus
                         sx={{width: '10ch',}}
 
-                        defaultValue={ProccesMobXStore.procces.number}
+                        defaultValue={ProccesMobXStore.procces?.number}
 
                         error={Boolean(ProccesMobXStore.errors.number)}
                         helperText={ProccesMobXStore.errors.number}
@@ -147,7 +151,7 @@ export default function ProccesFields({setProccesLocal}){
                         autoFocus
                         sx={{width: '50ch',}}
 
-                        defaultValue={ProccesMobXStore.procces.OrganizationCaption}
+                        defaultValue={ProccesMobXStore.procces?.OrganizationCaption}
 
                         error={Boolean(ProccesMobXStore.errors.OrganizationCaption)}
                         helperText={ProccesMobXStore.errors.OrganizationCaption}
@@ -164,7 +168,7 @@ export default function ProccesFields({setProccesLocal}){
                         autoFocus
                         sx={{width: '50ch',}}
 
-                        defaultValue={ProccesMobXStore.procces.EquipmentType}
+                        defaultValue={ProccesMobXStore.procces?.EquipmentType}
 
                         error={Boolean(ProccesMobXStore.errors.EquipmentType)}
                         helperText={ProccesMobXStore.errors.EquipmentType}
@@ -180,7 +184,7 @@ export default function ProccesFields({setProccesLocal}){
                         autoFocus
                         sx={{width: '50ch',}}
 
-                        defaultValue={ProccesMobXStore.procces.EquipmentModel}
+                        defaultValue={ProccesMobXStore.procces?.EquipmentModel}
 
                         error={Boolean(ProccesMobXStore.errors.EquipmentModel)}
                         helperText={ProccesMobXStore.errors.EquipmentModel}
@@ -202,15 +206,15 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces.caption}
+                    defaultValue={ProccesMobXStore.procces?.caption}
 
                     error={Boolean(ProccesMobXStore.errors.caption)}
                     helperText={ProccesMobXStore.errors.caption}
                 />
-                <DetailForm detailArray={procces.details}/>
+                <DetailForm detailArray={procces?.details}/>
             </TabPanel>
             <TabPanel value={value} index={3}>
-                <MaterialForm materialInputArray={procces.materials}/>
+                <MaterialForm materialInputArray={procces?.materials}/>
             </TabPanel>
             <TabPanel value={value} index={4}>
                 <StyledTextFieldLocal
@@ -228,7 +232,7 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces.PartVolume}
+                    defaultValue={ProccesMobXStore.procces?.PartVolume}
 
                     error={Boolean(ProccesMobXStore.errors.PartVolume)}
                     helperText={ProccesMobXStore.errors.PartVolume}
@@ -248,7 +252,7 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces.VolumeIncludingSupportingStructures}
+                    defaultValue={ProccesMobXStore.procces?.VolumeIncludingSupportingStructures}
 
                     error={Boolean(ProccesMobXStore.errors.VolumeIncludingSupportingStructures)}
                     helperText={ProccesMobXStore.errors.VolumeIncludingSupportingStructures}
@@ -268,7 +272,7 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces.BuildingHeight}
+                    defaultValue={ProccesMobXStore.procces?.BuildingHeight}
 
                     error={Boolean(ProccesMobXStore.errors.BuildingHeight)}
                     helperText={ProccesMobXStore.errors.BuildingHeight}
@@ -288,7 +292,7 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces.LayerThickness}
+                    defaultValue={ProccesMobXStore.procces?.LayerThickness}
 
                     error={Boolean(ProccesMobXStore.errors.LayerThickness)}
                     helperText={ProccesMobXStore.errors.LayerThickness}
@@ -310,7 +314,7 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces.AmountOfRequiredMaterialTakingIntoAccount}
+                    defaultValue={ProccesMobXStore.procces?.AmountOfRequiredMaterialTakingIntoAccount}
 
                     error={Boolean(ProccesMobXStore.errors.AmountOfRequiredMaterialTakingIntoAccount)}
                     helperText={ProccesMobXStore.errors.AmountOfRequiredMaterialTakingIntoAccount}
@@ -320,7 +324,7 @@ export default function ProccesFields({setProccesLocal}){
                     id="outlined-helperText"
                     label="Объем зщитного газа"
                     variant="outlined"
-                    name="VolumeIncludingSupportingStructures"
+                    name="ShieldingGasVolume"
                     onChange={handleTextFieldChange}
                     autoFocus
                     sx={{
@@ -330,7 +334,7 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces.ShieldingGasVolume}
+                    defaultValue={ProccesMobXStore.procces?.ShieldingGasVolume}
 
                     error={Boolean(ProccesMobXStore.errors.ShieldingGasVolume)}
                     helperText={ProccesMobXStore.errors.ShieldingGasVolume}
@@ -350,7 +354,7 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces.PrintTime}
+                    defaultValue={ProccesMobXStore.procces?.PrintTime}
 
                     error={Boolean(ProccesMobXStore.errors.PrintTime)}
                     helperText={ProccesMobXStore.errors.PrintTime}
@@ -370,7 +374,7 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces.LaborIntensity}
+                    defaultValue={ProccesMobXStore.procces?.LaborIntensity}
 
                     error={Boolean(ProccesMobXStore.errors.LaborIntensity)}
                     helperText={ProccesMobXStore.errors.LaborIntensity}
@@ -404,12 +408,13 @@ export default function ProccesFields({setProccesLocal}){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces.AdditionallyInformation}
+                    defaultValue={ProccesMobXStore.procces?.AdditionallyInformation}
 
                     error={Boolean(ProccesMobXStore.errors.AdditionallyInformation)}
                     helperText={ProccesMobXStore.errors.AdditionallyInformation}
                 />
             </TabPanel>
+
         </Box>
     )
 }

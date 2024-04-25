@@ -20,6 +20,8 @@ import {AddChildOperToProc} from "../AddingChildOperationToProcces/AddChildOperT
 import DeleteIcon from "@mui/icons-material/Delete";
 import {HistoryComponent} from "../../../../History/HistoryComponent.tsx";
 import '../../../../../../styles/CustomTabs.scss'
+import ProccesFields from "../../../../../Template/FiledSet/ProccesFields.tsx";
+import {ProccesMobXStore} from "../../../../../../store/ProccesMobXStore.ts";
 
 export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) => {
     const [selectedProcces, setSelectedProcces] = useState<Procces>()
@@ -31,6 +33,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
     useEffect(() => {
         //console.log("selectedProcces changed:", selectedProcces);
         setOperations(selectedProcces?.operations)
+        ProccesMobXStore.setProcces(selectedProcces)
     }, [selectedProcces]);
     useEffect(() => {
         //console.log('operations\n',operations);
@@ -50,6 +53,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
             if (response) {
                 //console.log('Ответ запроса на получение выбранного процесса с операциями :\n',response.data)
                 setSelectedProcces(response.data);
+
             } else {
                 console.error('requset faild')
             }
@@ -89,6 +93,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
             //console.log("Response from confirmEditedOperation:", response.data);
             if (response.status == 200) {
                 const res = await addingAttachmentsToProcces(selectedProcces?.id, selectedFiles, onClose)
+                ProccesMobXStore.resetProcces()
             }
             // Возможно, здесь вы захотите обновить состояние приложения или выполнить другие действия
         } catch (error) {
@@ -142,6 +147,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
             //console.log("Response from confirmEditedOperation:", response.data);
             if (response.status == 200) {
                 onClose()
+                ProccesMobXStore.resetProcces()
             }
         } catch (e) {
 
@@ -168,13 +174,18 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                 <CenteredDivColumn>
                     <CenteredDivRow
                         sx={{
+                            display:'center',
                             backgroundColor: 'green',
                             border: '4px solid ',
                             borderRadius: '25px',
                             padding: '1px',
                         }}
                     >
-                        <CenteredDivColumn>
+                        <CenteredDivColumn
+                            sx={{
+                                width: '30%',
+                            }}
+                        >
                             <IconButton onClick={confirmEditedOperation} style={{color: 'white'}}>
                                 <CenteredDivColumn>
                                     <AssignmentTurnedInSharpIcon style={{fontSize: 50, color: 'white'}}/>
@@ -189,7 +200,10 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                             </IconButton>
                         </CenteredDivColumn>
 
-                        <CenteredDivColumn>
+                        {ProccesMobXStore.procces &&
+                        <ProccesFields />}
+
+                        {/*<CenteredDivColumn>
                             <StyledTextField
                                 ref={inputRef}
                                 id="outlined-helperText"
@@ -253,7 +267,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                                 onChange={handleTextFieldChange}
                                 autoFocus
                             />
-                        </CenteredDivColumn>
+                        </CenteredDivColumn>*/}
 
                         {/*{selectedProcces.attachments &&
                                 <List>
@@ -263,8 +277,6 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                         {/* {selectedProcces.attachments &&
                                 renderAttachments(selectedProcces.attachments)
                             }*/}
-
-
                     </CenteredDivRow>
 
                     <Tabs

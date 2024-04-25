@@ -73,11 +73,11 @@ export const FieldsAndOperationsAddingComponent
         }
 
         const tokenValue = localStorage.getItem("authToken");
-        console.log('procces data before send request :\n',toJS(procces))
+        //console.log('procces data before send request :\n',toJS(procces))
         try {
             const response = await axios.post(
                 `${config.apiUrl}/procces/create`,
-                toJS(procces), // Передаем отредактированный объект
+                toJS(ProccesMobXStore.procces), // Передаем отредактированный объект
                 {
                     headers: {
                         //'Content-Type': 'application/json', // Устанавливаем заголовок для JSON
@@ -88,6 +88,7 @@ export const FieldsAndOperationsAddingComponent
             if(response.status==200)
             {
                 setFileData(response.data)
+                ProccesMobXStore.resetProcces()
             }
             else {
                 console.log('Some response',response)
@@ -134,7 +135,7 @@ export const FieldsAndOperationsAddingComponent
     };
     const addOperation = ({ operation }) => {
         const localOper=operation.operation
-        setProcces(prevState => {
+       /* setProcces(prevState => {
             // Если operations еще не инициализирован, создаем новый массив и добавляем операцию
             if (!prevState.operations) {
                 return {
@@ -148,11 +149,12 @@ export const FieldsAndOperationsAddingComponent
                     operations: [...prevState.operations, localOper]
                 };
             }
-        });
+        });*/
+        ProccesMobXStore.addOperation(localOper);
     };
     return (
         <CenteredDivColumn>
-            <ProccesFields setProccesLocal={setProcces}/>
+            <ProccesFields />
            {/* <CenteredDivRow
                 sx={{
                     backgroundColor: 'darkgreen',
