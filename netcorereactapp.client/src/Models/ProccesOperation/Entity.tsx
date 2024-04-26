@@ -1,6 +1,6 @@
 export interface Entity {
     id: number;
-    caption: any;
+    caption: string;
     dateOfCreture: Date;
     dateOfEdited: Date;
 }

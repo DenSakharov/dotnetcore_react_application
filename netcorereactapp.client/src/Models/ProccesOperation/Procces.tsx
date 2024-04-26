@@ -7,18 +7,18 @@ import {Material} from "./Material.tsx";
 
 export interface Procces extends  Entity{
     number: number,
-    OrganizationCaption: string,
-    EquipmentType: string,
-    EquipmentModel: string,
-    PartVolume: number
-    VolumeIncludingSupportingStructures: number
-    BuildingHeight: number
-    LayerThickness: number
-    AmountOfRequiredMaterialTakingIntoAccount: number
-    ShieldingGasVolume: number
-    PrintTime: number
-    LaborIntensity: number
-    AdditionallyInformation: string
+    organizationCaption: string,
+    equipmentType: string,
+    equipmentModel: string,
+    partVolume: number
+    volumeIncludingSupportingStructures: number
+    buildingHeight: number
+    layerThickness: number
+    amountOfRequiredMaterialTakingIntoAccount: number
+    shieldingGasVolume: number
+    printTime: number
+    laborIntensity: number
+    additionallyInformation: string
 
     operations: Operation[];
     histories: History[];

@@ -10,10 +10,11 @@ import { observer } from 'mobx-react';
 import {toJS} from "mobx";
 
 export default function ProccesFields(){
-    const [procces, setProcces] = useState<Procces>(ProccesMobXStore?.procces);
+    const [procces, setProcces]
+        = useState<Procces>(ProccesMobXStore?.procces);
 
     useEffect(() => {
-        console.log('Changing : ', procces);
+        //console.log('Changing : ', toJS( procces) );
         const isAllFieldsValid = Object.values(procces).every(value => value !== '' && value !== 0);
 
         if (isAllFieldsValid) {
@@ -35,6 +36,8 @@ export default function ProccesFields(){
     const [value, setValue] = useState(0);
 
     const handleChange = (event: SyntheticEvent, newValue: number) => {
+        //console.log("Новое значение:", newValue);
+        //console.log("MobX store procces",toJS( ProccesMobXStore.procces) );
         setValue(newValue);
     };
 
@@ -146,15 +149,15 @@ export default function ProccesFields(){
                         id="outlined-helperText"
                         label="Наименование организации"
                         variant="outlined"
-                        name="OrganizationCaption"
+                        name="organizationCaption"
                         onChange={handleTextFieldChange}
                         autoFocus
                         sx={{width: '50ch',}}
 
-                        defaultValue={ProccesMobXStore.procces?.OrganizationCaption}
+                        defaultValue={ProccesMobXStore.procces?.organizationCaption}
 
-                        error={Boolean(ProccesMobXStore.errors.OrganizationCaption)}
-                        helperText={ProccesMobXStore.errors.OrganizationCaption}
+                        error={Boolean(ProccesMobXStore.errors.organizationCaption)}
+                        helperText={ProccesMobXStore.errors.organizationCaption}
                     />
             </TabPanel>
             <TabPanel value={value} index={1}>
@@ -163,15 +166,15 @@ export default function ProccesFields(){
                         id="outlined-helperText"
                         label="Тип оборудования"
                         variant="outlined"
-                        name="EquipmentType"
+                        name="equipmentType"
                         onChange={handleTextFieldChange}
                         autoFocus
                         sx={{width: '50ch',}}
 
-                        defaultValue={ProccesMobXStore.procces?.EquipmentType}
+                        defaultValue={ProccesMobXStore.procces?.equipmentType}
 
-                        error={Boolean(ProccesMobXStore.errors.EquipmentType)}
-                        helperText={ProccesMobXStore.errors.EquipmentType}
+                        error={Boolean(ProccesMobXStore.errors.equipmentType)}
+                        helperText={ProccesMobXStore.errors.equipmentType}
 
                     />
                     <StyledTextFieldLocal
@@ -179,15 +182,15 @@ export default function ProccesFields(){
                         id="outlined-helperText"
                         label="Модель оборудования"
                         variant="outlined"
-                        name="EquipmentModel"
+                        name="equipmentModel"
                         onChange={handleTextFieldChange}
                         autoFocus
                         sx={{width: '50ch',}}
 
-                        defaultValue={ProccesMobXStore.procces?.EquipmentModel}
+                        defaultValue={ProccesMobXStore.procces?.equipmentModel}
 
-                        error={Boolean(ProccesMobXStore.errors.EquipmentModel)}
-                        helperText={ProccesMobXStore.errors.EquipmentModel}
+                        error={Boolean(ProccesMobXStore.errors.equipmentModel)}
+                        helperText={ProccesMobXStore.errors.equipmentModel}
                     />
             </TabPanel>
             <TabPanel value={value} index={2}>
@@ -211,10 +214,10 @@ export default function ProccesFields(){
                     error={Boolean(ProccesMobXStore.errors.caption)}
                     helperText={ProccesMobXStore.errors.caption}
                 />
-                <DetailForm detailArray={procces?.details}/>
+                <DetailForm detailArray={ProccesMobXStore.procces?.details}/>
             </TabPanel>
             <TabPanel value={value} index={3}>
-                <MaterialForm materialInputArray={procces?.materials}/>
+                <MaterialForm materialInputArray={ProccesMobXStore.procces?.materials}/>
             </TabPanel>
             <TabPanel value={value} index={4}>
                 <StyledTextFieldLocal
@@ -222,7 +225,7 @@ export default function ProccesFields(){
                     id="outlined-helperText"
                     label="Объем детали"
                     variant="outlined"
-                    name="PartVolume"
+                    name="partVolume"
                     onChange={handleTextFieldChange}
                     autoFocus
                     sx={{
@@ -232,17 +235,17 @@ export default function ProccesFields(){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces?.PartVolume}
+                    defaultValue={ProccesMobXStore.procces?.partVolume}
 
-                    error={Boolean(ProccesMobXStore.errors.PartVolume)}
-                    helperText={ProccesMobXStore.errors.PartVolume}
+                    error={Boolean(ProccesMobXStore.errors.partVolume)}
+                    helperText={ProccesMobXStore.errors.partVolume}
                 />
                 <StyledTextFieldLocal
                     ref={volumeIncludingSupportingStructuresRef}
                     id="outlined-helperText"
                     label="Объем с учетом поддерживающих структур"
                     variant="outlined"
-                    name="VolumeIncludingSupportingStructures"
+                    name="volumeIncludingSupportingStructures"
                     onChange={handleTextFieldChange}
                     autoFocus
                     sx={{
@@ -252,17 +255,17 @@ export default function ProccesFields(){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces?.VolumeIncludingSupportingStructures}
+                    defaultValue={ProccesMobXStore.procces?.volumeIncludingSupportingStructures}
 
-                    error={Boolean(ProccesMobXStore.errors.VolumeIncludingSupportingStructures)}
-                    helperText={ProccesMobXStore.errors.VolumeIncludingSupportingStructures}
+                    error={Boolean(ProccesMobXStore.errors.volumeIncludingSupportingStructures)}
+                    helperText={ProccesMobXStore.errors.volumeIncludingSupportingStructures}
                 />
                 <StyledTextFieldLocal
                     ref={buildingHeightRef}
                     id="outlined-helperText"
                     label="Высота построения"
                     variant="outlined"
-                    name="BuildingHeight"
+                    name="buildingHeight"
                     onChange={handleTextFieldChange}
                     autoFocus
                     sx={{
@@ -272,17 +275,17 @@ export default function ProccesFields(){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces?.BuildingHeight}
+                    defaultValue={ProccesMobXStore.procces?.buildingHeight}
 
-                    error={Boolean(ProccesMobXStore.errors.BuildingHeight)}
-                    helperText={ProccesMobXStore.errors.BuildingHeight}
+                    error={Boolean(ProccesMobXStore.errors.buildingHeight)}
+                    helperText={ProccesMobXStore.errors.buildingHeight}
                 />
                 <StyledTextFieldLocal
                     ref={layerThicknessRef}
                     id="outlined-helperText"
                     label="Толщина слоя"
                     variant="outlined"
-                    name="LayerThickness"
+                    name="layerThickness"
                     onChange={handleTextFieldChange}
                     autoFocus
                     sx={{
@@ -292,10 +295,10 @@ export default function ProccesFields(){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces?.LayerThickness}
+                    defaultValue={ProccesMobXStore.procces?.layerThickness}
 
-                    error={Boolean(ProccesMobXStore.errors.LayerThickness)}
-                    helperText={ProccesMobXStore.errors.LayerThickness}
+                    error={Boolean(ProccesMobXStore.errors.layerThickness)}
+                    helperText={ProccesMobXStore.errors.layerThickness}
                 />
             </TabPanel>
             <TabPanel value={value} index={5}>
@@ -304,7 +307,7 @@ export default function ProccesFields(){
                     id="outlined-helperText"
                     label="Количество необходимого материала с учетом КИМ"
                     variant="outlined"
-                    name="AmountOfRequiredMaterialTakingIntoAccount"
+                    name="amountOfRequiredMaterialTakingIntoAccount"
                     onChange={handleTextFieldChange}
                     autoFocus
                     sx={{
@@ -314,17 +317,17 @@ export default function ProccesFields(){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces?.AmountOfRequiredMaterialTakingIntoAccount}
+                    defaultValue={ProccesMobXStore.procces?.amountOfRequiredMaterialTakingIntoAccount}
 
-                    error={Boolean(ProccesMobXStore.errors.AmountOfRequiredMaterialTakingIntoAccount)}
-                    helperText={ProccesMobXStore.errors.AmountOfRequiredMaterialTakingIntoAccount}
+                    error={Boolean(ProccesMobXStore.errors.amountOfRequiredMaterialTakingIntoAccount)}
+                    helperText={ProccesMobXStore.errors.amountOfRequiredMaterialTakingIntoAccount}
                 />
                 <StyledTextFieldLocal
                     ref={shieldingGasVolumeRef}
                     id="outlined-helperText"
                     label="Объем зщитного газа"
                     variant="outlined"
-                    name="ShieldingGasVolume"
+                    name="shieldingGasVolume"
                     onChange={handleTextFieldChange}
                     autoFocus
                     sx={{
@@ -334,17 +337,17 @@ export default function ProccesFields(){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces?.ShieldingGasVolume}
+                    defaultValue={ProccesMobXStore.procces?.shieldingGasVolume}
 
-                    error={Boolean(ProccesMobXStore.errors.ShieldingGasVolume)}
-                    helperText={ProccesMobXStore.errors.ShieldingGasVolume}
+                    error={Boolean(ProccesMobXStore.errors.shieldingGasVolume)}
+                    helperText={ProccesMobXStore.errors.shieldingGasVolume}
                 />
                 <StyledTextFieldLocal
                     ref={printTimeRef}
                     id="outlined-helperText"
                     label="Время печати"
                     variant="outlined"
-                    name="PrintTime"
+                    name="printTime"
                     onChange={handleTextFieldChange}
                     autoFocus
                     sx={{
@@ -354,17 +357,17 @@ export default function ProccesFields(){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces?.PrintTime}
+                    defaultValue={ProccesMobXStore.procces?.printTime}
 
-                    error={Boolean(ProccesMobXStore.errors.PrintTime)}
-                    helperText={ProccesMobXStore.errors.PrintTime}
+                    error={Boolean(ProccesMobXStore.errors.printTime)}
+                    helperText={ProccesMobXStore.errors.printTime}
                 />
                 <StyledTextFieldLocal
                     ref={laborIntensityRef}
                     id="outlined-helperText"
                     label="Трудоемкость"
                     variant="outlined"
-                    name="LaborIntensity"
+                    name="laborIntensity"
                     onChange={handleTextFieldChange}
                     autoFocus
                     sx={{
@@ -374,10 +377,10 @@ export default function ProccesFields(){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces?.LaborIntensity}
+                    defaultValue={ProccesMobXStore.procces?.laborIntensity}
 
-                    error={Boolean(ProccesMobXStore.errors.LaborIntensity)}
-                    helperText={ProccesMobXStore.errors.LaborIntensity}
+                    error={Boolean(ProccesMobXStore.errors.laborIntensity)}
+                    helperText={ProccesMobXStore.errors.laborIntensity}
                 />
             </TabPanel>
             <TabPanel value={value} index={6}>
@@ -387,7 +390,7 @@ export default function ProccesFields(){
                     multiline
                     maxRows={10}
                     variant="standard"
-                    name="AdditionallyInformation"
+                    name="additionallyInformation"
                     onChange={handleTextFieldChange}
                     sx={{
                         width: '500px',
@@ -408,10 +411,10 @@ export default function ProccesFields(){
                         },
                     }}
 
-                    defaultValue={ProccesMobXStore.procces?.AdditionallyInformation}
+                    defaultValue={ProccesMobXStore.procces?.additionallyInformation}
 
-                    error={Boolean(ProccesMobXStore.errors.AdditionallyInformation)}
-                    helperText={ProccesMobXStore.errors.AdditionallyInformation}
+                    error={Boolean(ProccesMobXStore.errors.additionallyInformation)}
+                    helperText={ProccesMobXStore.errors.additionallyInformation}
                 />
             </TabPanel>
 

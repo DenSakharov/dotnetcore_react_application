@@ -10,16 +10,18 @@ import EditSharpIcon from "@material-ui/icons/EditSharp";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {styled} from "@mui/system";
 import {Material} from "../../../Models/ProccesOperation/Material.tsx";
+import {ProccesMobXStore} from "../../../store/ProccesMobXStore.ts";
+import {toJS} from "mobx";
 
 export default function MaterialForm(materialInputArray: Material[]) {
     const [materials, setMaterials] = useState<Material[]>(Array.isArray(materialInputArray) ? materialInputArray : []);
 
     const [material,setMaterial]=useState({
         caption:'',
-        LoadWeightM3: '',
-        ProfileAndSize: '',
-        OrganizationCaption: '',
-        Quantity: '',
+        loadWeightM3: 0,
+        profileAndSize: 0,
+        organizationCaption: '',
+        quantity: 0,
     })
     const [errors, setErrors] = useState({});
     const inputRef = useRef(null);
@@ -27,12 +29,15 @@ export default function MaterialForm(materialInputArray: Material[]) {
         const {name, value} = event.target;
         const valu = inputRef.current.value;
         // Валидация для поля "number"
-        if (name === 'amount' && !value.match(/^\d+$/)) {
+        if ((name === 'loadWeightM3' ||
+            name === 'profileAndSize' ||
+            name === 'quantity') && !value.match(/^\d+$/)) {
             setErrors(prevErrors => ({
                 ...prevErrors,
                 [name]: 'Пожалуйста, введите число.'
-            }));
-        } else {
+            }))
+        }
+        else {
             setErrors(prevErrors => ({
                 ...prevErrors,
                 [name]: null
@@ -69,27 +74,32 @@ export default function MaterialForm(materialInputArray: Material[]) {
             return; // Прерываем отправку данных
         }
         // Создаем новый объект Detail и добавляем его в массив
-        const newDetail: Material = {
+        const newMaterial: Material = {
             caption: material.caption,
-            LoadWeightM3:  parseInt(material.LoadWeightM3),
-            ProfileAndSize: parseInt(material.ProfileAndSize),
-            OrganizationCaption: material.OrganizationCaption,
-            Quantity:  parseInt(material.Quantity),
+            loadWeightM3:  parseInt(material.loadWeightM3),
+            profileAndSize: parseInt(material.profileAndSize),
+            organizationCaption: material.organizationCaption,
+            quantity:  parseInt(material.quantity),
         };
 
         // Обновляем состояние, добавляя новый объект Detail в массив
-        setMaterials(prevDetails => [...prevDetails, newDetail]);
-
+        setMaterials(prevDetails => [...prevDetails, newMaterial]);
+        //console.log(toJS( ProccesMobXStore.procces ) )
+        ProccesMobXStore.addMaterial(newMaterial)
         // Очищаем состояние для поля detail, чтобы подготовить его к следующему вводу
+        console.log(toJS( ProccesMobXStore.procces ) )
         setMaterial({
             caption: '',
-            LoadWeightM3: '',
-            ProfileAndSize: '',
-            OrganizationCaption: '',
-            Quantity: '',
+            loadWeightM3: 0,
+            profileAndSize: 0,
+            organizationCaption: '',
+            quantity: 0,
         });
         toggleInfoVisibility()
     };
+    const deleteBtn = (index) => {
+        ProccesMobXStore.removeMaterial(index)
+    }
     return (
         <CenteredDivColumnLocal
             sx={{
@@ -142,7 +152,7 @@ export default function MaterialForm(materialInputArray: Material[]) {
                                     id="outlined-helperText"
                                     label="Масса загрузки"
                                     variant="outlined"
-                                    name="LoadWeightM3"
+                                    name="loadWeightM3"
                                     onChange={handleTextFieldChange}
                                     autoFocus
                                     sx={{
@@ -151,8 +161,8 @@ export default function MaterialForm(materialInputArray: Material[]) {
                                             fontSize: '15px',
                                         },
                                     }}
-                                    error={Boolean(errors.LoadWeightM3)}
-                                    helperText={errors.LoadWeightM3}
+                                    error={Boolean(errors.loadWeightM3)}
+                                    helperText={errors.loadWeightM3}
                                 />
                             </CenteredDivRow>
                             <CenteredDivRow>
@@ -161,7 +171,7 @@ export default function MaterialForm(materialInputArray: Material[]) {
                                     id="outlined-helperText"
                                     label="Профиль и размеры"
                                     variant="outlined"
-                                    name="ProfileAndSize"
+                                    name="profileAndSize"
                                     onChange={handleTextFieldChange}
                                     autoFocus
                                     sx={{
@@ -170,15 +180,15 @@ export default function MaterialForm(materialInputArray: Material[]) {
                                             fontSize: '15px',
                                         },
                                     }}
-                                    error={Boolean(errors.ProfileAndSize)}
-                                    helperText={errors.ProfileAndSize}
+                                    error={Boolean(errors.profileAndSize)}
+                                    helperText={errors.profileAndSize}
                                 />
                                 <StyledTextFieldLocal
                                     ref={inputRef}
                                     id="outlined-helperText"
                                     label="Название организации"
                                     variant="outlined"
-                                    name="OrganizationCaption"
+                                    name="organizationCaption"
                                     onChange={handleTextFieldChange}
                                     autoFocus
                                     sx={{
@@ -188,15 +198,15 @@ export default function MaterialForm(materialInputArray: Material[]) {
                                         },
                                     }}
 
-                                    error={Boolean(errors.OrganizationCaption)}
-                                    helperText={errors.OrganizationCaption}
+                                    error={Boolean(errors.organizationCaption)}
+                                    helperText={errors.organizationCaption}
                                 />
                                 <StyledTextFieldLocal
                                     ref={inputRef}
                                     id="outlined-helperText"
                                     label="Количество на загрузку"
                                     variant="outlined"
-                                    name="Quantity"
+                                    name="quantity"
                                     onChange={handleTextFieldChange}
                                     autoFocus
                                     sx={{
@@ -206,8 +216,8 @@ export default function MaterialForm(materialInputArray: Material[]) {
                                         },
                                     }}
 
-                                    error={Boolean(errors.Quantity)}
-                                    helperText={errors.Quantity}
+                                    error={Boolean(errors.quantity)}
+                                    helperText={errors.quantity}
                                 />
                             </CenteredDivRow>
                         </CenteredDivColumn>
@@ -224,8 +234,8 @@ export default function MaterialForm(materialInputArray: Material[]) {
                 )
             }
 
-            {Array.isArray(materials) && // Проверяем, что details является массивом
-                materials.map(material => (
+            {ProccesMobXStore.procces.materials && // Проверяем, что details является массивом
+                ProccesMobXStore.procces.materials.map(material => (
                     <CenteredDivRow key={material.id}>
                         <IconButton>
                             <EditSharpIcon/>
@@ -233,7 +243,7 @@ export default function MaterialForm(materialInputArray: Material[]) {
                         <Typography>
                             {material.caption}
                         </Typography>
-                        <IconButton edge="end" aria-label="delete">
+                        <IconButton edge="end" aria-label="delete" onClick={deleteBtn(material.id)}>
                             <DeleteIcon/>
                         </IconButton>
                     </CenteredDivRow>

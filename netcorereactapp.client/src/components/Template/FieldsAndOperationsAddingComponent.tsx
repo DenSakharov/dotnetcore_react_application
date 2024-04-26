@@ -50,7 +50,7 @@ export const FieldsAndOperationsAddingComponent
     };
 
     const saveProcces=async()=>{
-        console.log('',ProccesMobXStore.procces)
+        //console.log('',ProccesMobXStore.procces)
         // Проверяем, что все поля заполнены
         const allFieldsFilled = Object.values(ProccesMobXStore.procces).every(value => {
             // Проверяем, является ли значение строкой и, если да, обрезаем пробельные символы
@@ -73,11 +73,13 @@ export const FieldsAndOperationsAddingComponent
         }
 
         const tokenValue = localStorage.getItem("authToken");
-        //console.log('procces data before send request :\n',toJS(procces))
+        //console.log('procces data before send request :\n',toJS(ProccesMobXStore.procces))
+        const procTemp=toJS(ProccesMobXStore.procces)
+        console.log('procTemp',procTemp)
         try {
             const response = await axios.post(
                 `${config.apiUrl}/procces/create`,
-                toJS(ProccesMobXStore.procces), // Передаем отредактированный объект
+                procTemp, // Передаем отредактированный объект
                 {
                     headers: {
                         //'Content-Type': 'application/json', // Устанавливаем заголовок для JSON

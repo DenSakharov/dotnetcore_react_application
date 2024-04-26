@@ -15,6 +15,7 @@ namespace ClassesLibrary.Services
                 DateOfCreture = proccesDTO.DateOfCreture,
                 DateOfEdited = proccesDTO.DateOfEdited,
                 number = proccesDTO.number,
+                OrganizationCaption = proccesDTO.OrganizationCaption,
                 EquipmentType = proccesDTO.EquipmentType,
                 EquipmentModel = proccesDTO.EquipmentModel,
                 PartVolume = proccesDTO.PartVolume,
@@ -31,6 +32,8 @@ namespace ClassesLibrary.Services
                 //kd = proccesDTO.kd,
                 //profile_size = proccesDTO.profile_size,
                 Operations = MapChildOperations(proccesDTO.Operations),
+                details = MapDetails(proccesDTO.details),
+                materials = MapMaterials(proccesDTO.materials),
                 Attachments = MapAttachments(proccesDTO.Attachments),
             };
         }
@@ -123,6 +126,72 @@ namespace ClassesLibrary.Services
             return list_of_AttacmentDTO;
         }
 
+        public static List<Detail> MapDetails(List<DetailDTO> detailsDTO)
+        {
+            var details = new List<Detail>();
+            foreach (var VARIABLE in detailsDTO)
+            {
+                var detail = new Detail()
+                {
+                    Caption = VARIABLE.Caption,
+                    Quantity = VARIABLE.Quantity,
+                };
+                details.Add(detail);
+            }
+
+            return details;
+        }
+        public static List<DetailDTO> MapDetails(List<Detail> details)
+        {
+            var detailDtos = new List<DetailDTO>();
+            foreach (var VARIABLE in details)
+            {
+                var detail = new DetailDTO()
+                {
+                    Caption = VARIABLE.Caption,
+                    Quantity = VARIABLE.Quantity,
+                };
+                detailDtos.Add(detail);
+            }
+
+            return detailDtos;
+        }
+        public static List<Material> MapMaterials(List<MaterialDTO> materialDtos)
+        {
+            var materials = new List<Material>();
+            foreach (var VARIABLE in materialDtos)
+            {
+                var detail = new Material()
+                {
+                    Caption = VARIABLE.Caption,
+                    OrganizationCaption = VARIABLE.OrganizationCaption,
+                    LoadWeightM3 = VARIABLE.LoadWeightM3,
+                    ProfileAndSize = VARIABLE.ProfileAndSize,
+                    Quantity = VARIABLE.Quantity,
+                };
+                materials.Add(detail);
+            }
+
+            return materials;
+        }
+        public static List<MaterialDTO> MapMaterials(List<Material> Materials)
+        {
+            var materialDtos = new List<MaterialDTO>();
+            foreach (var VARIABLE in Materials)
+            {
+                var material = new MaterialDTO()
+                {
+                    Caption = VARIABLE.Caption,
+                    OrganizationCaption = VARIABLE.OrganizationCaption,
+                    LoadWeightM3 = VARIABLE.LoadWeightM3,
+                    ProfileAndSize = VARIABLE.ProfileAndSize,
+                    Quantity = VARIABLE.Quantity,
+                };
+                materialDtos.Add(material);
+            }
+
+            return materialDtos;
+        }
         public static List<Operation> MapChildOperations(List<OperationDTO> operationDTOs)
         {
             var operations = new List<Operation>();

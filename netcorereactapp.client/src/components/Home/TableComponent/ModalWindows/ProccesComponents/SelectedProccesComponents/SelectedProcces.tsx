@@ -22,6 +22,7 @@ import {HistoryComponent} from "../../../../History/HistoryComponent.tsx";
 import '../../../../../../styles/CustomTabs.scss'
 import ProccesFields from "../../../../../Template/FiledSet/ProccesFields.tsx";
 import {ProccesMobXStore} from "../../../../../../store/ProccesMobXStore.ts";
+import {toJS} from "mobx";
 
 export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) => {
     const [selectedProcces, setSelectedProcces] = useState<Procces>()
@@ -79,10 +80,10 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
     const confirmEditedOperation = async () => {
         const tokenValue = localStorage.getItem("authToken");
         try {
-            //console.log(selectedProcces?.id)
+            console.log(toJS(ProccesMobXStore.procces))
             const response = await axios.put(
                 `${config.apiUrl}/procces/updatemodel`, // URL для обновления операции по ее идентификатору
-                selectedProcces, // Передаем отредактированный объект
+                toJS(ProccesMobXStore.procces), // Передаем отредактированный объект
                 {
                     headers: {
                         'Content-Type': 'application/json',

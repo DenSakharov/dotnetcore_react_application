@@ -1,8 +1,8 @@
 import {Entity} from "./Entity.tsx";
 
 export interface Material extends Entity {
-    LoadWeightM3: number,
-    ProfileAndSize: number,
-    OrganizationCaption: string,
-    Quantity: number,
+    loadWeightM3: number,
+    profileAndSize: number,
+    organizationCaption: string,
+    quantity: number,
 }

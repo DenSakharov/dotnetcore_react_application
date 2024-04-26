@@ -55,6 +55,8 @@ namespace netcorereactapp.Server.Services.ModelServices
                     .Include(p => p.Operations)
                         .ThenInclude(o => o.Attachments)
                     .Include(p => p.Attachments)
+                    .Include(p=>p.details)
+                    .Include(p=>p.materials)
                     .FirstOrDefault(p => p.Id == id);
 
                 if (existingProcces != null)
@@ -139,6 +141,8 @@ namespace netcorereactapp.Server.Services.ModelServices
                     //newProcces.profile_size = procces.profile_size;
 
                     newProcces.Operations = MapService.MapChildOperations(procces.Operations);
+                    newProcces.details = MapService.MapDetails(procces.details);
+                    newProcces.materials = MapService.MapMaterials(procces.materials);
                     _dbContext.Procceses.Add(newProcces);
                     await _dbContext.SaveChangesAsync();
                     await transaction.CommitAsync();
@@ -151,6 +155,22 @@ namespace netcorereactapp.Server.Services.ModelServices
             }
         }
 
+        public async Task<Procces> Create(Procces procces)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    _dbContext.Procceses.Add(procces);
+                    await transaction.CommitAsync();
+                    return procces;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+        }
         public async Task<Procces> UpdateProcces(ProccesDTO editedProcces)
         {
             try
@@ -196,16 +216,26 @@ namespace netcorereactapp.Server.Services.ModelServices
                     var tempOldProcces = existingProcces;
                     // Обновляем существующую операцию данными из отредактированной операции
                     existingProcces.Caption = editedProcces.Caption;
-
-                    //existingProcces.kd = editedProcces.kd;
-                    //existingProcces.m3 = editedProcces.m3;
+                   
                     existingProcces.number = editedProcces.number;
-                    //existingProcces.material = editedProcces.material;
-                    //existingProcces.profile_size = editedProcces.profile_size;
-
+                    existingProcces.OrganizationCaption = editedProcces.OrganizationCaption;
+                    existingProcces.EquipmentType = editedProcces.EquipmentType;
+                    existingProcces.EquipmentModel = editedProcces.EquipmentModel;
+                    existingProcces.PartVolume = editedProcces.PartVolume;
+                    existingProcces.VolumeIncludingSupportingStructures = editedProcces.VolumeIncludingSupportingStructures;
+                    existingProcces.BuildingHeight = editedProcces.BuildingHeight;
+                    existingProcces.LayerThickness = editedProcces.LayerThickness;
+                    existingProcces.AmountOfRequiredMaterialTakingIntoAccount = editedProcces.AmountOfRequiredMaterialTakingIntoAccount;
+                    existingProcces.ShieldingGasVolume = editedProcces.ShieldingGasVolume;
+                    existingProcces.PrintTime = editedProcces.PrintTime;
+                    existingProcces.LaborIntensity = editedProcces.LaborIntensity;
+                    existingProcces.AdditionallyInformation = editedProcces.AdditionallyInformation;
+                    
                     existingProcces.DateOfCreture = editedProcces.DateOfCreture;
                     existingProcces.DateOfEdited = DateTime.UtcNow;
-                    //existingProcces.Operations =editedProcces.Operations;
+                    
+                    existingProcces.details = editedProcces.details;
+                    existingProcces.materials = editedProcces.materials;
                     // Сохраняем изменения в базе данных
                     await _dbContext.SaveChangesAsync();
 

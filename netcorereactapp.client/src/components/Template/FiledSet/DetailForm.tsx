@@ -3,20 +3,23 @@ import {IconButton, Typography} from "@mui/material";
 import {buttonHover, buttonHoverBorderRadius} from "../../../styles/Annimations/Buttons/button_animations_hover.tsx";
 import RemoveCircleTwoToneIcon from "@mui/icons-material/RemoveCircleTwoTone";
 import AddBoxSharpIcon from "@mui/icons-material/AddBoxSharp";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {StyledTextFieldLocal} from "../../../styles/SingleComponents/TabPanel/styles.tsx";
 import PlaylistAddCheckTwoToneIcon from "@mui/icons-material/PlaylistAddCheckTwoTone";
 import {styled} from "@mui/system";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditSharpIcon from '@material-ui/icons/EditSharp';
 import {Detail} from "../../../Models/ProccesOperation/Detail.tsx";
+import {ProccesMobXStore} from "../../../store/ProccesMobXStore.ts";
 
 export default function DetailForm(detailArray: Detail[]) {
     const [details, setDetails] = useState<Detail[]>(Array.isArray(detailArray) ? detailArray : []);
 
+    useEffect(() => {
+    }, [details]);
     const [detail,setDetail]=useState({
         caption:'',
-        amount:''
+        quantity:''
     })
     const [errors, setErrors] = useState({});
     const inputRef = useRef(null);
@@ -46,7 +49,6 @@ export default function DetailForm(detailArray: Detail[]) {
         setHidden(!hidden);
     };
     const addBtn = () => {
-        console.log('details',details)
         const allFieldsFilled = Object.entries(detail).every(([fieldName, value]) => {
             // Проверяем, что значение не пустое, является строкой и не является массивом или объектом
             return (typeof value === 'string' && value.trim() !== '') || Array.isArray(value) || typeof value === 'object';
@@ -67,16 +69,17 @@ export default function DetailForm(detailArray: Detail[]) {
         // Создаем новый объект Detail и добавляем его в массив
         const newDetail: Detail = {
             caption: detail.caption,
-            amount: parseInt(detail.amount) // Преобразуем количество в число
+            quantity: parseInt(detail.quantity) // Преобразуем количество в число
         };
 
         // Обновляем состояние, добавляя новый объект Detail в массив
         setDetails(prevDetails => [...prevDetails, newDetail]);
 
+        ProccesMobXStore.addDetail(newDetail)
         // Очищаем состояние для поля detail, чтобы подготовить его к следующему вводу
         setDetail({
             caption: '',
-            amount: ''
+            quantity: ''
         });
         toggleInfoVisibility()
     };
@@ -114,13 +117,13 @@ export default function DetailForm(detailArray: Detail[]) {
                             id="outlined-helperText"
                             label="Количество"
                             variant="outlined"
-                            name="amount"
+                            name="quantity"
                             onChange={handleTextFieldChange}
                             autoFocus
                             sx={{width: '20ch',}}
 
-                            error={Boolean(errors.amount)}
-                            helperText={errors.amount}
+                            error={Boolean(errors.quantity)}
+                            helperText={errors.quantity}
                         />
                     </CenteredDivRow>
                 </CenteredDivColumnLocal>
@@ -135,8 +138,8 @@ export default function DetailForm(detailArray: Detail[]) {
                 )
             }
 
-                {Array.isArray(details) && // Проверяем, что details является массивом
-                    details.map((detail) => (
+                {ProccesMobXStore.procces.details && // Проверяем, что details является массивом
+                    ProccesMobXStore.procces.details.map((detail) => (
                         <CenteredDivRow key={detail.id}>
                             <IconButton>
                                 <EditSharpIcon/>
