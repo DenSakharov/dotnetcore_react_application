@@ -11,23 +11,35 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditSharpIcon from '@material-ui/icons/EditSharp';
 import {Detail} from "../../../Models/ProccesOperation/Detail.tsx";
 import {ProccesMobXStore} from "../../../store/ProccesMobXStore.ts";
+import {reaction, toJS} from "mobx";
 
 export default function DetailForm(detailArray: Detail[]) {
-    const [details, setDetails] = useState<Detail[]>(Array.isArray(detailArray) ? detailArray : []);
+    const [details, setDetails] =
+        useState<Detail[]>(Array.isArray(detailArray) ? detailArray : []);
 
     useEffect(() => {
     }, [details]);
-    const [detail,setDetail]=useState({
+    const [detail,setDetail]=
+        useState({
         caption:'',
         quantity:''
     })
+    reaction(
+        () => ProccesMobXStore.procces.details,
+        (newDetails, oldDetails) => {
+            /*console.log('Details array updated.');
+            console.log('Old details:', toJS(oldDetails));
+            console.log('New details:', toJS(newDetails));*/
+        }
+    );
+
     const [errors, setErrors] = useState({});
     const inputRef = useRef(null);
     const handleTextFieldChange = (event) => {
         const {name, value} = event.target;
         const valu = inputRef.current.value;
         // Валидация для поля "number"
-        if (name === 'amount' && !value.match(/^\d+$/)) {
+        if (name === 'quantity' && !value.match(/^\d+$/)) {
             setErrors(prevErrors => ({
                 ...prevErrors,
                 [name]: 'Пожалуйста, введите число.'
@@ -49,9 +61,11 @@ export default function DetailForm(detailArray: Detail[]) {
         setHidden(!hidden);
     };
     const addBtn = () => {
-        const allFieldsFilled = Object.entries(detail).every(([fieldName, value]) => {
+        const allFieldsFilled =
+            Object.entries(detail).every(([fieldName, value]) => {
             // Проверяем, что значение не пустое, является строкой и не является массивом или объектом
-            return (typeof value === 'string' && value.trim() !== '') || Array.isArray(value) || typeof value === 'object';
+            return (typeof value === 'string' && value.trim() !== '') ||
+                Array.isArray(value) || typeof value === 'object';
         });
 
         if (!allFieldsFilled) {
@@ -75,7 +89,7 @@ export default function DetailForm(detailArray: Detail[]) {
         // Обновляем состояние, добавляя новый объект Detail в массив
         setDetails(prevDetails => [...prevDetails, newDetail]);
 
-        ProccesMobXStore.addDetail(newDetail)
+        ProccesMobXStore.addItem('details', newDetail);
         // Очищаем состояние для поля detail, чтобы подготовить его к следующему вводу
         setDetail({
             caption: '',
@@ -137,22 +151,22 @@ export default function DetailForm(detailArray: Detail[]) {
                     </IconButton>
                 )
             }
-
-                {ProccesMobXStore.procces.details && // Проверяем, что details является массивом
-                    ProccesMobXStore.procces.details.map((detail) => (
-                        <CenteredDivRow key={detail.id}>
-                            <IconButton>
-                                <EditSharpIcon/>
-                            </IconButton>
-                            <Typography>
-                                {detail.caption}
-                                </Typography>
-                                <IconButton edge="end" aria-label="delete">
-                                    <DeleteIcon/>
-                                </IconButton>
-                        </CenteredDivRow>
-                    ))
-                }
+            {JSON.stringify(ProccesMobXStore.procces.details)}
+            {ProccesMobXStore.procces.details && // Проверяем, что details является массивом
+                ProccesMobXStore.procces.details.map((detail, index) => (
+                    <CenteredDivRow key={index}>
+                        <IconButton>
+                            <EditSharpIcon/>
+                        </IconButton>
+                        <Typography>
+                            {detail.caption}
+                        </Typography>
+                        <IconButton edge="end" aria-label="delete">
+                            <DeleteIcon/>
+                        </IconButton>
+                    </CenteredDivRow>
+                ))
+            }
         </CenteredDivColumnLocal>
 
     )

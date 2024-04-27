@@ -11,7 +11,7 @@ import {toJS} from "mobx";
 
 export default function ProccesFields(){
     const [procces, setProcces]
-        = useState<Procces>(ProccesMobXStore?.procces);
+        = useState<Procces>(ProccesMobXStore.procces);
 
     useEffect(() => {
         //console.log('Changing : ', toJS( procces) );

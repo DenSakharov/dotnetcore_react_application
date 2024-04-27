@@ -135,6 +135,7 @@ namespace ClassesLibrary.Services
                 {
                     Caption = VARIABLE.Caption,
                     Quantity = VARIABLE.Quantity,
+                    ProccesId = VARIABLE.ProccesId,
                 };
                 details.Add(detail);
             }
@@ -150,6 +151,7 @@ namespace ClassesLibrary.Services
                 {
                     Caption = VARIABLE.Caption,
                     Quantity = VARIABLE.Quantity,
+                    ProccesId = VARIABLE.ProccesId,
                 };
                 detailDtos.Add(detail);
             }
@@ -168,6 +170,7 @@ namespace ClassesLibrary.Services
                     LoadWeightM3 = VARIABLE.LoadWeightM3,
                     ProfileAndSize = VARIABLE.ProfileAndSize,
                     Quantity = VARIABLE.Quantity,
+                    ProccesId = VARIABLE.ProccesId,
                 };
                 materials.Add(detail);
             }
@@ -186,6 +189,7 @@ namespace ClassesLibrary.Services
                     LoadWeightM3 = VARIABLE.LoadWeightM3,
                     ProfileAndSize = VARIABLE.ProfileAndSize,
                     Quantity = VARIABLE.Quantity,
+                    ProccesId = VARIABLE.ProccesId,
                 };
                 materialDtos.Add(material);
             }

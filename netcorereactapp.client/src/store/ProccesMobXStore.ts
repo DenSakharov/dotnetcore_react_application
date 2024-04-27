@@ -42,54 +42,61 @@ export const ProccesMobXStore = {
     errors: {},
 
     setProcces(newProcces) {
+        //console.log(newProcces);
         ProccesMobXStore.procces = newProcces;
     },
 
     setErrors(newErrors) {
         ProccesMobXStore.errors = newErrors;
     },
-    addOperation(operation) {
-        ProccesMobXStore.procces = {
-            ...ProccesMobXStore.procces,
-            operations: [...ProccesMobXStore.procces.operations, operation]
-        };
+    // Общий метод для добавления элемента в массив по типу
+    addItem(type, item) {
+        if (type === 'operations') {
+            ProccesMobXStore.procces = {
+                ...ProccesMobXStore.procces,
+                operations: [...ProccesMobXStore.procces.operations, item]
+            };
+        } else if (type === 'details') {
+            ProccesMobXStore.procces = {
+                ...ProccesMobXStore.procces,
+                details: [...ProccesMobXStore.procces.details, item]
+            };
+        } else if (type === 'materials') {
+            ProccesMobXStore.procces = {
+                ...ProccesMobXStore.procces,
+                materials: [...ProccesMobXStore.procces.materials, item]
+            };
+        } else {
+            console.error('Неизвестный тип:', type);
+        }
     },
-    removeOperation(index) {
-        const newOperations = [...ProccesMobXStore.procces.operations];
-        newOperations.splice(index, 1);
-        ProccesMobXStore.procces = {
-            ...ProccesMobXStore.procces,
-            operations: newOperations
-        };
-    },
-    addDetail(detail) {
-        ProccesMobXStore.procces = {
-            ...ProccesMobXStore.procces,
-            details: [...ProccesMobXStore.procces.details, detail]
-        };
-    },
-    removeDetail(index) {
-        const newDetails = [...ProccesMobXStore.procces.details];
-        newDetails.splice(index, 1);
-        ProccesMobXStore.procces = {
-            ...ProccesMobXStore.procces,
-            details: newDetails
-        };
-    },
-    addMaterial(material) {
-        console.log(material);
-        ProccesMobXStore.procces = {
-            ...ProccesMobXStore.procces,
-            materials: [...ProccesMobXStore.procces.materials, material]
-        };
-    },
-    removeMaterial(index) {
-        const materials = [...ProccesMobXStore.procces.materials];
-        materials.splice(index, 1);
-        ProccesMobXStore.procces = {
-            ...ProccesMobXStore.procces,
-            materials: materials
-        };
+
+    // Общий метод для удаления элемента из массива по индексу и типу
+    removeItem(type, index) {
+        if (type === 'operations') {
+            const newOperations = [...ProccesMobXStore.procces.operations];
+            newOperations.splice(index, 1);
+            ProccesMobXStore.procces = {
+                ...ProccesMobXStore.procces,
+                operations: newOperations
+            };
+        } else if (type === 'details') {
+            const newDetails = [...ProccesMobXStore.procces.details];
+            newDetails.splice(index, 1);
+            ProccesMobXStore.procces = {
+                ...ProccesMobXStore.procces,
+                details: newDetails
+            };
+        } else if (type === 'materials') {
+            const newMaterials = [...ProccesMobXStore.procces.materials];
+            newMaterials.splice(index, 1);
+            ProccesMobXStore.procces = {
+                ...ProccesMobXStore.procces,
+                materials: newMaterials
+            };
+        } else {
+            console.error('Неизвестный тип:', type);
+        }
     },
     resetProcces() {
         ProccesMobXStore.procces = this.initialProcces();
@@ -99,7 +106,12 @@ export const ProccesMobXStore = {
 makeObservable(ProccesMobXStore, {
     initialProcces:observable,
     procces: observable,
-    errors: observable,
     setProcces: action,
+    resetProcces: action,
+
+    errors: observable,
     setErrors: action,
+
+    addItem:action,
+    removeItem:action,
 });

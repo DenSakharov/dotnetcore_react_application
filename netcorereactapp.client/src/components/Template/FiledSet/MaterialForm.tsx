@@ -1,5 +1,5 @@
 import {CenteredDivColumn, CenteredDivRow} from "../../Home/CommonComponents/CenteredDivRow.tsx";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {IconButton, Typography} from "@mui/material";
 import {buttonHover, buttonHoverBorderRadius} from "../../../styles/Annimations/Buttons/button_animations_hover.tsx";
 import RemoveCircleTwoToneIcon from "@mui/icons-material/RemoveCircleTwoTone";
@@ -11,18 +11,31 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {styled} from "@mui/system";
 import {Material} from "../../../Models/ProccesOperation/Material.tsx";
 import {ProccesMobXStore} from "../../../store/ProccesMobXStore.ts";
-import {toJS} from "mobx";
+import {reaction, toJS} from "mobx";
 
 export default function MaterialForm(materialInputArray: Material[]) {
-    const [materials, setMaterials] = useState<Material[]>(Array.isArray(materialInputArray) ? materialInputArray : []);
-
-    const [material,setMaterial]=useState({
+    const [materials, setMaterials] =
+        useState<Material[]>(Array.isArray(materialInputArray) ? materialInputArray : []);
+    useEffect(() => {
+        console.log('materials',materials)
+    }, [materials]);
+    const [material,setMaterial]=
+        useState({
         caption:'',
-        loadWeightM3: 0,
-        profileAndSize: 0,
+        loadWeightM3: '',
+        profileAndSize: '',
         organizationCaption: '',
-        quantity: 0,
+        quantity: '',
     })
+    useEffect(() => {
+
+    }, [material]);
+    reaction(
+        () => ProccesMobXStore.procces.materials,
+        (materials) => {
+            //console.log('materials:', toJS(materials) );
+        }
+    );
     const [errors, setErrors] = useState({});
     const inputRef = useRef(null);
     const handleTextFieldChange = (event) => {
@@ -54,11 +67,11 @@ export default function MaterialForm(materialInputArray: Material[]) {
         setHidden(!hidden);
     };
     const addBtn = () => {
-        //console.log('details',materials)
-        //console.log('', oper);
-        const allFieldsFilled = Object.entries(material).every(([fieldName, value]) => {
+        const allFieldsFilled =
+            Object.entries(material).every(([fieldName, value]) => {
             // Проверяем, что значение не пустое, является строкой и не является массивом или объектом
-            return (typeof value === 'string' && value.trim() !== '') || Array.isArray(value) || typeof value === 'object';
+            return (typeof value === 'string' && value.trim() !== '') ||
+                Array.isArray(value) || typeof value === 'object';
         });
 
         if (!allFieldsFilled) {
@@ -70,10 +83,8 @@ export default function MaterialForm(materialInputArray: Material[]) {
                 }
             }
             setErrors(newErrors);
-            //console.error(errors)
             return; // Прерываем отправку данных
         }
-        // Создаем новый объект Detail и добавляем его в массив
         const newMaterial: Material = {
             caption: material.caption,
             loadWeightM3:  parseInt(material.loadWeightM3),
@@ -81,24 +92,20 @@ export default function MaterialForm(materialInputArray: Material[]) {
             organizationCaption: material.organizationCaption,
             quantity:  parseInt(material.quantity),
         };
+        ProccesMobXStore.addItem('materials', newMaterial);
+        setMaterials(prevMaterials => [...prevMaterials, newMaterial]);
 
-        // Обновляем состояние, добавляя новый объект Detail в массив
-        setMaterials(prevDetails => [...prevDetails, newMaterial]);
-        //console.log(toJS( ProccesMobXStore.procces ) )
-        ProccesMobXStore.addMaterial(newMaterial)
-        // Очищаем состояние для поля detail, чтобы подготовить его к следующему вводу
-        console.log(toJS( ProccesMobXStore.procces ) )
-        setMaterial({
+        /*setMaterial({
             caption: '',
             loadWeightM3: 0,
             profileAndSize: 0,
             organizationCaption: '',
             quantity: 0,
-        });
+        });*/
         toggleInfoVisibility()
     };
     const deleteBtn = (index) => {
-        ProccesMobXStore.removeMaterial(index)
+        ProccesMobXStore.removeItem('materials', index);
     }
     return (
         <CenteredDivColumnLocal
@@ -233,17 +240,17 @@ export default function MaterialForm(materialInputArray: Material[]) {
                     </IconButton>
                 )
             }
-
+            {JSON.stringify(ProccesMobXStore.procces.materials)}
             {ProccesMobXStore.procces.materials && // Проверяем, что details является массивом
-                ProccesMobXStore.procces.materials.map(material => (
-                    <CenteredDivRow key={material.id}>
+                ProccesMobXStore.procces.materials.map((material,index) => (
+                    <CenteredDivRow key={index}>
                         <IconButton>
                             <EditSharpIcon/>
                         </IconButton>
                         <Typography>
                             {material.caption}
                         </Typography>
-                        <IconButton edge="end" aria-label="delete" onClick={deleteBtn(material.id)}>
+                        <IconButton edge="end" aria-label="delete" onClick={() => deleteBtn(index)}>
                             <DeleteIcon/>
                         </IconButton>
                     </CenteredDivRow>

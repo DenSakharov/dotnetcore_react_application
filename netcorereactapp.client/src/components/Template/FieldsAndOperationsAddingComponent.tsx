@@ -152,7 +152,7 @@ export const FieldsAndOperationsAddingComponent
                 };
             }
         });*/
-        ProccesMobXStore.addOperation(localOper);
+        ProccesMobXStore.addItem('operations', localOper);
     };
     return (
         <CenteredDivColumn>

@@ -29,7 +29,7 @@ export const OperationList
             ...prevState,
             operations: updatedOperations
         }));
-        ProccesMobXStore.removeOperation(index);
+        ProccesMobXStore.removeItem('operations',index);
     };
     return (
         <ThemeProvider theme={theme}>

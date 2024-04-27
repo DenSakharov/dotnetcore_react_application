@@ -22,7 +22,7 @@ import {HistoryComponent} from "../../../../History/HistoryComponent.tsx";
 import '../../../../../../styles/CustomTabs.scss'
 import ProccesFields from "../../../../../Template/FiledSet/ProccesFields.tsx";
 import {ProccesMobXStore} from "../../../../../../store/ProccesMobXStore.ts";
-import {toJS} from "mobx";
+import {reaction, toJS} from "mobx";
 
 export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) => {
     const [selectedProcces, setSelectedProcces] = useState<Procces>()
@@ -36,6 +36,12 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
         setOperations(selectedProcces?.operations)
         ProccesMobXStore.setProcces(selectedProcces)
     }, [selectedProcces]);
+   /* reaction(
+        () => ProccesMobXStore.procces,
+        (procces) => {
+            //console.log('materials:', toJS(procces) );
+        }
+    );*/
     useEffect(() => {
         //console.log('operations\n',operations);
     }, [operations]);
@@ -52,7 +58,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                     }
                 })
             if (response) {
-                //console.log('Ответ запроса на получение выбранного процесса с операциями :\n',response.data)
+                console.log('Ответ запроса на получение выбранного процесса с операциями :\n',response.data)
                 setSelectedProcces(response.data);
 
             } else {
@@ -80,7 +86,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
     const confirmEditedOperation = async () => {
         const tokenValue = localStorage.getItem("authToken");
         try {
-            console.log(toJS(ProccesMobXStore.procces))
+            console.log('ProccesMobXStore.procces before request : ',toJS(ProccesMobXStore.procces))
             const response = await axios.put(
                 `${config.apiUrl}/procces/updatemodel`, // URL для обновления операции по ее идентификатору
                 toJS(ProccesMobXStore.procces), // Передаем отредактированный объект
