@@ -8,6 +8,7 @@ import {ProccesMobXStore} from "../../../store/ProccesMobXStore.ts";
 import {errorsStore} from "../../../store/ErrorsMobXStore.ts";
 import { observer } from 'mobx-react';
 import {toJS} from "mobx";
+import {CenteredDivColumn} from "../../Home/CommonComponents/CenteredDivRow.tsx";
 
 export default function ProccesFields(){
     const [procces, setProcces]

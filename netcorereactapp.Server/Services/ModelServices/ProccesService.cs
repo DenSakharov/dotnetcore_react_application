@@ -42,6 +42,18 @@ namespace netcorereactapp.Server.Services.ModelServices
             }
         }
 
+        Procces getExistingProcces(int id)
+        {
+            return _dbContext.Procceses
+                .Include(o => o.Operations)
+                .ThenInclude(o => o.Equipments)
+                .Include(p => p.Operations)
+                .ThenInclude(o => o.Attachments)
+                .Include(p => p.Attachments)
+                .Include(p=>p.details)
+                .Include(p=>p.materials)
+                .FirstOrDefault(p => p.Id == id);
+        }
         public async Task<ProccesDTO> GetCurrent(int id)
         {
             try
@@ -49,15 +61,7 @@ namespace netcorereactapp.Server.Services.ModelServices
                 // Проверяем, существует ли операция с указанным ID в базе данных
                 //var existingProcces =  _dbContext.Procceses.Where(p => p.Id == id).FirstOrDefault();
 
-                var existingProcces = _dbContext.Procceses
-                    .Include(o => o.Operations)
-                        .ThenInclude(o => o.Equipments)
-                    .Include(p => p.Operations)
-                        .ThenInclude(o => o.Attachments)
-                    .Include(p => p.Attachments)
-                    .Include(p=>p.details)
-                    .Include(p=>p.materials)
-                    .FirstOrDefault(p => p.Id == id);
+                var existingProcces = getExistingProcces(id);
 
                 if (existingProcces != null)
                 {
@@ -89,6 +93,7 @@ namespace netcorereactapp.Server.Services.ModelServices
 
             procces.Operations= MapService.MapChildOperations(existingProcces.Operations);
             procces.Attachments=MapService.MapAttachments(existingProcces.Attachments);*/
+                
                 return procces;
             }
             catch (Exception ex)
@@ -176,7 +181,8 @@ namespace netcorereactapp.Server.Services.ModelServices
             try
             {
                 // Проверяем, существует ли операция с указанным ID в базе данных
-                var existingProcces = await _dbContext.Procceses.FindAsync(editedProcces.Id);
+                var existingProcces = getExistingProcces(editedProcces.Id);
+                
                 if (existingProcces == null)
                 {
                     return null; // Возвращаем 404 Not Found, если операция не найдена
@@ -205,7 +211,8 @@ namespace netcorereactapp.Server.Services.ModelServices
                 {
 
                     // Проверяем, существует ли операция с указанным ID в базе данных
-                    var existingProcces = await _dbContext.Procceses.FindAsync(editedProcces.Id);
+                    var existingProcces = getExistingProcces(editedProcces.Id);
+                    
                     if (existingProcces == null)
                     {
                         return null; // Возвращаем 404 Not Found, если операция не найдена

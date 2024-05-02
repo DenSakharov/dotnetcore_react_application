@@ -90,15 +90,20 @@ namespace netcorereactapp.Server.Controllers.ProccesController
         public async Task<IActionResult> ConfirmEditedOperation(Procces editedProcces
             )
         {
-            var res = await _proccesService.UpdateProcces(editedProcces);
-            if (res != null)
+            if (editedProcces != null)
             {
-                return Ok(res);
+                var res = await _proccesService.UpdateProcces(editedProcces);
+                if (res != null)
+                {
+                    return Ok(res);
+                }
+                else
+                {
+                    return StatusCode(500, $"Internal server error");
+                }
             }
-            else
-            {
-                return StatusCode(500, $"Internal server error");
-            }
+
+            return null;
         }
         [HttpPut]
         [Route("{proccedId}/updatefile")]

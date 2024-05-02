@@ -17,25 +17,25 @@ export default function MaterialForm(materialInputArray: Material[]) {
     const [materials, setMaterials] =
         useState<Material[]>(Array.isArray(materialInputArray) ? materialInputArray : []);
     useEffect(() => {
-        console.log('materials',materials)
+        //console.log('materials',materials)
     }, [materials]);
     const [material,setMaterial]=
         useState({
         caption:'',
-        loadWeightM3: '',
-        profileAndSize: '',
+        loadWeightM3: 0,
+        profileAndSize: 0,
         organizationCaption: '',
-        quantity: '',
+        quantity: 0,
     })
     useEffect(() => {
 
     }, [material]);
-    reaction(
+  /*  reaction(
         () => ProccesMobXStore.procces.materials,
         (materials) => {
             //console.log('materials:', toJS(materials) );
         }
-    );
+    );*/
     const [errors, setErrors] = useState({});
     const inputRef = useRef(null);
     const handleTextFieldChange = (event) => {
@@ -240,7 +240,7 @@ export default function MaterialForm(materialInputArray: Material[]) {
                     </IconButton>
                 )
             }
-            {JSON.stringify(ProccesMobXStore.procces.materials)}
+            {/*{JSON.stringify(ProccesMobXStore.procces.materials)}*/}
             {ProccesMobXStore.procces.materials && // Проверяем, что details является массивом
                 ProccesMobXStore.procces.materials.map((material,index) => (
                     <CenteredDivRow key={index}>

@@ -58,7 +58,7 @@ export const SelectedProcces = ({int, onClose}: { int: string, onClose: void }) 
                     }
                 })
             if (response) {
-                console.log('Ответ запроса на получение выбранного процесса с операциями :\n',response.data)
+                //console.log('Ответ запроса на получение выбранного процесса с операциями :\n',response.data)
                 setSelectedProcces(response.data);
 
             } else {

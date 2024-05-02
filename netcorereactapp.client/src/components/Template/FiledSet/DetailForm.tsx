@@ -22,16 +22,16 @@ export default function DetailForm(detailArray: Detail[]) {
     const [detail,setDetail]=
         useState({
         caption:'',
-        quantity:''
+        quantity:0,
     })
-    reaction(
-        () => ProccesMobXStore.procces.details,
+   /* reaction(
+        () => ProccesMobXStore.procces?.details,
         (newDetails, oldDetails) => {
-            /*console.log('Details array updated.');
+            /!*console.log('Details array updated.');
             console.log('Old details:', toJS(oldDetails));
-            console.log('New details:', toJS(newDetails));*/
+            console.log('New details:', toJS(newDetails));*!/
         }
-    );
+    );*/
 
     const [errors, setErrors] = useState({});
     const inputRef = useRef(null);
@@ -97,6 +97,9 @@ export default function DetailForm(detailArray: Detail[]) {
         });
         toggleInfoVisibility()
     };
+    const deleteBtn = (index) => {
+        ProccesMobXStore.removeItem('materials', index);
+    }
     return (
         <CenteredDivColumnLocal sx={{width: '700px'}}>
             {hidden ?
@@ -151,7 +154,7 @@ export default function DetailForm(detailArray: Detail[]) {
                     </IconButton>
                 )
             }
-            {JSON.stringify(ProccesMobXStore.procces.details)}
+            {/*{JSON.stringify(ProccesMobXStore.procces.details)}*/}
             {ProccesMobXStore.procces.details && // Проверяем, что details является массивом
                 ProccesMobXStore.procces.details.map((detail, index) => (
                     <CenteredDivRow key={index}>
@@ -161,7 +164,7 @@ export default function DetailForm(detailArray: Detail[]) {
                         <Typography>
                             {detail.caption}
                         </Typography>
-                        <IconButton edge="end" aria-label="delete">
+                        <IconButton edge="end" aria-label="delete" onClick={() => deleteBtn(index)}>
                             <DeleteIcon/>
                         </IconButton>
                     </CenteredDivRow>
