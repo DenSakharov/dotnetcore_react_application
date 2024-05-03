@@ -12,8 +12,8 @@ using netcorereactapp.Server.Services.PostgreService;
 namespace netcorereactapp.Server.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240422072706_NewFieldsInProcces")]
-    partial class NewFieldsInProcces
+    [Migration("20240503081232_AddingMaterialAndDetailInProcces")]
+    partial class AddingMaterialAndDetailInProcces
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -174,8 +174,8 @@ namespace netcorereactapp.Server.Migrations
                     b.Property<DateTime>("DateOfEdited")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("LoadWeightM3")
-                        .HasColumnType("text");
+                    b.Property<int?>("LoadWeightM3")
+                        .HasColumnType("integer");
 
                     b.Property<string>("OrganizationCaption")
                         .HasColumnType("text");
@@ -183,8 +183,8 @@ namespace netcorereactapp.Server.Migrations
                     b.Property<int?>("ProccesId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ProfileAndSize")
-                        .HasColumnType("text");
+                    b.Property<int?>("ProfileAndSize")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("Quantity")
                         .HasColumnType("integer");

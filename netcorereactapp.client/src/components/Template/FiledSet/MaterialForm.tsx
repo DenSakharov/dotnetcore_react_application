@@ -12,8 +12,10 @@ import {styled} from "@mui/system";
 import {Material} from "../../../Models/ProccesOperation/Material.tsx";
 import {ProccesMobXStore} from "../../../store/ProccesMobXStore.ts";
 import {reaction, toJS} from "mobx";
+import {observer} from "mobx-react";
 
-export default function MaterialForm(materialInputArray: Material[]) {
+export default observer(MaterialForm)
+function MaterialForm(materialInputArray: Material[]) {
     const [materials, setMaterials] =
         useState<Material[]>(Array.isArray(materialInputArray) ? materialInputArray : []);
     useEffect(() => {

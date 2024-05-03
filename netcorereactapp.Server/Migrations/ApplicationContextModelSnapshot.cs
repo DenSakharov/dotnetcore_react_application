@@ -171,8 +171,8 @@ namespace netcorereactapp.Server.Migrations
                     b.Property<DateTime>("DateOfEdited")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("LoadWeightM3")
-                        .HasColumnType("text");
+                    b.Property<int?>("LoadWeightM3")
+                        .HasColumnType("integer");
 
                     b.Property<string>("OrganizationCaption")
                         .HasColumnType("text");
@@ -180,8 +180,8 @@ namespace netcorereactapp.Server.Migrations
                     b.Property<int?>("ProccesId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ProfileAndSize")
-                        .HasColumnType("text");
+                    b.Property<int?>("ProfileAndSize")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("Quantity")
                         .HasColumnType("integer");

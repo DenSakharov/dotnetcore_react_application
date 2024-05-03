@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace netcorereactapp.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class NewFieldsInProcces : Migration
+    public partial class AddingMaterialAndDetailInProcces : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -109,8 +109,8 @@ namespace netcorereactapp.Server.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    LoadWeightM3 = table.Column<string>(type: "text", nullable: true),
-                    ProfileAndSize = table.Column<string>(type: "text", nullable: true),
+                    LoadWeightM3 = table.Column<int>(type: "integer", nullable: true),
+                    ProfileAndSize = table.Column<int>(type: "integer", nullable: true),
                     OrganizationCaption = table.Column<string>(type: "text", nullable: true),
                     Quantity = table.Column<int>(type: "integer", nullable: true),
                     ProccesId = table.Column<int>(type: "integer", nullable: true),

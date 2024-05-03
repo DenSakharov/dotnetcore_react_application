@@ -4,8 +4,8 @@ namespace ClassesLibrary.Models;
 
 public class Material:Entity
 {
-    public string? LoadWeightM3 { get; set; }
-    public string? ProfileAndSize { get; set; }
+    public int? LoadWeightM3 { get; set; }
+    public int? ProfileAndSize { get; set; }
     public string? OrganizationCaption { get; set; }//Наименование организации
     public int? Quantity { get; set; }
     [JsonIgnore]

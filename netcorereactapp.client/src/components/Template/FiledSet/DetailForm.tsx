@@ -12,8 +12,10 @@ import EditSharpIcon from '@material-ui/icons/EditSharp';
 import {Detail} from "../../../Models/ProccesOperation/Detail.tsx";
 import {ProccesMobXStore} from "../../../store/ProccesMobXStore.ts";
 import {reaction, toJS} from "mobx";
+import {observer} from "mobx-react";
 
-export default function DetailForm(detailArray: Detail[]) {
+export default observer(DetailForm)
+function DetailForm(detailArray: Detail[]) {
     const [details, setDetails] =
         useState<Detail[]>(Array.isArray(detailArray) ? detailArray : []);
 
@@ -98,7 +100,7 @@ export default function DetailForm(detailArray: Detail[]) {
         toggleInfoVisibility()
     };
     const deleteBtn = (index) => {
-        ProccesMobXStore.removeItem('materials', index);
+        ProccesMobXStore.removeItem('details', index);
     }
     return (
         <CenteredDivColumnLocal sx={{width: '700px'}}>

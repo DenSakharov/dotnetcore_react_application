@@ -51,7 +51,7 @@ namespace netcorereactapp.Server.Controllers.ProccesController
             return Ok(new { procceses, totalCount });
         }
         [HttpPost("create")]
-        public async Task<string> CreateNewProcces([FromBody] Procces procces)
+        public async Task<string> CreateNewProcces([FromBody] ProccesDTO procces)
         {
             if (procces != null)
             {
