@@ -19,7 +19,7 @@ namespace ExcelConstructorLibrary.RouteMap
             //создание копии пустого шаблона
             File.Copy(pathMainTemplate, destinationFilePath, true);
 
-            get_template_table();
+            //get_template_table();
             //добавление таблицы, для дальнейшего копирования 
             int rangeStart = 34;
             int rangeEnd = 64;
@@ -44,14 +44,14 @@ namespace ExcelConstructorLibrary.RouteMap
 
         }
 
-        static void get_template_table()
+        /*static void get_template_table()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using (var package = new ExcelPackage(new FileInfo(destinationFilePath)))
             {
                 var worksheet = package.Workbook.Worksheets["МК"];
             }
-        }
+        }*/
 
 
         static byte[] export_excel(string destinationFilePath, Procces procces)
