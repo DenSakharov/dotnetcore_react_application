@@ -6,7 +6,7 @@ namespace ClassesLibrary.Models
     {
         public string? number { get; set; }//номер
         public string? OrganizationCaption { get; set; }//Наименование организации
-        public string? EquipmentType { get; set; }//Тип оборудования
+        public string? EquipmentType { get; set; }//Тип оборудования (Наименование оборудования)
         public string? EquipmentModel { get; set; }//Модель оборудования
         public List<Detail> details { get; set; } = new List<Detail>();// массив деталей
         public List<Material> materials { get; set; } = new List<Material>();//массив материалов

@@ -99,7 +99,7 @@ export const NewOperation=({hidden,addChildOperartion})=>{
     const handleTextFieldChange = (event) => {
         const { name, value } = event.target;
         // Валидация для поля "number"
-        if (name === 'number' && !value.match(/^\d+$/)) {
+        if ((name === 'number' || name=='laborCost')&& !value.match(/^\d+$/)) {
             setErrors(prevErrors => ({
                 ...prevErrors,
                 [name]: 'Пожалуйста, введите число.'

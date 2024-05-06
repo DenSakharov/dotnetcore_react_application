@@ -249,7 +249,12 @@ namespace ExcelConstructorLibrary.RouteMap
 
                 //логика по заполнению листа ВТР Пооперационная ведомость трудоемкости
                 WorkSheetVTR.OperationalLaborIntensitySheet(package,procces);
-
+                
+                //логика по заполнению листа СЛ Сопроводительный лист
+                WorkSheetSL.fillingOutApprovalSheet(package, procces);
+                
+                WorkSheetTO.fillingOutTOSheet(package, procces);
+                
                 package.Save();
 
                 return package.GetAsByteArray();
